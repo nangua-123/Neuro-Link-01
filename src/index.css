@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+:root {
+  --adm-color-primary: #1677FF;
+  --adm-font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --adm-color-text: #333333;
+  --adm-color-text-secondary: #999999;
+  --adm-color-background: #F5F5F5;
+}
+
+body {
+  background-color: var(--adm-color-background);
+  margin: 0;
+  padding: 0;
+  font-family: var(--adm-font-family);
+  -webkit-font-smoothing: antialiased;
+}

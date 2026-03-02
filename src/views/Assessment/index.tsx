@@ -1,0 +1,30 @@
+// File: src/views/Assessment/index.tsx
+import React, { useState } from 'react';
+import { useAppStore } from '../../store';
+import { DiseaseTag } from '../../configs/constants';
+import { ILAE_SCHEMA } from '../../configs/scales/ilae';
+import { MOCA_AVLT_SCHEMA } from '../../configs/scales/moca_avlt';
+import DynamicScale from '../../components/DynamicScale';
+
+export default function AssessmentView() {
+  // 1. 从 Zustand 获取当前的 DiseaseTag
+  const { selectedDiseaseTag } = useAppStore();
+  const [isCompleted, setIsCompleted] = useState(false);
+
+  // 2. 动态加载对应 Schema
+  const currentSchema = selectedDiseaseTag === DiseaseTag.EPILEPSY 
+    ? ILAE_SCHEMA 
+    : MOCA_AVLT_SCHEMA;
+
+  const handleComplete = (answers: Record<string, any>) => {
+    // 3. 测评完成后，将生成的 answers Payload 打印到控制台
+    console.log('【测评完成】生成的答卷 Payload:', answers);
+    setIsCompleted(true);
+  };
+
+  if (isCompleted) {
+    return <div>UI Placeholder - 正在生成华西 AI 报告...</div>;
+  }
+
+  return <div>UI Placeholder</div>;
+}
