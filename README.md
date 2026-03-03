@@ -48,6 +48,21 @@
 - `tailwindcss`: 样式引擎。
 
 ## Changelog
+### v0.5.2 (Phase 2 AI Pre-consultation UI Refactor Planning)
+- 规划全新沉浸式 AI 预问诊视图 (`src/views/Home/index.tsx`)：
+  - **沉浸式管家氛围**：顶部悬浮 AI 状态感知栏（呼吸光晕头像与“正在聆听”状态），全局浅色弥散渐变背景。
+  - **温情对话气泡**：AI 气泡采用极淡蓝紫底色与微小阴影，用户气泡采用高对比度主色调，区分明显且专业克制。
+  - **极简多模态输入区**：底部悬浮毛玻璃操作台，主推巨大的、带渐变发光阴影的“语音录入”胶囊/圆形按钮，文字输入降级为辅助入口。
+  - **高价值转化卡片**：重构《初步症状提取图谱》，采用“加密医疗档案”视觉风格（精致描边、高亮 Tag 标签），底部配置极具诱惑力的发光渐变“1 元解锁”超级胶囊按钮。
+
+### v0.5.1 (Phase 1 UI Refactor Planning)
+- 规划全局 App Shell (`src/views/Layout/index.tsx`)：设计高级毛玻璃模糊效果（backdrop-blur）的底部导航栏。
+- 规划全新商业级首页 (`src/views/Home/index.tsx`)：
+  - 顶部管家式问候与柔和渐变氛围。
+  - 黄金转化区：设计带有发光阴影与胶囊按钮的“1 元深度早筛”入口卡片。
+  - 动态状态卡片：设计 VIP 登机牌样式的 Neuro-Pass 专属就诊码卡片（高危标签态）。
+  - 金刚区 (Grid)：规划精致的圆形/圆角快捷入口图标区域。
+
 ### v0.4.4 (Phase 4.4 Architecture Planning)
 - 落地底层硬件服务 `speech.ts`，基于 Web Speech API 支持语音复述测试。
 - 落地核心业务配置抽离 (`configs/scales/`)，将华西金标准（ILAE, MoCA, CDR）转化为 JSON Schema。
