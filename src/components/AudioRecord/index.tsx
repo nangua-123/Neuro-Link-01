@@ -1,6 +1,6 @@
 // File: src/components/AudioRecord/index.tsx
 import React, { useState } from 'react';
-import { Button, Space, Card } from 'antd-mobile';
+import { Button, Space, Card, Toast } from 'antd-mobile';
 import { AudioOutline } from 'antd-mobile-icons';
 import { speechService } from '../../services/speech';
 
@@ -19,8 +19,19 @@ export default function AudioRecord({ onComplete }: AudioRecordProps) {
       const result = await speechService.startListening();
       setTranscript(result.text);
       onComplete(result.text); // 将识别出的文本抛出给上层表单
-    } catch (error) {
+    } catch (error: any) {
       console.error('Speech recognition failed:', error);
+      if (error === 'not-allowed' || error?.message === 'not-allowed') {
+        Toast.show({
+          icon: 'fail',
+          content: '请允许麦克风权限',
+        });
+      } else {
+        Toast.show({
+          icon: 'fail',
+          content: '语音识别失败，请重试',
+        });
+      }
     } finally {
       setIsRecording(false);
     }

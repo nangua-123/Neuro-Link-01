@@ -1,5 +1,7 @@
 {
   "name": "Neuro-Link",
-  "description": "",
-  "requestFramePermissions": []
+  "description": "纯 C 端神经专病 AI 智能管理平台",
+  "requestFramePermissions": [
+    "microphone"
+  ]
 }
