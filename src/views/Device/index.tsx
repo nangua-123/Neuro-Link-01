@@ -1,7 +1,8 @@
 // File: src/views/Device/index.tsx
 import React, { useState, useEffect } from 'react';
 import { NavBar, Button, Toast, SafeArea, Modal } from 'antd-mobile';
-import { BluetoothOutline, BatteryOutline, HeartOutline } from 'antd-mobile-icons';
+import { HeartOutline } from 'antd-mobile-icons';
+import { Bluetooth, Battery } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { bluetoothService } from '../../services/bluetooth';
 import { IoTDevice } from '../../interfaces/mall_device';
@@ -97,7 +98,7 @@ export default function DeviceView() {
             {/* 呼吸光晕效果 */}
             <div className={`absolute inset-0 bg-[#1677FF]/20 rounded-full scale-150 ${isConnecting ? 'animate-ping' : 'animate-pulse'}`} />
             <div className="relative w-32 h-32 rounded-full bg-white shadow-lg flex items-center justify-center z-10">
-              <BluetoothOutline fontSize={48} className={isConnecting ? 'text-[#1677FF] animate-bounce' : 'text-[#1677FF]'} />
+              <Bluetooth size={48} className={isConnecting ? 'text-[#1677FF] animate-bounce' : 'text-[#1677FF]'} />
             </div>
           </div>
           
@@ -125,7 +126,7 @@ export default function DeviceView() {
         onBack={() => navigate(-1)} 
         right={<span onClick={handleDisconnect} className="text-xs text-gray-400">断开</span>}
         className="bg-transparent border-none"
-        style={{ '--title-color': '#fff', '--back-arrow-color': '#fff' }}
+        style={{ color: '#fff' } as React.CSSProperties}
       >
         夜间体征看板
       </NavBar>
@@ -135,7 +136,7 @@ export default function DeviceView() {
         <div className="flex justify-between items-center mb-8 bg-[#141414] p-4 rounded-2xl border border-white/5">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[#1677FF]/20 flex items-center justify-center">
-              <BluetoothOutline className="text-[#1677FF]" />
+              <Bluetooth className="text-[#1677FF]" />
             </div>
             <div>
               <div className="text-sm font-medium text-white/90">{device.deviceName}</div>
@@ -143,7 +144,7 @@ export default function DeviceView() {
             </div>
           </div>
           <div className="flex items-center gap-1 text-emerald-400">
-            <BatteryOutline />
+            <Battery size={16} />
             <span className="text-xs font-mono">{device.batteryLevel}%</span>
           </div>
         </div>

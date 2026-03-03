@@ -45,7 +45,7 @@ export class TriageEngine {
    */
   private calculateRisk(answers: Record<string, any>, diseaseTag: string): RiskLevel {
     // 强触发逻辑：如果 CDR 记忆力得分为 3 (极严重)，直接红灯
-    if (diseaseTag === DiseaseTag.ALZHEIMER && answers['q_memory'] >= 2) {
+    if (diseaseTag === DiseaseTag.AD && answers['q_memory'] >= 2) {
       return RiskLevel.RED;
     }
     
@@ -97,7 +97,7 @@ export class TriageEngine {
 
     // 中高风险，触发绿通逻辑
     let requiredEquipment: MedicalEquipment;
-    if (diseaseTag === DiseaseTag.ALZHEIMER) {
+    if (diseaseTag === DiseaseTag.AD) {
       requiredEquipment = MedicalEquipment.MRI_1_5T; // AD 强依赖核磁
     } else {
       requiredEquipment = MedicalEquipment.EEG; // 癫痫/其他默认依赖脑电图

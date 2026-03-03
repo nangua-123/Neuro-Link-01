@@ -1,9 +1,9 @@
+// File: src/views/Login/index.tsx
 import React, { useState, useEffect } from 'react';
 import { Button, Input, Checkbox, Toast } from 'antd-mobile';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../store';
-
-type IdentityType = 'PATIENT' | 'CAREGIVER';
+import { UserIdentity } from '../../interfaces/user';
 
 export default function LoginView() {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ export default function LoginView() {
   const [phone, setPhone] = useState('');
   const [code, setCode] = useState('');
   // 默认选中患者本人，降低转化摩擦
-  const [identity, setIdentity] = useState<IdentityType>('PATIENT');
+  const [identity, setIdentity] = useState<UserIdentity>(UserIdentity.PATIENT);
   const [agreed, setAgreed] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -120,21 +120,21 @@ export default function LoginView() {
         <div className="w-full max-w-[320px] bg-gray-100/60 backdrop-blur-md p-1 rounded-full flex mb-8 animate-fade-in" style={{ animationDelay: '100ms' }}>
           <div
             className={`flex-1 py-3 text-center rounded-full text-[15px] font-medium transition-all duration-300 cursor-pointer ${
-              identity === 'PATIENT' 
+              identity === UserIdentity.PATIENT 
                 ? 'bg-white text-[#1677FF] shadow-[0_2px_12px_rgba(22,119,255,0.08)]' 
                 : 'text-gray-500 hover:text-gray-700'
             }`}
-            onClick={() => setIdentity('PATIENT')}
+            onClick={() => setIdentity(UserIdentity.PATIENT)}
           >
             我是患者本人
           </div>
           <div
             className={`flex-1 py-3 text-center rounded-full text-[15px] font-medium transition-all duration-300 cursor-pointer ${
-              identity === 'CAREGIVER' 
+              identity === UserIdentity.CAREGIVER 
                 ? 'bg-white text-[#1677FF] shadow-[0_2px_12px_rgba(22,119,255,0.08)]' 
                 : 'text-gray-500 hover:text-gray-700'
             }`}
-            onClick={() => setIdentity('CAREGIVER')}
+            onClick={() => setIdentity(UserIdentity.CAREGIVER)}
           >
             我是家属 / 照护者
           </div>
@@ -221,22 +221,23 @@ export default function LoginView() {
           >
             <svg viewBox="0 0 1024 1024" width="18" height="18" fill="#07C160">
               <path d="M682.666667 341.333333c-17.066667 0-34.133333 4.266667-51.2 8.533334C588.8 204.8 439.466667 106.666667 277.333333 106.666667 123.733333 106.666667 0 213.333333 0 341.333333c0 72.533333 38.4 136.533333 98.133333 183.466667l-25.6 76.8 85.333334-42.666667c34.133333 12.8 72.533333 21.333333 115.2 21.333334 12.8 0 25.6 0 38.4-4.266667C302.933333 588.8 302.933333 601.6 302.933333 618.666667c0 149.333333 149.333333 273.066667 341.333334 273.066666 42.666667 0 85.333333-8.533333 123.733333-21.333333l85.333333 42.666667-25.6-76.8c55.466667-46.933333 93.866667-110.933333 93.866667-183.466667 0-149.333333-149.333333-273.066667-341.333333-273.066667zM192 277.333333c21.333333 0 38.4 17.066667 38.4 38.4s-17.066667 38.4-38.4 38.4-38.4-17.066667-38.4-38.4 17.066667-38.4 38.4-38.4z m170.666667 76.8c-21.333333 0-38.4-17.066667-38.4-38.4s17.066667-38.4 38.4-38.4 38.4 17.066667 38.4 38.4-17.066667 38.4-38.4 38.4z m234.666666 149.333334c-17.066667 0-34.133333-12.8-34.133333-34.133334s12.8-34.133333 34.133333-34.133333 34.133333 12.8 34.133334 34.133333-17.066667 34.133334-34.133334 34.133334z m170.666667 0c-17.066667 0-34.133333-12.8-34.133333-34.133334s12.8-34.133333 34.133333-34.133333 34.133333 12.8 34.133334 34.133333-17.066667 34.133334-34.133334 34.133334z" />
-            </svg>
-            <span className="text-[13px] text-gray-600 font-medium tracking-wide">微信登录</span>
-          </div>
-          <div 
-            className="bg-white/60 backdrop-blur-md rounded-full px-5 py-2.5 flex items-center gap-2 shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-white/60 cursor-pointer active:scale-95 transition-transform" 
-            onClick={() => handleQuickLogin('alipay')}
-          >
-            <svg viewBox="0 0 1024 1024" width="18" height="18" fill="#1677FF">
-              <path d="M874.666667 1024H149.333333C68.266667 1024 0 955.733333 0 874.666667V149.333333C0 68.266667 68.266667 0 149.333333 0h725.333334C955.733333 0 1024 68.266667 1024 149.333333v725.333334C1024 955.733333 955.733333 1024 874.666667 1024zM716.8 469.333333H580.266667c17.066667-51.2 29.866667-106.666667 38.4-162.133333h123.733333v-76.8H512V149.333333h-85.333333v81.066667H192v76.8h337.066667c-8.533333 46.933333-21.333333 93.866667-38.4 136.533333-34.133333-64-64-123.733333-85.333334-174.933333l-76.8 34.133333c25.6 55.466667 59.733333 123.733333 98.133334 192-38.4 46.933333-85.333333 89.6-136.533334 123.733334l46.933334 64c59.733333-38.4 115.2-89.6 157.866666-145.066667 42.666667 64 102.4 115.2 174.933334 157.866667l51.2-68.266667c-64-38.4-119.466667-85.333333-157.866667-145.066667 21.333333-46.933333 38.4-98.133333 51.2-153.6h196.266667v-59.733333z" />
-            </svg>
-            <span className="text-[13px] text-gray-600 font-medium tracking-wide">支付宝登录</span>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  );
-}
+224:             </svg>
+225:             <span className="text-[13px] text-gray-600 font-medium tracking-wide">微信登录</span>
+226:           </div>
+227:           <div 
+228:             className="bg-white/60 backdrop-blur-md rounded-full px-5 py-2.5 flex items-center gap-2 shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-white/60 cursor-pointer active:scale-95 transition-transform" 
+229:             onClick={() => handleQuickLogin('alipay')}
+230:           >
+231:             <svg viewBox="0 0 1024 1024" width="18" height="18" fill="#1677FF">
+232:               <path d="M874.666667 1024H149.333333C68.266667 1024 0 955.733333 0 874.666667V149.333333C0 68.266667 68.266667 0 149.333333 0h725.333334C955.733333 0 1024 68.266667 1024 149.333333v725.333334C1024 955.733333 955.733333 1024 874.666667 1024zM716.8 469.333333H580.266667c17.066667-51.2 29.866667-106.666667 38.4-162.133333h123.733333v-76.8H512V149.333333h-85.333333v81.066667H192v76.8h337.066667c-8.533333 46.933333-21.333333 93.866667-38.4 136.533333-34.133333-64-64-123.733333-85.333334-174.933333l-76.8 34.133333c25.6 55.466667 59.733333 123.733333 98.133334 192-38.4 46.933333-85.333333 89.6-136.533334 123.733334l46.933334 64c59.733333-38.4 115.2-89.6 157.866666-145.066667 42.666667 64 102.4 115.2 174.933334 157.866667l51.2-68.266667c-64-38.4-119.466667-85.333333-157.866667-145.066667 21.333333-46.933333 38.4-98.133333 51.2-153.6h196.266667v-59.733333z" />
+233:             </svg>
+234:             <span className="text-[13px] text-gray-600 font-medium tracking-wide">支付宝登录</span>
+235:           </div>
+236:         </div>
+237: 
+238:       </div>
+239:     </div>
+240:   );
+241: }
+242: 
 

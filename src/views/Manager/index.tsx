@@ -155,7 +155,7 @@ export default function ManagerView() {
     <div className="min-h-screen bg-gray-50 flex flex-col pb-20">
       {selectedDiseaseTag === DiseaseTag.NONE && renderNoneState()}
       {selectedDiseaseTag === DiseaseTag.EPILEPSY && renderEpilepsyState()}
-      {selectedDiseaseTag === DiseaseTag.ALZHEIMER && renderAlzheimerState()}
+      {selectedDiseaseTag === DiseaseTag.AD && renderAlzheimerState()}
     </div>
   );
 }

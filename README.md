@@ -48,6 +48,13 @@
 - `tailwindcss`: 样式引擎。
 
 ## Changelog
+### v0.5.3 (Phase 3 Pre-consultation UI Refinement)
+- 彻底重构预问诊模块 (`src/views/Home/index.tsx`)：
+  - **状态机驱动对话**：引入 `DIALOGUE_TREE` 数据层，完整实现认知衰退、癫痫、偏头痛三大专病的 6 轮阶梯式问诊逻辑。
+  - **悬浮药丸输入舱 (Floating Pill)**：废弃臃肿的底部输入区，改为悬浮在底部的精致胶囊条，完美解决间距问题，释放对话视口。
+  - **多模态打断与回归**：支持语音、键盘、拍照输入切换。实现用户自定义输入打断当前流程，AI 柔性兜底并引导回归当前问诊节点的逻辑。
+  - **动态风险提示**：根据问诊分支动态生成高危风险提示（如 AD 风险、持续状态风险、MOH 风险），并在最终转化卡片中高亮展示。
+
 ### v0.5.2 (Phase 2 AI Pre-consultation UI Refactor Planning)
 - 规划全新沉浸式 AI 预问诊视图 (`src/views/Home/index.tsx`)：
   - **沉浸式管家氛围**：顶部悬浮 AI 状态感知栏（呼吸光晕头像与“正在聆听”状态），全局浅色弥散渐变背景。

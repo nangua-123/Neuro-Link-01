@@ -1,6 +1,6 @@
 // File: src/views/NeuroPass/index.tsx
 import React, { useEffect, useState } from 'react';
-import { NavBar, Card, Button, Tag, Skeleton, Result, SafeArea } from 'antd-mobile';
+import { NavBar, Card, Button, Tag, Skeleton, SafeArea } from 'antd-mobile';
 import { CheckCircleFill, ExclamationCircleFill, EnvironmentOutline } from 'antd-mobile-icons';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../store';
@@ -77,7 +77,7 @@ export default function NeuroPassView() {
       <NavBar 
         onBack={() => navigate(-1)} 
         className="bg-[#141414] text-white border-b border-gray-800"
-        style={{ '--title-font-size': '16px', '--title-color': '#fff', '--back-arrow-color': '#fff' }}
+        style={{ color: '#fff' } as React.CSSProperties}
       >
         Neuro-Pass 专属绿通
       </NavBar>

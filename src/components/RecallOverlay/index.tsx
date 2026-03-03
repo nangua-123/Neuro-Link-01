@@ -38,7 +38,7 @@ export const RecallOverlay: React.FC = () => {
           block 
           size="large" 
           className="bg-white text-[#FF3141] font-black text-2xl h-16 rounded-2xl shadow-xl border-0" 
-          onClick={() => window.location.href = 'tel:120'}
+          onClick={() => { window.location.href = 'tel:120'; }}
         >
           立即拨打 120
         </Button>
@@ -46,7 +46,7 @@ export const RecallOverlay: React.FC = () => {
           block 
           size="large" 
           className="bg-transparent border-2 border-white text-white font-bold text-xl h-14 rounded-2xl" 
-          onClick={() => Toast.show({ content: '已向家属发送紧急定位' })}
+          onClick={() => { Toast.show({ content: '已向家属发送紧急定位' }); }}
         >
           已联系家属
         </Button>
