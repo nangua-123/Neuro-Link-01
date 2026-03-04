@@ -71,6 +71,7 @@ const QuestionRenderer: React.FC<{
       case QuestionType.RADIO:
       case QuestionType.RADIO_WITH_COMPLEX_SUB:
       case QuestionType.RADIO_WITH_INPUT:
+      case QuestionType.RADIO_WITH_NESTED_INPUT:
         return (
           <div className="space-y-3">
             {question.options?.map(opt => {
@@ -125,6 +126,30 @@ const QuestionRenderer: React.FC<{
                           value={value?.input || ''}
                           onChange={(e) => onChange(question.id, { ...value, input: e.target.value })}
                         />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <AnimatePresence>
+                    {isSelected && opt.nestedFields && opt.nestedFields.length > 0 && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="pl-8 overflow-hidden space-y-3 mt-2"
+                      >
+                        {opt.nestedFields.map(field => (
+                          <div key={field.id} className="w-full">
+                            {field.label && <span className="block text-xs text-gray-500 mb-1 ml-1">{field.label}</span>}
+                            <input
+                              type={field.type || 'text'}
+                              placeholder={field.placeholder || '请输入...'}
+                              className="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                              value={value?.[field.id] || ''}
+                              onChange={(e) => onChange(question.id, { ...value, [field.id]: e.target.value })}
+                            />
+                          </div>
+                        ))}
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -280,6 +305,19 @@ const QuestionRenderer: React.FC<{
                 </div>
               </div>
             ))}
+          </div>
+        );
+
+      case QuestionType.TEXTAREA:
+        return (
+          <div className="w-full">
+            <textarea
+              rows={4}
+              placeholder={question.placeholder || '请输入...'}
+              className="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-y min-h-[100px]"
+              value={value || ''}
+              onChange={(e) => onChange(question.id, e.target.value)}
+            />
           </div>
         );
 

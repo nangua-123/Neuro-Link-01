@@ -1,5 +1,5 @@
 // File: src/configs/scales/cdr.ts
-import { FormSchema, QuestionType } from '../../interfaces/scaleEngine';
+import { FormSchema, QuestionType as EngineQuestionType } from '../../interfaces/scaleEngine';
 
 export const CDR_SCHEMA: FormSchema = {
   id: 'cdr_family_001',
@@ -10,7 +10,7 @@ export const CDR_SCHEMA: FormSchema = {
   questions: {
     'q_memory': {
       id: 'q_memory',
-      type: QuestionType.RADIO,
+      type: EngineQuestionType.RADIO,
       title: '【记忆力】他/她最近的记忆力怎么样？',
       target: 'FAMILY',
       required: true,
@@ -25,7 +25,7 @@ export const CDR_SCHEMA: FormSchema = {
     },
     'q_orientation': {
       id: 'q_orientation',
-      type: QuestionType.RADIO,
+      type: EngineQuestionType.RADIO,
       title: '【定向力】他/她对时间、地点的认知清晰吗？',
       target: 'FAMILY',
       required: true,
@@ -40,7 +40,7 @@ export const CDR_SCHEMA: FormSchema = {
     },
     'q_judgment': {
       id: 'q_judgment',
-      type: QuestionType.RADIO,
+      type: EngineQuestionType.RADIO,
       title: '【判断力与解决问题能力】他/她处理日常问题或突发情况的能力如何？',
       target: 'FAMILY',
       required: true,
@@ -55,7 +55,7 @@ export const CDR_SCHEMA: FormSchema = {
     },
     'q_community': {
       id: 'q_community',
-      type: QuestionType.RADIO,
+      type: EngineQuestionType.RADIO,
       title: '【社会事务】他/她还能独立参加社交活动或工作吗？',
       target: 'FAMILY',
       required: true,
@@ -70,7 +70,7 @@ export const CDR_SCHEMA: FormSchema = {
     },
     'q_home': {
       id: 'q_home',
-      type: QuestionType.RADIO,
+      type: EngineQuestionType.RADIO,
       title: '【家庭与爱好】他/她还能做家务或保持以前的兴趣爱好吗？',
       target: 'FAMILY',
       required: true,
@@ -85,7 +85,7 @@ export const CDR_SCHEMA: FormSchema = {
     },
     'q_personal_care': {
       id: 'q_personal_care',
-      type: QuestionType.RADIO,
+      type: EngineQuestionType.RADIO,
       title: '【个人料理】他/她能自己穿衣、洗漱、吃饭吗？',
       target: 'FAMILY',
       required: true,
@@ -98,6 +98,167 @@ export const CDR_SCHEMA: FormSchema = {
       ]
     }
   }
+};
+
+export const scale_cdr_informant_memory = {
+  scaleId: "cdr_informant_memory_v1",
+  title: "临床痴呆评定量表(CDR) - 询问知情者 (记忆篇)",
+  description: "请最了解患者日常生活的家属或照护者根据患者真实情况作答。",
+  questions: [
+    {
+      id: "cdr_m_1",
+      type: "radio",
+      text: "1. 他/她有记忆力减退吗？",
+      options: [
+        { label: "没有", value: 1 },
+        { label: "有", value: 2 }
+      ],
+      required: true
+    },
+    {
+      id: "cdr_m_2",
+      type: "radio",
+      text: "2. 如果有记忆力减退，是最近的事情记不清（如昨天吃什么），还是以前的事情记不清（如年轻时的经历）？",
+      options: [
+        { label: "主要是最近的事情记不清", value: 1 },
+        { label: "主要是以前的事情记不清", value: 2 },
+        { label: "都有", value: 3 },
+        { label: "不适用（没有记忆力减退）", value: 4 }
+      ],
+      dependsOn: {
+        questionId: "cdr_m_1",
+        value: 2
+      }
+    },
+    {
+      id: "cdr_m_3",
+      type: "radio",
+      text: "3. 他/她能记住最近发生的事情吗？",
+      options: [
+        { label: "经常", value: 1 },
+        { label: "有时", value: 2 },
+        { label: "很少", value: 3 },
+        { label: "不详", value: 4 }
+      ],
+      required: true
+    },
+    {
+      id: "cdr_m_4",
+      type: "radio",
+      text: "4. 他/她能记住几天前谈话的内容吗？",
+      options: [
+        { label: "经常", value: 1 },
+        { label: "有时", value: 2 },
+        { label: "很少", value: 3 },
+        { label: "不详", value: 4 }
+      ],
+      required: true
+    },
+    {
+      id: "cdr_m_5",
+      type: "radio",
+      text: "5. 他/她能记住自己的生日、结婚纪念日等重要日期吗？",
+      options: [
+        { label: "经常", value: 1 },
+        { label: "有时", value: 2 },
+        { label: "很少", value: 3 },
+        { label: "不详", value: 4 }
+      ],
+      required: true
+    },
+    {
+      id: "cdr_m_6",
+      type: "radio",
+      text: "6. 他/她能记住自己把东西放在哪里了吗？",
+      options: [
+        { label: "经常", value: 1 },
+        { label: "有时", value: 2 },
+        { label: "很少", value: 3 },
+        { label: "不详", value: 4 }
+      ],
+      required: true
+    },
+    {
+      id: "cdr_m_7",
+      type: "radio",
+      text: "7. 他/她能记住自己刚刚做过的事情吗？（如刚吃过饭、刚吃过药）",
+      options: [
+        { label: "经常", value: 1 },
+        { label: "有时", value: 2 },
+        { label: "很少", value: 3 },
+        { label: "不详", value: 4 }
+      ],
+      required: true
+    },
+    {
+      id: "cdr_m_8",
+      type: "radio",
+      text: "8. 他/她能认出熟悉的人吗？",
+      options: [
+        { label: "经常", value: 1 },
+        { label: "有时", value: 2 },
+        { label: "很少", value: 3 },
+        { label: "不详", value: 4 }
+      ],
+      required: true
+    },
+    {
+      id: "cdr_m_9",
+      type: "input_group",
+      text: "9. 请提供他/她的出生年月：",
+      fields: [
+        { id: "year", label: "年", type: "number", placeholder: "如 1950" },
+        { id: "month", label: "月", type: "number", placeholder: "如 10" }
+      ],
+      required: true
+    },
+    {
+      id: "cdr_m_10",
+      type: "input_group",
+      text: "10. 请提供他/她的出生地：",
+      fields: [
+        { id: "province", label: "省", type: "text", placeholder: "如 四川" },
+        { id: "city", label: "市", type: "text", placeholder: "如 成都" }
+      ],
+      required: true
+    },
+    {
+      id: "cdr_m_11",
+      type: "textarea",
+      text: "11. 请填写他/她曾经就读的学校（如小学、中学、大学）：",
+      required: true
+    },
+    {
+      id: "cdr_m_12",
+      type: "textarea",
+      text: "12. 请填写他/她曾经的主要工作或职业：",
+      required: true
+    },
+    {
+      id: "cdr_m_13",
+      type: "textarea",
+      text: "13. 他/她是什么时候退休的？（如未退休请填“未退休”）：",
+      required: true
+    },
+    {
+      id: "cdr_m_14",
+      type: "textarea",
+      text: "14. 请填写他/她退休的主要原因（如正常退休、因病退休等）：",
+      required: true
+    },
+    {
+      id: "cdr_m_15",
+      type: "radio",
+      text: "15. 他/她能回忆起年轻时发生的一些重大事件吗？",
+      options: [
+        { label: "经常", value: 1 },
+        { label: "有时", value: 2 },
+        { label: "很少", value: 3 },
+        { label: "不详", value: 4 }
+      ],
+      required: true
+    }
+  ]
 };
 
 export const scale_cdr_informant_orientation_judgment = {
@@ -222,6 +383,193 @@ export const scale_cdr_informant_orientation_judgment = {
       type: "radio",
       text: "6. 在社交场合或与他人交往时，他/她的行为得体吗？（和他/她平常的风格一样吗？）",
       options: [ { label: "经常", value: 1 }, { label: "有时", value: 2 }, { label: "很少", value: 3 }, { label: "不详", value: 4 } ],
+      required: true
+    }
+  ]
+};
+
+export const scale_cdr_informant_social_home_care = {
+  scaleId: "cdr_informant_shc_v1",
+  title: "临床痴呆评定量表(CDR) - 询问知情者 (社会事务、家务与爱好、个人生活自理)",
+  description: "请最了解患者日常生活的家属或照护者根据患者真实情况作答。",
+  questions: [
+    // --- 社会活动方面 ---
+    {
+      id: "cdr_s_1",
+      type: "radio",
+      text: "工作方面 1. 他/她仍在工作吗？",
+      options: [ { label: "是", value: 1 }, { label: "否", value: 2 }, { label: "不适用", value: 3 } ],
+      required: true
+    },
+    {
+      id: "cdr_s_2",
+      type: "radio",
+      text: "工作方面 2. 他/她决定退休是因为记忆减退或考虑问题困难吗？",
+      dependsOn: { questionId: "cdr_s_1", value: 2 },
+      options: [ { label: "是", value: 1 }, { label: "否", value: 2 }, { label: "不知道", value: 3 } ]
+    },
+    {
+      id: "cdr_s_3",
+      type: "radio",
+      text: "工作方面 3. 他/她的记忆减退或考虑问题困难，经常引起明显的工作困难吗？",
+      dependsOn: { questionId: "cdr_s_1", value: 1 },
+      options: [ { label: "无或很少", value: 1 }, { label: "有时", value: 2 }, { label: "经常", value: 3 }, { label: "不知道", value: 4 } ]
+    },
+    {
+      id: "cdr_s_4_1",
+      type: "radio",
+      text: "社交方面 4-1. 他/她过去开过车或独自乘坐公共交通工具吗？",
+      options: [ { label: "是", value: 1 }, { label: "否", value: 2 } ],
+      required: true
+    },
+    {
+      id: "cdr_s_4_2",
+      type: "radio",
+      text: "社交方面 4-2. 他/她现在是否还能够开车或独自乘坐公共交通工具？",
+      options: [ { label: "是", value: 1 }, { label: "否", value: 2 } ],
+      required: true
+    },
+    {
+      id: "cdr_s_4_3",
+      type: "radio",
+      text: "社交方面 4-3. 假如现在不能，是否由于记忆或思维问题？",
+      dependsOn: { questionId: "cdr_s_4_2", value: 2 },
+      options: [ { label: "是", value: 1 }, { label: "否", value: 2 } ]
+    },
+    {
+      id: "cdr_s_5",
+      type: "radio",
+      text: "社交方面 5. 如果他/她仍有开车或独自乘坐公共交通工具，你认为是否他/她会因此而出现危险吗？",
+      dependsOn: { questionId: "cdr_s_4_2", value: 1 },
+      options: [ { label: "是", value: 1 }, { label: "否", value: 2 } ]
+    },
+    {
+      id: "cdr_s_6",
+      type: "radio",
+      text: "社交方面 6. 他/她能独立去购物吗？",
+      options: [
+        { label: "很少或从来不(每次购物均需别人陪同)", value: 1 },
+        { label: "有时(购买有限数量的物品；重复购买或忘记所需要的物品)", value: 2 },
+        { label: "经常", value: 3 },
+        { label: "不知道", value: 4 }
+      ],
+      required: true
+    },
+    {
+      id: "cdr_s_7",
+      type: "radio",
+      text: "社交方面 7. 他/她能独立外出活动吗？",
+      options: [
+        { label: "很少或从来不(没有帮助一般不能外出)", value: 1 },
+        { label: "有时(有限地或进行常规的活动，如开会、理发)", value: 2 },
+        { label: "经常(有意义的参加活动，如发表意见、选举)", value: 3 },
+        { label: "不详", value: 4 }
+      ],
+      required: true
+    },
+    {
+      id: "cdr_s_8",
+      type: "radio_with_input",
+      text: "社交方面 8. 有没有带他/她去参加家庭以外的社交活动？",
+      options: [
+        { label: "有", value: 1 },
+        { label: "没有", value: 2, requiresInput: true, inputPlaceholder: "假如否，为什么？请描述" }
+      ],
+      required: true
+    },
+    {
+      id: "cdr_s_9",
+      type: "radio",
+      text: "社交方面 9. 一个偶尔看到他/她的行为的人，会觉得他/她行为异常吗？",
+      options: [ { label: "否", value: 1 }, { label: "是", value: 2 } ],
+      required: true
+    },
+    {
+      id: "cdr_s_10",
+      type: "radio",
+      text: "社交方面 10. 如果在养老院里，他/她能很好地参加社交活动吗？",
+      options: [ { label: "能", value: 1 }, { label: "不能", value: 2 } ],
+      required: true
+    },
+
+    // --- 家务与爱好方面 ---
+    { id: "cdr_h_1a", type: "textarea", text: "1a. 他/她做家务的能力有什么变化吗？" },
+    { id: "cdr_h_1b", type: "textarea", text: "1b. 他/她现在还能做好哪些家务？" },
+    { id: "cdr_h_2a", type: "textarea", text: "2a. 他/她参加业余爱好的能力有什么变化？" },
+    { id: "cdr_h_2b", type: "textarea", text: "2b. 他/她还能做好哪些爱好的事情？" },
+    { id: "cdr_h_3", type: "textarea", text: "3. 如果在养老院，他/她再也无法做好哪些家务和爱好的事情了？" },
+    {
+      id: "cdr_h_4",
+      type: "radio_with_input",
+      text: "4. 处理家务的能力：",
+      options: [ 
+        { label: "没有丧失 (0分)", value: 0 }, 
+        { label: "有些丧失 (0.5分)", value: 0.5 }, 
+        { label: "严重丧失 (1分)", value: 1, requiresInput: true, inputPlaceholder: "请描述" } 
+      ],
+      required: true
+    },
+    {
+      id: "cdr_h_5",
+      type: "radio",
+      text: "5. 他/她做家务的能力以下哪个答案最合适(检査者根据以上信息判断)：",
+      options: [
+        { label: "缺乏有意义的功能(只有在高度提示指导下才可完成简单的活动，如铺床)", value: 1 },
+        { label: "仅能从事有限的活动(在指导下，洗碗基本干净、能摆碗筷)", value: 2 },
+        { label: "能独立完成某些活动(使用电器，如吸尘器；做简单的饭)", value: 3 },
+        { label: "日常活动不如过去", value: 4 },
+        { label: "日常活动正常", value: 5 }
+      ],
+      required: true
+    },
+
+    // --- 个人生活自理能力 ---
+    {
+      id: "cdr_p_1",
+      type: "radio",
+      text: "1. 穿衣",
+      options: [
+        { label: "独立完成", value: 0 }, 
+        { label: "有时系错扣子等", value: 1 },
+        { label: "顺序错误，常忘记某一些步骤", value: 2 }, 
+        { label: "不能穿衣", value: 3 }
+      ],
+      required: true
+    },
+    {
+      id: "cdr_p_2",
+      type: "radio",
+      text: "2. 洗漱与梳妆打扮",
+      options: [
+        { label: "无须帮助", value: 0 }, 
+        { label: "需要督促", value: 1 },
+        { label: "有时需要帮助", value: 2 }, 
+        { label: "总是或几乎总是需要帮助", value: 3 }
+      ],
+      required: true
+    },
+    {
+      id: "cdr_p_3",
+      type: "radio",
+      text: "3. 吃饭",
+      options: [
+        { label: "干净，适当使用餐具", value: 0 }, 
+        { label: "零乱，只用汤勺", value: 1 },
+        { label: "只能吃简单的固体食物", value: 2 }, 
+        { label: "完全依赖他人喂食", value: 3 }
+      ],
+      required: true
+    },
+    {
+      id: "cdr_p_4",
+      type: "radio",
+      text: "4. 二便控制",
+      options: [
+        { label: "控制正常", value: 0 }, 
+        { label: "有时尿床", value: 1 },
+        { label: "经常尿床", value: 2 }, 
+        { label: "大小便失禁", value: 3 }
+      ],
       required: true
     }
   ]

@@ -4,6 +4,7 @@ export enum QuestionType {
   RADIO = 'radio',
   CHECKBOX = 'checkbox',
   INPUT = 'input',
+  TEXTAREA = 'textarea',
   DATE = 'date',
   NUMBER = 'number',
   RADIO_WITH_INPUT = 'radio_with_input',

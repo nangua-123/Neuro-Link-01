@@ -1,0 +1,170 @@
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { NavBar, SafeArea } from 'antd-mobile';
+import { motion } from 'motion/react';
+import { calculateMockScore, ScoringResult } from '../../utils/scoring';
+import { Activity, AlertTriangle, Brain, ChevronRight, ShieldCheck, FileText } from 'lucide-react';
+
+export default function ReportView() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [result, setResult] = useState<ScoringResult | null>(null);
+
+  useEffect(() => {
+    const payload = location.state?.payload || {};
+    // Simulate network delay for scoring
+    const timer = setTimeout(() => {
+      setResult(calculateMockScore(payload));
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [location.state]);
+
+  if (!result) {
+    return (
+      <div className="min-h-screen bg-[#0f172a] flex flex-col items-center justify-center relative overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        
+        <Brain className="w-16 h-16 text-blue-400 animate-bounce mb-6 relative z-10" />
+        <h2 className="text-xl font-medium text-white mb-2 tracking-wider relative z-10">Neuro-Link AI</h2>
+        <p className="text-blue-200/60 text-sm tracking-widest relative z-10">正在深度解析脑健康图谱...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#f8fafc] flex flex-col relative pb-36">
+      {/* Header Section with Deep Tech Blue Gradient */}
+      <div className="relative bg-gradient-to-b from-[#0f172a] via-[#1e293b] to-[#334155] pt-12 pb-24 px-6 overflow-hidden rounded-b-[40px] shadow-xl">
+        {/* Watermark / Texture */}
+        <div className="absolute inset-0 opacity-5 pointer-events-none flex items-center justify-center">
+          <div className="text-[120px] font-black tracking-tighter transform -rotate-12 select-none text-white">
+            NEURO-PASS
+          </div>
+        </div>
+        
+        <NavBar 
+          onBack={() => navigate(-1)} 
+          className="absolute top-0 left-0 right-0 z-10"
+          style={{ '--adm-color-text': 'white' } as any}
+          backArrow={<span className="text-white"><ChevronRight className="rotate-180 w-6 h-6" /></span>}
+        >
+          <span className="text-white/90 font-medium tracking-widest text-sm">绝密医疗档案</span>
+        </NavBar>
+
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative z-10 mt-8"
+        >
+          <div className="flex items-center space-x-2 mb-4">
+            <ShieldCheck className="w-5 h-5 text-emerald-400" />
+            <span className="text-emerald-400 text-xs font-semibold tracking-widest uppercase">AI 综合评估完成</span>
+          </div>
+          <h1 className="text-3xl font-light text-white mb-2 tracking-tight leading-tight">
+            {result.riskLevel}
+          </h1>
+          <p className="text-blue-200/70 text-sm font-light">
+            基于华西 CDR 认知量表多维数据计算
+          </p>
+          
+          {/* Main Score Display */}
+          <div className="mt-8 flex items-end space-x-3">
+            <div className="text-7xl font-light text-white tracking-tighter leading-none">
+              {result.riskScore}
+            </div>
+            <div className="text-blue-200/60 text-sm pb-2 font-medium tracking-wide">/ 100 综合健康指数</div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Content Section */}
+      <div className="flex-1 px-6 -mt-12 relative z-20 space-y-6">
+        
+        {/* High Risk Symptoms Card */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-red-50/50"
+        >
+          <div className="flex items-center space-x-2 mb-5">
+            <AlertTriangle className="w-5 h-5 text-red-500" />
+            <h3 className="text-gray-900 font-semibold tracking-wide">高危症状预警</h3>
+          </div>
+          <div className="flex flex-wrap gap-2.5">
+            {result.highRiskSymptoms.map((symptom, idx) => (
+              <span 
+                key={idx} 
+                className={`px-3.5 py-1.5 rounded-full text-xs font-medium tracking-wide ${
+                  symptom === '未见明显高危症状' 
+                    ? 'bg-emerald-50 text-emerald-600'
+                    : 'bg-red-50 text-red-600 border border-red-100/50'
+                }`}
+              >
+                {symptom}
+              </span>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Dimensions Card */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
+        >
+          <div className="flex items-center space-x-2 mb-6">
+            <Activity className="w-5 h-5 text-blue-500" />
+            <h3 className="text-gray-900 font-semibold tracking-wide">多维能力图谱</h3>
+          </div>
+          
+          <div className="space-y-6">
+            {result.dimensions.map((dim, idx) => (
+              <div key={idx} className="space-y-2.5">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-gray-600 font-medium">{dim.name}</span>
+                  <span className={`font-semibold ${
+                    dim.status === 'normal' ? 'text-emerald-500' :
+                    dim.status === 'warning' ? 'text-orange-500' : 'text-red-500'
+                  }`}>
+                    {dim.score} 分
+                  </span>
+                </div>
+                <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${dim.score}%` }}
+                    transition={{ duration: 1, delay: 0.3 + idx * 0.1, ease: "easeOut" }}
+                    className={`h-full rounded-full ${
+                      dim.status === 'normal' ? 'bg-emerald-400' :
+                      dim.status === 'warning' ? 'bg-orange-400' : 'bg-red-400'
+                    }`}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+      </div>
+
+      {/* Bottom CTA */}
+      <div className="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#f8fafc] via-[#f8fafc] to-transparent z-30 pointer-events-none">
+        <div className="flex flex-col space-y-3 max-w-md mx-auto pointer-events-auto">
+          <button className="w-full py-4 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium text-[15px] tracking-wide shadow-[0_8px_20px_rgba(79,70,229,0.25)] transform transition active:scale-95 flex items-center justify-center space-x-2">
+            <ShieldCheck className="w-5 h-5" />
+            <span>开启 24 小时认知护航管家</span>
+          </button>
+          <button className="w-full py-4 rounded-full bg-white text-gray-700 font-medium text-[15px] tracking-wide border border-gray-200 shadow-sm transform transition active:scale-95 flex items-center justify-center space-x-2">
+            <FileText className="w-5 h-5 text-gray-400" />
+            <span>预约华西神经内科专家解读</span>
+          </button>
+        </div>
+        <SafeArea position="bottom" />
+      </div>
+    </div>
+  );
+}

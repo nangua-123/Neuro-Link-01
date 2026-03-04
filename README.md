@@ -48,6 +48,32 @@
 - `tailwindcss`: 样式引擎。
 
 ## Changelog
+### v0.5.8 (Phase 3 Medical Report & Mock Scoring Engine)
+- 开发 `src/utils/scoring.ts`：实现简易的 Mock 计分引擎，接收 Assessment Payload 并生成结构化的评分结果（综合风险定级、多维能力得分、高危症状提取）。
+- 开发 `src/views/Report/index.tsx`：实现纯 C 端高保真医学报告页。
+  - **专病档案质感**：顶部采用深邃科技蓝渐变背景，叠加 "NEURO-PASS" 绝密医疗档案水印。
+  - **数据可视化**：使用平滑的进度条动画直观展示患者在记忆力、定向力、社会活动等维度的受损情况。
+  - **高亮警示**：提取高危症状并以醒目的红色/橙色 Tag 在核心区予以警告。
+  - **商业化闭环钩子**：底部配置强力的 Call to Action 悬浮胶囊按钮，引导用户“开启 24 小时认知护航管家”或“获取深度解读报告”。
+- 修改 `src/views/Assessment/index.tsx`：在测评完成后，携带 Payload 路由跳转至 `/report` 页面。
+- 重构 `src/views/Assessment/index.tsx`，实现优雅的 C 端沉浸式多步测评流（Wizard 模式）。
+- 引入 `framer-motion` 实现平滑的左右推拉过渡动画。
+- 增加顶部精美进度指示器，实时感知答题进度。
+- 维护全局 `assessmentData` 状态，无缝串联 CDR 知情者问卷的三个篇章（记忆篇、定向与判断篇、社会与生活自理篇）。
+
+### v0.5.6 (Phase 3 Dynamic Scale Engine Ultimate Data Injection)
+- 彻底修复 `src/configs/scales/cdr.ts` 数据截断问题，完整恢复并导出所有知情者问卷数据：
+  - `scale_cdr_informant_memory`：补齐缺失的 9-15 题，包含 `input_group` 出生年月/省市和 `textarea` 工作/退休原因。
+  - `scale_cdr_informant_orientation_judgment`：保留定向 8 题 + 判断 6 题。
+  - 新增 `scale_cdr_informant_social_home_care`：追加社会事务、家务与爱好、个人生活自理的完整数据。
+- 严格遵循医疗系统 CRF 量表不可篡改的 P0 级红线，确保数据 100% 完整无省略。
+
+### v0.5.5 (Phase 3 Dynamic Scale Engine Hotfix)
+- 修复 `src/configs/scales/cdr.ts` 数据丢失问题，完整恢复并导出 `scale_cdr_informant_memory`（记忆篇）。
+- 修复 `AssessmentEngine` 渲染器残缺问题：
+  - 新增 `QuestionType.TEXTAREA` 渲染逻辑，支持多行主观简答题。
+  - 补充 `QuestionType.RADIO_WITH_NESTED_INPUT` 支持，实现单选选项下嵌套多个输入框的动态渲染。
+
 ### v0.5.4 (Phase 3 Dynamic Scale Data Batch 2)
 - 严格按照 1:1 像素级复刻精神，向 `src/configs/scales/cdr.ts` 追加【定向篇】与【判断篇】的真实医疗量表数据。
 - 升级 `AssessmentEngine` 动态渲染引擎：
