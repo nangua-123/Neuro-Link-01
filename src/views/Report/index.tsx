@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { NavBar, SafeArea } from 'antd-mobile';
 import { motion } from 'motion/react';
-import { calculateMockScore, ScoringResult } from '../../utils/scoring';
+import { calculateReport, ScoringResult } from '../../utils/scoring';
 import { Activity, AlertTriangle, Brain, ChevronRight, ShieldCheck, FileText } from 'lucide-react';
+import { DiseaseTag } from '../../configs/constants';
 
 export default function ReportView() {
   const location = useLocation();
@@ -12,9 +13,10 @@ export default function ReportView() {
 
   useEffect(() => {
     const payload = location.state?.payload || {};
+    const diseaseTag = location.state?.diseaseTag || DiseaseTag.NONE;
     // Simulate network delay for scoring
     const timer = setTimeout(() => {
-      setResult(calculateMockScore(payload));
+      setResult(calculateReport(payload, diseaseTag));
     }, 1500);
     return () => clearTimeout(timer);
   }, [location.state]);
@@ -66,7 +68,7 @@ export default function ReportView() {
             {result.riskLevel}
           </h1>
           <p className="text-blue-200/70 text-sm font-light">
-            基于华西 CDR 认知量表多维数据计算
+            {result.reportSource}
           </p>
           
           {/* Main Score Display */}
@@ -156,7 +158,7 @@ export default function ReportView() {
         <div className="flex flex-col space-y-3 max-w-md mx-auto pointer-events-auto">
           <button className="w-full py-4 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium text-[15px] tracking-wide shadow-[0_8px_20px_rgba(79,70,229,0.25)] transform transition active:scale-95 flex items-center justify-center space-x-2">
             <ShieldCheck className="w-5 h-5" />
-            <span>开启 24 小时认知护航管家</span>
+            <span>{result.ctaText}</span>
           </button>
           <button className="w-full py-4 rounded-full bg-white text-gray-700 font-medium text-[15px] tracking-wide border border-gray-200 shadow-sm transform transition active:scale-95 flex items-center justify-center space-x-2">
             <FileText className="w-5 h-5 text-gray-400" />

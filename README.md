@@ -48,6 +48,31 @@
 - `tailwindcss`: 样式引擎。
 
 ## Changelog
+### v0.7.0 (Phase 4.6 Multi-disease Scoring Engine & Dynamic Report)
+- 重构 `src/utils/scoring.ts`，实现多病种计分逻辑分发引擎 (`calculateReport`)。
+  - **认知 (AD)**：保留原有 CDR 逻辑，输出多维能力图谱与风险预警。
+  - **癫痫 (Epilepsy)**：解析 V0 基线量表（发作频次、时长、用药依从性），生成癫痫专属的综合风险定级和多维特征。
+  - **偏头痛 (Migraine)**：解析 MIDAS 初筛数据，生成偏头痛特有的失能评级和维度表现。
+- 重构 `src/views/Report/index.tsx`，实现动态专病档案交付。
+  - 动态渲染报告来源副标题 (`reportSource`)。
+  - 动态渲染底部核心行动号召按钮文案 (`ctaText`)，实现向“认知护航管家”、“癫痫护航管家”或“偏头痛管家”的精准引流。
+  - 完美承接来自 Assessment 测评流的 `diseaseTag` 与 `payload`。
+
+### v0.6.0 (Phase 4.5 Assessment Dynamic Routing)
+- 重构 `src/views/Assessment/index.tsx`，实现多病种动态路由策略。
+- 引入 `DiseaseTag` 枚举，从 Zustand 全局 Store (`useAppStore`) 中读取 `selectedDiseaseTag`。
+- 动态加载不同的测评步骤流：
+  - **认知衰退 (`DiseaseTag.AD` 或默认为空时)**：加载 CDR 问卷的 3 个步骤，顶部副标题显示“CDR 知情者评估”。
+  - **癫痫 (`DiseaseTag.EPILEPSY`)**：加载癫痫基线期 V0 的 3 个步骤，顶部副标题显示“华西癫痫基线期 (V0) 档案”。
+  - **偏头痛 (`DiseaseTag.MIGRAINE`)**：加载 Mock 的 MIDAS 初筛步骤，顶部副标题显示“偏头痛 MIDAS 初筛”。
+- 保留现有的 `framer-motion` 丝滑推拉动画以及顶部动态进度条。
+- 在最后一步点击“提交评估”时，将当前的 `diseaseTag` 一起封装进 Payload 中，通过 `navigate('/report', { state: { payload, diseaseTag } })` 传递给报告页，为下一步重构多病种计分引擎做准备。
+
+### v0.5.9 (Phase 3 Epilepsy CRF Ultimate Batch 5)
+- 彻底完结华西癫痫专病底座搭建，向 `src/configs/scales/epilepsy.ts` 追加最终的【第五批次：产后随访 V5 与爱丁堡产后抑郁量表 EPDS】。
+- 完整实现 EPDS 抑郁量表的正反交替计分逻辑映射，严格遵循 0-3 赋分因题而异的医学红线。
+- 补齐后代随访发育指标、畸形、疾病及丹佛发展筛查测试等复杂嵌套题型。
+
 ### v0.5.8 (Phase 3 Medical Report & Mock Scoring Engine)
 - 开发 `src/utils/scoring.ts`：实现简易的 Mock 计分引擎，接收 Assessment Payload 并生成结构化的评分结果（综合风险定级、多维能力得分、高危症状提取）。
 - 开发 `src/views/Report/index.tsx`：实现纯 C 端高保真医学报告页。

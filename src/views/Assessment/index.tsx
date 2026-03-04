@@ -1,34 +1,22 @@
 // File: src/views/Assessment/index.tsx
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { NavBar, Result, SafeArea } from 'antd-mobile';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAppStore } from '../../store';
+import { DiseaseTag } from '../../configs/constants';
 import { AssessmentEngine } from '../../components/AssessmentEngine';
 import {
   scale_cdr_informant_memory,
   scale_cdr_informant_orientation_judgment,
   scale_cdr_informant_social_home_care,
 } from '../../configs/scales/cdr';
-
-// Define the schemas for each step
-const assessmentSteps = [
-  {
-    id: 'step1',
-    title: '记忆篇',
-    schema: scale_cdr_informant_memory,
-  },
-  {
-    id: 'step2',
-    title: '定向与判断篇',
-    schema: scale_cdr_informant_orientation_judgment,
-  },
-  {
-    id: 'step3',
-    title: '社会与生活自理篇',
-    schema: scale_cdr_informant_social_home_care,
-  },
-];
+import {
+  scale_epilepsy_crf_v0_part1,
+  scale_epilepsy_crf_v0_part2,
+  scale_epilepsy_crf_v0_part3,
+} from '../../configs/scales/epilepsy';
+import { scale_migraine_midas_mock } from '../../configs/scales/migraine';
 
 export default function AssessmentView() {
   const navigate = useNavigate();
@@ -37,6 +25,66 @@ export default function AssessmentView() {
   const [assessmentData, setAssessmentData] = useState<Record<string, any>>({});
   const [isCompleted, setIsCompleted] = useState(false);
   const [direction, setDirection] = useState(1);
+
+  const { steps: assessmentSteps, subtitle } = useMemo(() => {
+    switch (selectedDiseaseTag) {
+      case DiseaseTag.EPILEPSY:
+        return {
+          subtitle: '华西癫痫基线期 (V0) 档案',
+          steps: [
+            {
+              id: 'epi_step1',
+              title: '入排与基本信息',
+              schema: scale_epilepsy_crf_v0_part1,
+            },
+            {
+              id: 'epi_step2',
+              title: '癫痫史与发作矩阵',
+              schema: scale_epilepsy_crf_v0_part2,
+            },
+            {
+              id: 'epi_step3',
+              title: '用药、病史与检查',
+              schema: scale_epilepsy_crf_v0_part3,
+            },
+          ],
+        };
+      case DiseaseTag.MIGRAINE:
+        return {
+          subtitle: '偏头痛 MIDAS 初筛',
+          steps: [
+            {
+              id: 'mig_step1',
+              title: 'MIDAS 初筛',
+              schema: scale_migraine_midas_mock,
+            },
+          ],
+        };
+      case DiseaseTag.AD:
+      case DiseaseTag.NONE:
+      default:
+        return {
+          subtitle: 'CDR 知情者评估',
+          steps: [
+            {
+              id: 'cdr_step1',
+              title: '记忆篇',
+              schema: scale_cdr_informant_memory,
+            },
+            {
+              id: 'cdr_step2',
+              title: '定向与判断篇',
+              schema: scale_cdr_informant_orientation_judgment,
+            },
+            {
+              id: 'cdr_step3',
+              title: '社会与生活自理篇',
+              schema: scale_cdr_informant_social_home_care,
+            },
+          ],
+        };
+    }
+  }, [selectedDiseaseTag]);
 
   const currentStep = assessmentSteps[currentStepIndex];
 
@@ -52,11 +100,11 @@ export default function AssessmentView() {
         console.log('【测评完成】生成的答卷 Payload:', finalData);
         setIsCompleted(true);
         setTimeout(() => {
-          navigate('/report', { state: { payload: finalData } });
+          navigate('/report', { state: { payload: finalData, diseaseTag: selectedDiseaseTag } });
         }, 1500);
       }
     },
-    [currentStepIndex, assessmentSteps.length, assessmentData]
+    [currentStepIndex, assessmentSteps.length, assessmentData, navigate, selectedDiseaseTag]
   );
 
   const handleBackStep = useCallback(() => {
@@ -103,7 +151,7 @@ export default function AssessmentView() {
             <span className="text-base font-medium text-gray-900">
               {currentStepIndex + 1} / {assessmentSteps.length} {currentStep.title}
             </span>
-            <span className="text-xs text-gray-400 mt-0.5">CDR 知情者问卷</span>
+            <span className="text-xs text-gray-400 mt-0.5">{subtitle}</span>
           </div>
         </NavBar>
         <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-100">

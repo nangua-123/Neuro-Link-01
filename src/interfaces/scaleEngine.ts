@@ -1,14 +1,19 @@
 // File: src/interfaces/scaleEngine.ts
 
 export enum QuestionType {
-  RADIO = 'RADIO',
-  CHECKBOX = 'CHECKBOX',
-  CANVAS_CLOCK = 'CANVAS_CLOCK',
-  AUDIO_REPEAT = 'AUDIO_REPEAT',
-  TEXT = 'TEXT',
+  RADIO = "RADIO",
+  CHECKBOX = "CHECKBOX",
+  CANVAS_CLOCK = "CANVAS_CLOCK",
+  AUDIO_REPEAT = "AUDIO_REPEAT",
+  TEXT = "TEXT",
+  RADIO_WITH_INPUT = "RADIO_WITH_INPUT",
+  INPUT_GROUP = "INPUT_GROUP",
+  RADIO_WITH_COMPLEX_SUB = "RADIO_WITH_COMPLEX_SUB",
+  CHECKBOX_WITH_INPUT = "CHECKBOX_WITH_INPUT",
+  TEXTAREA = "TEXTAREA",
 }
 
-export type TargetAudience = 'PATIENT' | 'FAMILY' | 'BOTH';
+export type TargetAudience = "PATIENT" | "FAMILY" | "BOTH";
 
 export interface QuestionOption {
   label: string;
@@ -18,7 +23,12 @@ export interface QuestionOption {
 
 export interface BranchLogic {
   condition: {
-    operator: 'EQUALS' | 'NOT_EQUALS' | 'CONTAINS' | 'GREATER_THAN' | 'LESS_THAN';
+    operator:
+      | "EQUALS"
+      | "NOT_EQUALS"
+      | "CONTAINS"
+      | "GREATER_THAN"
+      | "LESS_THAN";
     value: any;
   };
   nextQuestionId: string; // 满足条件时跳转的题目ID
@@ -44,16 +54,16 @@ export interface QuestionNode {
   target: TargetAudience; // 题目受众，用于双端流转
   options?: QuestionOption[];
   required?: boolean;
-  
+
   // 针对特殊高阶题型的配置
   audioConfig?: AudioConfig;
   canvasConfig?: CanvasConfig;
 
   // 跳题逻辑引擎
   branches?: BranchLogic[];
-  
+
   // 如果没有命中任何 branch，默认的下一题 ID。若为空则表示结束或按顺序下一题
-  defaultNextId?: string; 
+  defaultNextId?: string;
 }
 
 export interface FormSchema {
