@@ -5,11 +5,15 @@ import { motion } from 'motion/react';
 import { calculateReport, ScoringResult } from '../../utils/scoring';
 import { Activity, AlertTriangle, Brain, ChevronRight, ShieldCheck, FileText } from 'lucide-react';
 import { DiseaseTag } from '../../configs/constants';
+import { AgreementModal } from '../../components/AgreementModal';
+import { useAppStore } from '../../store';
 
 export default function ReportView() {
   const location = useLocation();
   const navigate = useNavigate();
   const [result, setResult] = useState<ScoringResult | null>(null);
+  const [isAgreementOpen, setIsAgreementOpen] = useState(false);
+  const { hasSignedAgreement, signAgreement } = useAppStore();
 
   useEffect(() => {
     const payload = location.state?.payload || {};
@@ -20,6 +24,20 @@ export default function ReportView() {
     }, 1500);
     return () => clearTimeout(timer);
   }, [location.state]);
+
+  const handleCTAClick = () => {
+    if (hasSignedAgreement) {
+      navigate('/manager');
+    } else {
+      setIsAgreementOpen(true);
+    }
+  };
+
+  const handleAgree = () => {
+    signAgreement();
+    setIsAgreementOpen(false);
+    navigate('/manager');
+  };
 
   if (!result) {
     return (
@@ -156,7 +174,10 @@ export default function ReportView() {
       {/* Bottom CTA */}
       <div className="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#f8fafc] via-[#f8fafc] to-transparent z-30 pointer-events-none">
         <div className="flex flex-col space-y-3 max-w-md mx-auto pointer-events-auto">
-          <button className="w-full py-4 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium text-[15px] tracking-wide shadow-[0_8px_20px_rgba(79,70,229,0.25)] transform transition active:scale-95 flex items-center justify-center space-x-2">
+          <button 
+            onClick={handleCTAClick}
+            className="w-full py-4 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium text-[15px] tracking-wide shadow-[0_8px_20px_rgba(79,70,229,0.25)] transform transition active:scale-95 flex items-center justify-center space-x-2"
+          >
             <ShieldCheck className="w-5 h-5" />
             <span>{result.ctaText}</span>
           </button>
@@ -167,6 +188,12 @@ export default function ReportView() {
         </div>
         <SafeArea position="bottom" />
       </div>
+
+      <AgreementModal 
+        isOpen={isAgreementOpen} 
+        onClose={() => setIsAgreementOpen(false)} 
+        onAgree={handleAgree} 
+      />
     </div>
   );
 }

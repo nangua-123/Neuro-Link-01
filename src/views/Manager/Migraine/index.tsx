@@ -1,170 +1,127 @@
-// File: src/views/Manager/Migraine/index.tsx
-import React, { useState } from 'react';
-import { Button, Popup, Slider, Toast, Modal } from 'antd-mobile';
+import React from 'react';
+import { motion } from 'motion/react';
 import { useAppStore } from '../../../store';
-import { captureEnvironment } from '../../../services/envCapture';
-import { MigraineTrigger, MigraineDiaryPayload } from '../../../interfaces/manager';
+import { Zap, AlertTriangle, Plus, Pill, Calendar, Activity, ShieldAlert, ArrowRight } from 'lucide-react';
 
 export default function MigraineManager() {
   const { painkillerDays, recordPainkiller } = useAppStore();
-  const [showDiary, setShowDiary] = useState(false);
-  const [painLevel, setPainLevel] = useState<number>(5);
-  const [selectedTriggers, setSelectedTriggers] = useState<MigraineTrigger[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const triggers = [
-    { label: '☕️ 咖啡', value: MigraineTrigger.COFFEE },
-    { label: '🧋 奶茶', value: MigraineTrigger.MILK_TEA },
-    { label: '🤯 压力大', value: MigraineTrigger.STRESS },
-    { label: '🌙 熬夜缺觉', value: MigraineTrigger.LACK_OF_SLEEP },
-    { label: '🩸 生理期', value: MigraineTrigger.MENSTRUATION },
-  ];
-
-  const toggleTrigger = (val: MigraineTrigger) => {
-    if (selectedTriggers.includes(val)) {
-      setSelectedTriggers(selectedTriggers.filter(t => t !== val));
-    } else {
-      setSelectedTriggers([...selectedTriggers, val]);
-    }
-  };
-
-  const handleSaveDiary = async () => {
-    setIsSubmitting(true);
-    Toast.show({ icon: 'loading', content: '静默抓取环境数据...', duration: 0 });
-    
-    try {
-      const envData = await captureEnvironment();
-      const payload: MigraineDiaryPayload = {
-        patientId: 'current_user',
-        timestamp: Date.now(),
-        painLevel,
-        triggers: selectedTriggers,
-        medicationTaken: [],
-        environment: envData,
-      };
-      
-      console.log('【头痛日记已保存】', payload);
-      Toast.show({ icon: 'success', content: '记录成功，已生成诱因分析' });
-      setShowDiary(false);
-      setPainLevel(5);
-      setSelectedTriggers([]);
-    } catch (e) {
-      Toast.show({ icon: 'fail', content: '环境数据获取失败' });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleMedication = () => {
-    if (painkillerDays >= 15) {
-      // MOH 药物防火墙：防呆锁死逻辑
-      Modal.alert({
-        header: <div className="text-5xl mb-2">🚫</div>,
-        title: 'MOH 药物过度使用警告',
-        content: (
-          <div className="text-gray-600 text-sm leading-relaxed text-justify">
-            您本月吃止痛药已达 <span className="text-red-500 font-bold text-base">15</span> 天！继续服用将引发严重的<span className="font-bold text-gray-900">药物过度使用性头痛 (MOH)</span>！请立即停止自行服药并联系主治医生！
-          </div>
-        ),
-        confirmText: '立即联系医生',
-        onConfirm: () => {
-          Toast.show({ content: '正在为您接通华西专科医生...' });
-        },
-        closeOnMaskClick: false,
-      });
-    } else {
-      recordPainkiller();
-      Toast.show({ icon: 'success', content: `服药打卡成功 (本月累计 ${painkillerDays + 1} 天)` });
-    }
-  };
+  
+  // MOH 熔断机制：每月止痛药服用天数 >= 15 天为红线
+  const isMOHRisk = painkillerDays >= 15;
 
   return (
-    <div className="h-full flex flex-col bg-[#F7F9FC] relative pb-safe">
-      <div className="p-6">
-        <h2 className="text-2xl font-black text-gray-900 mb-2">头痛管家</h2>
-        <p className="text-sm text-gray-500 mb-6">精准记录，告别偏头痛困扰</p>
-        
-        {/* MOH 防火墙面板 */}
-        <div className="bg-white p-6 rounded-3xl shadow-sm mb-6 border border-gray-100">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-bold text-gray-800 text-lg">本月止痛药天数</h3>
-            <span className={`text-xl font-black ${painkillerDays >= 10 ? 'text-red-500' : 'text-primary'}`}>
-              {painkillerDays} <span className="text-sm text-gray-400 font-normal">/ 15天红线</span>
-            </span>
-          </div>
-          <div className="w-full bg-gray-100 rounded-full h-2 mb-6 overflow-hidden">
-            <div 
-              className={`h-2 rounded-full transition-all ${painkillerDays >= 15 ? 'bg-red-500' : painkillerDays >= 10 ? 'bg-orange-400' : 'bg-primary'}`} 
-              style={{ width: `${Math.min((painkillerDays / 15) * 100, 100)}%` }}
-            ></div>
-          </div>
-          <Button block color="primary" fill="outline" className="rounded-2xl font-bold h-12 border-2" onClick={handleMedication}>
-            💊 服药打卡
-          </Button>
-        </div>
-      </div>
-
-      {/* 核心UI 1：又头痛了 */}
-      <div className="absolute bottom-12 left-0 right-0 flex justify-center px-6 z-10">
-        <Button 
-          block 
-          color="primary" 
-          className="h-16 rounded-3xl font-black text-xl shadow-[0_8px_24px_rgba(22,119,255,0.3)]"
-          onClick={() => setShowDiary(true)}
-        >
-          + 又头痛了
-        </Button>
-      </div>
-
-      {/* 极简记录抽屉 */}
-      <Popup 
-        visible={showDiary} 
-        onMaskClick={() => !isSubmitting && setShowDiary(false)} 
-        bodyStyle={{ borderTopLeftRadius: '24px', borderTopRightRadius: '24px', minHeight: '60vh' }}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-6"
+    >
+      {/* 模块一：头痛状态看板与 MOH 红色防火墙 (Status Overview) */}
+      <div 
+        className={`relative overflow-hidden rounded-[32px] p-6 text-white shadow-xl transition-all duration-500 ${
+          isMOHRisk 
+            ? 'bg-gradient-to-br from-red-500 to-rose-600 shadow-red-500/20' 
+            : 'bg-gradient-to-br from-violet-500 to-purple-600 shadow-violet-500/20'
+        }`}
       >
-        <div className="p-6">
-          <h3 className="text-xl font-black text-gray-900 mb-8 text-center">记录本次发作</h3>
-          
-          <div className="mb-8">
-            <div className="flex justify-between items-center mb-4">
-              <span className="font-bold text-gray-800">疼痛等级 (VAS)</span>
-              <span className="text-primary font-black text-xl">{painLevel} <span className="text-xs text-gray-400 font-normal">分</span></span>
-            </div>
-            <div className="px-2">
-              <Slider 
-                value={painLevel} 
-                onChange={(val) => setPainLevel(val as number)} 
-                min={1} max={10} step={1}
-                marks={{ 1: '轻微', 5: '中度', 10: '剧痛' }}
-              />
-            </div>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+        
+        <div className="flex items-center space-x-3 mb-6 relative z-10">
+          <div className="p-2.5 bg-white/20 rounded-2xl backdrop-blur-md">
+            {isMOHRisk ? <ShieldAlert className="w-6 h-6 text-white" /> : <Zap className="w-6 h-6 text-white" />}
           </div>
-
-          <div className="mb-10">
-            <span className="font-bold text-gray-800 block mb-4">可能诱因 (多选)</span>
-            <div className="flex flex-wrap gap-3">
-              {triggers.map(t => {
-                const isActive = selectedTriggers.includes(t.value);
-                return (
-                  <div 
-                    key={t.value}
-                    onClick={() => toggleTrigger(t.value)}
-                    className={`px-4 py-2 rounded-2xl text-sm font-medium transition-colors ${
-                      isActive ? 'bg-primary text-white shadow-md shadow-blue-500/20' : 'bg-gray-100 text-gray-600'
-                    }`}
-                  >
-                    {t.label}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          <Button block color="primary" size="large" className="rounded-2xl font-bold h-14" loading={isSubmitting} onClick={handleSaveDiary}>
-            保存并分析环境诱因
-          </Button>
+          <h2 className="text-xl font-semibold tracking-tight">偏头痛管家</h2>
         </div>
-      </Popup>
-    </div>
+
+        <div className="relative z-10">
+          <div className="flex items-baseline space-x-2">
+            <span className="text-5xl font-light tracking-tighter">{painkillerDays}</span>
+            <span className="text-sm font-medium opacity-80">天 / 本月止痛药</span>
+          </div>
+          
+          <div className="mt-4">
+            {isMOHRisk ? (
+              <div className="flex items-start space-x-2 bg-white/20 p-3 rounded-2xl backdrop-blur-sm border border-white/20">
+                <AlertTriangle className="w-5 h-5 text-white shrink-0 mt-0.5" />
+                <p className="text-sm font-medium leading-snug">
+                  本月止痛药使用已达红线，极易诱发药物过度使用性头痛 (MOH)！请立即停止滥用并联系医生。
+                </p>
+              </div>
+            ) : (
+              <p className="text-sm opacity-90 leading-relaxed">
+                距离 MOH 风险红线还有 <span className="font-bold">{15 - painkillerDays}</span> 天。请谨慎使用单纯止痛药，记录诱因更重要。
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* 模块二：头痛发作日记与干预流 (Daily Actions) */}
+      <div className="space-y-4">
+        <h3 className="text-sm font-semibold text-slate-800 px-2">发作干预</h3>
+        
+        {/* 一键记录头痛 */}
+        <button 
+          onClick={() => alert('Mock: 弹出头痛记录表单（疼痛等级、诱因如熬夜/经期等）')}
+          className="w-full bg-white p-5 rounded-[28px] shadow-sm shadow-slate-100 border border-slate-100/50 flex items-center justify-between group hover:border-violet-200 transition-colors"
+        >
+          <div className="flex items-center space-x-4">
+            <div className="w-12 h-12 rounded-full bg-violet-50 flex items-center justify-center text-violet-500 group-hover:bg-violet-100 transition-colors">
+              <Plus className="w-6 h-6" />
+            </div>
+            <div className="text-left">
+              <h4 className="text-base font-semibold text-slate-800">记录今日头痛</h4>
+              <p className="text-xs text-slate-500 mt-0.5">记录疼痛等级与发作诱因</p>
+            </div>
+          </div>
+          <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-violet-400 transition-colors" />
+        </button>
+
+        {/* 服药打卡 */}
+        <div className="bg-white p-5 rounded-[28px] shadow-sm shadow-slate-100 border border-slate-100/50 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <div className="w-12 h-12 rounded-full bg-rose-50 flex items-center justify-center text-rose-500">
+              <Pill className="w-6 h-6" />
+            </div>
+            <div>
+              <h4 className="text-base font-semibold text-slate-800">服用止痛药</h4>
+              <p className="text-xs text-slate-500 mt-0.5">布洛芬 / 散利痛等单纯止痛药</p>
+            </div>
+          </div>
+          <button 
+            onClick={recordPainkiller}
+            className="px-5 py-2.5 bg-slate-900 text-white text-sm font-medium rounded-full hover:bg-slate-800 transition-colors active:scale-95"
+          >
+            打卡
+          </button>
+        </div>
+      </div>
+
+      {/* 模块三：医患连接与服务 (Medical Services) */}
+      <div className="space-y-4">
+        <h3 className="text-sm font-semibold text-slate-800 px-2">医疗服务</h3>
+        
+        <div className="grid grid-cols-2 gap-4">
+          <button className="bg-white p-5 rounded-[28px] shadow-sm shadow-slate-100 border border-slate-100/50 flex flex-col items-start space-y-3 text-left group hover:border-indigo-200 transition-colors">
+            <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-500 group-hover:bg-indigo-100 transition-colors">
+              <Activity className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold text-slate-800 leading-tight">CGRP 靶向药</h4>
+              <p className="text-xs text-slate-500 mt-1">特效药申请评估</p>
+            </div>
+          </button>
+
+          <button className="bg-white p-5 rounded-[28px] shadow-sm shadow-slate-100 border border-slate-100/50 flex flex-col items-start space-y-3 text-left group hover:border-blue-200 transition-colors">
+            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 group-hover:bg-blue-100 transition-colors">
+              <Calendar className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold text-slate-800 leading-tight">历史日历</h4>
+              <p className="text-xs text-slate-500 mt-1">头痛趋势回顾</p>
+            </div>
+          </button>
+        </div>
+      </div>
+    </motion.div>
   );
 }

@@ -48,6 +48,31 @@
 - `tailwindcss`: 样式引擎。
 
 ## Changelog
+### v0.9.1 (Phase 5.3 Migraine Manager Dashboard & MOH Firewall)
+- 重构 `src/views/Manager/Migraine/index.tsx`，实现偏头痛管家核心业务面板：
+  - **Status Overview & MOH Firewall**：从 `useAppStore` 读取 `painkillerDays`。当达到 15 天红线时，看板呈现极强的红色警示状态，警告极易诱发 MOH；未达红线时显示安全的紫色系状态。
+  - **Daily Actions**：实现“记录今日头痛”的快捷入口（Mock），以及独立的“服用止痛药”打卡卡片。点击打卡实时触发 MOH 防火墙预警。
+  - **Medical Services**：实现“CGRP 靶向药申请评估”和“历史头痛日历”的常驻入口。
+  - 保持阿福式的克制与高级感，大量使用大圆角、柔和阴影与渐变背景。
+
+### v0.9.0 (Phase 5.2 Epilepsy Manager Dashboard)
+- 重构 `src/views/Manager/Epilepsy/index.tsx`，实现癫痫护航管家核心业务面板：
+  - **Status Overview**：实现持续无发作天数（支持 Tailwind 静态类名映射的动态预警色）、用药依从率。
+  - **Daily Actions**：实现大卡片式分时服药打卡（早/中/晚）与基于 CRF 的随访倒计时提醒。
+  - **Medical Services**：实现专病医生咨询与发作日记趋势回顾的常驻入口。
+  - **Emergency Recall**：将紧急录像重构为全局最高优先级的红色悬浮球，完美融合日常业务与极端医疗安全底线。
+
+### v0.8.0 (Phase 5.1 Report Conversion & JIT Compliance)
+- 新增 `src/components/AgreementModal.tsx`，实现《三方电子联合数据授权协议》的 UI 与交互。
+- 更新 `src/store/index.ts`，引入 `hasSignedAgreement` 状态与 `signAgreement` 方法，用于全局合规状态管理。
+- 重构 `src/views/Report/index.tsx`，实现转化流转与 JIT (Just-In-Time) 拦截：
+  - 底部 CTA 按钮绑定点击事件，未授权时弹出 `AgreementModal`。
+  - 授权通过后，安全放行并路由至 `/manager`。
+- 重构 `src/views/Manager/index.tsx`，实现居家管家区的基础多病种分发机制：
+  - 引入强路由守卫：未签署协议直接重定向至首页 (`/`)。
+  - 动态业务分发：根据 `selectedDiseaseTag` 渲染 `CognitiveManager`、`EpilepsyManager` 或 `MigraineManager`。
+  - 采用全新的 UI 规范实现各专病管家的骨架占位（包含专属渐变卡片与功能入口）。
+
 ### v0.7.0 (Phase 4.6 Multi-disease Scoring Engine & Dynamic Report)
 - 重构 `src/utils/scoring.ts`，实现多病种计分逻辑分发引擎 (`calculateReport`)。
   - **认知 (AD)**：保留原有 CDR 逻辑，输出多维能力图谱与风险预警。
