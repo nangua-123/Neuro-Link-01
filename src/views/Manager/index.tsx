@@ -38,10 +38,18 @@ export default function ManagerView() {
       <Button
         color="primary"
         size="large"
-        className="w-full rounded-xl font-medium shadow-sm h-12"
+        className="w-full rounded-xl font-medium shadow-sm h-12 mb-4"
         onClick={() => navigate('/assessment')}
       >
         立即进行 1 元深度测评
+      </Button>
+      <Button
+        color="default"
+        size="large"
+        className="w-full rounded-xl font-medium shadow-sm h-12"
+        onClick={() => navigate('/crf-assessment')}
+      >
+        填写既往史信息 (CRF)
       </Button>
     </div>
   );

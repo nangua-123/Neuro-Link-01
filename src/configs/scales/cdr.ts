@@ -99,3 +99,130 @@ export const CDR_SCHEMA: FormSchema = {
     }
   }
 };
+
+export const scale_cdr_informant_orientation_judgment = {
+  scaleId: "cdr_informant_oj_v1",
+  title: "临床痴呆评定量表(CDR) - 询问知情者 (定向与判断篇)",
+  description: "请最了解患者日常生活的家属或照护者根据患者真实情况作答。",
+  questions: [
+    // --- 定向问题 ---
+    {
+      id: "cdr_o_1",
+      type: "radio",
+      text: "1. 他/她是否经常准确知道日期？",
+      options: [ { label: "经常", value: 1 }, { label: "有时", value: 2 }, { label: "很少", value: 3 }, { label: "不详", value: 4 } ],
+      required: true
+    },
+    {
+      id: "cdr_o_2",
+      type: "radio",
+      text: "2. 他/她是否经常准确知道月份？",
+      options: [ { label: "经常", value: 1 }, { label: "有时", value: 2 }, { label: "很少", value: 3 }, { label: "不详", value: 4 } ],
+      required: true
+    },
+    {
+      id: "cdr_o_3",
+      type: "radio",
+      text: "3. 他/她是否经常准确知道年份？",
+      options: [ { label: "经常", value: 1 }, { label: "有时", value: 2 }, { label: "很少", value: 3 }, { label: "不详", value: 4 } ],
+      required: true
+    },
+    {
+      id: "cdr_o_4",
+      type: "radio",
+      text: "4. 他/她是否经常准确知道星期几？",
+      options: [ { label: "经常", value: 1 }, { label: "有时", value: 2 }, { label: "很少", value: 3 }, { label: "不详", value: 4 } ],
+      required: true
+    },
+    {
+      id: "cdr_o_5",
+      type: "radio",
+      text: "5. 当事情先后发生时，他/她是否能判断清楚先后顺序？",
+      options: [ { label: "经常", value: 1 }, { label: "有时", value: 2 }, { label: "很少", value: 3 }, { label: "不详", value: 4 } ],
+      required: true
+    },
+    {
+      id: "cdr_o_6",
+      type: "radio",
+      text: "6. 他/她能否在熟悉的街道找到路？",
+      options: [ { label: "经常", value: 1 }, { label: "有时", value: 2 }, { label: "很少", value: 3 }, { label: "不详", value: 4 } ],
+      required: true
+    },
+    {
+      id: "cdr_o_7",
+      type: "radio",
+      text: "7. 他/她能否在自己家以外的地方知道如何从一个地方到另一个地方？",
+      options: [ { label: "经常", value: 1 }, { label: "有时", value: 2 }, { label: "很少", value: 3 }, { label: "不详", value: 4 } ],
+      required: true
+    },
+    {
+      id: "cdr_o_8",
+      type: "radio",
+      text: "8. 他/她是否在熟悉的室内找不到地方？",
+      options: [ { label: "经常", value: 1 }, { label: "有时", value: 2 }, { label: "很少", value: 3 }, { label: "不详", value: 4 } ],
+      required: true
+    },
+
+    // --- 判断和解决问题的能力 ---
+    {
+      id: "cdr_j_1",
+      type: "radio",
+      text: "1. 现在必须评估他/她解决问题的总体能力，请你考虑以下答案哪一种最适合：",
+      options: [
+        { label: "和以前一样好", value: 1 },
+        { label: "不如以前好", value: 2 },
+        { label: "差不多", value: 3 },
+        { label: "差", value: 4 },
+        { label: "根本没有能力", value: 5 }
+      ],
+      required: true
+    },
+    {
+      id: "cdr_j_2",
+      type: "radio",
+      text: "2. 评估他/她处理少量钱财的能力（如换零钱、找零钱）",
+      options: [
+        { label: "没有丧失", value: 1 },
+        { label: "有些丧失", value: 2 },
+        { label: "严重丧失", value: 3 }
+      ],
+      required: true
+    },
+    {
+      id: "cdr_j_3",
+      type: "radio",
+      text: "3. 评估他/她处理复杂财务或买卖的能力（如收支平衡、付费）",
+      options: [
+        { label: "没有丧失", value: 1 },
+        { label: "有些丧失", value: 2 },
+        { label: "严重丧失", value: 3 }
+      ],
+      required: true
+    },
+    {
+      id: "cdr_j_4",
+      type: "radio_with_input",
+      text: "4. 他/她能否处理家庭中发生的紧急情况（如水管渗漏、着火）",
+      options: [
+        { label: "和以前一样好", value: 1 },
+        { label: "因为思维障碍，不如以前好", value: 2 },
+        { label: "由于其他原因不如以前好", value: 3, requiresInput: true, inputPlaceholder: "请填写具体原因" }
+      ],
+      required: true
+    },
+    {
+      id: "cdr_j_5",
+      type: "radio",
+      text: "5. 他/她能明白所处的场合或其他人对某一问题的解释吗？",
+      options: [ { label: "经常", value: 1 }, { label: "有时", value: 2 }, { label: "很少", value: 3 }, { label: "不详", value: 4 } ],
+      required: true
+    },
+    {
+      id: "cdr_j_6",
+      type: "radio",
+      text: "6. 在社交场合或与他人交往时，他/她的行为得体吗？（和他/她平常的风格一样吗？）",
+      options: [ { label: "经常", value: 1 }, { label: "有时", value: 2 }, { label: "很少", value: 3 }, { label: "不详", value: 4 } ],
+      required: true
+    }
+  ]
+};

@@ -8,6 +8,7 @@ import MallView from '../views/Mall';
 import ProfileView from '../views/Profile';
 import LoginView from '../views/Login';
 import AssessmentView from '../views/Assessment';
+import CRFAssessmentView from '../views/CRFAssessment';
 import { RequireAgreement } from '../components/AuthGuard';
 import { useAppStore } from '../store';
 
@@ -31,6 +32,10 @@ export const router = createBrowserRouter([
   {
     path: '/assessment',
     element: <RequireAuth><RequireAgreement><AssessmentView /></RequireAgreement></RequireAuth>,
+  },
+  {
+    path: '/crf-assessment',
+    element: <RequireAuth><RequireAgreement><CRFAssessmentView /></RequireAgreement></RequireAuth>,
   },
   {
     path: '/',

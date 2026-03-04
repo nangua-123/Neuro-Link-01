@@ -48,6 +48,12 @@
 - `tailwindcss`: 样式引擎。
 
 ## Changelog
+### v0.5.4 (Phase 3 Dynamic Scale Data Batch 2)
+- 严格按照 1:1 像素级复刻精神，向 `src/configs/scales/cdr.ts` 追加【定向篇】与【判断篇】的真实医疗量表数据。
+- 升级 `AssessmentEngine` 动态渲染引擎：
+  - 完美兼容并渲染 `radio_with_input` 题型（如判断力第 4 题的“具体原因”填空）。
+  - 增强 Schema 字段的向下兼容性，支持 `text` 作为 `title` 的别名，支持 `scaleId` 作为 `id` 的别名。
+
 ### v0.5.3 (Phase 3 Pre-consultation UI Refinement)
 - 彻底重构预问诊模块 (`src/views/Home/index.tsx`)：
   - **状态机驱动对话**：引入 `DIALOGUE_TREE` 数据层，完整实现认知衰退、癫痫、偏头痛三大专病的 6 轮阶梯式问诊逻辑。
