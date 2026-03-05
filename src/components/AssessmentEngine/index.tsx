@@ -83,10 +83,8 @@ const QuestionRenderer: React.FC<{
     
     isMatch = false;
     if (depValue !== undefined && depValue !== null) {
-      if (typeof depValue === 'object' && 'selected' in depValue) {
-        isMatch = depValue.selected === dep.value;
-      } else if (Array.isArray(depValue)) {
-        isMatch = depValue.some(v => (typeof v === 'object' ? v.selected === dep.value : v === dep.value));
+      if (Array.isArray(depValue)) {
+        isMatch = depValue.includes(dep.value);
       } else {
         isMatch = depValue === dep.value;
       }
@@ -113,7 +111,7 @@ const QuestionRenderer: React.FC<{
       return (
         <div className="space-y-3">
           {question.options?.map((opt: any) => {
-            const isSelected = value?.selected === opt.value || value === opt.value;
+            const isSelected = value === opt.value;
             
             return (
               <div key={opt.value} className="flex flex-col">
@@ -143,12 +141,7 @@ const QuestionRenderer: React.FC<{
                     value={opt.value}
                     checked={isSelected}
                     onChange={() => {
-                      if (qType === 'radio') {
-                        onChange(question.id, opt.value);
-                      } else {
-                        // Preserve existing input if switching back, or reset
-                        onChange(question.id, { selected: opt.value, input: value?.input });
-                      }
+                      onChange(question.id, opt.value);
                     }}
                   />
                 </label>
@@ -167,8 +160,8 @@ const QuestionRenderer: React.FC<{
                           type="text"
                           placeholder={opt.inputPlaceholder || '请输入详细信息...'}
                           className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-                          value={value?.input || ''}
-                          onChange={(e) => onChange(question.id, { ...value, input: e.target.value })}
+                          value={values[`${question.id}_input`] || ''}
+                          onChange={(e) => onChange(`${question.id}_input`, e.target.value)}
                         />
                       </div>
                     </motion.div>
@@ -211,8 +204,7 @@ const QuestionRenderer: React.FC<{
         <div className="space-y-3">
           {question.options?.map((opt: any) => {
             const selectedValues = Array.isArray(value) ? value : [];
-            const isSelected = selectedValues.some((v: any) => (typeof v === 'object' ? v.selected === opt.value : v === opt.value));
-            const currentValue = selectedValues.find((v: any) => (typeof v === 'object' ? v.selected === opt.value : v === opt.value));
+            const isSelected = selectedValues.includes(opt.value);
 
             return (
               <div key={opt.value} className="flex flex-col">
@@ -248,9 +240,9 @@ const QuestionRenderer: React.FC<{
                     onChange={(e) => {
                       let newValues = [...selectedValues];
                       if (e.target.checked) {
-                        newValues.push(qType === 'checkbox' ? opt.value : { selected: opt.value });
+                        newValues.push(opt.value);
                       } else {
-                        newValues = newValues.filter((v: any) => (typeof v === 'object' ? v.selected !== opt.value : v !== opt.value));
+                        newValues = newValues.filter((v: any) => v !== opt.value);
                       }
                       onChange(question.id, newValues);
                     }}
@@ -271,16 +263,8 @@ const QuestionRenderer: React.FC<{
                           type="text"
                           placeholder={opt.inputPlaceholder || '请输入详细信息...'}
                           className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-                          value={currentValue?.input || ''}
-                          onChange={(e) => {
-                            const newValues = selectedValues.map((v: any) => {
-                              if ((typeof v === 'object' ? v.selected : v) === opt.value) {
-                                return { selected: opt.value, input: e.target.value };
-                              }
-                              return v;
-                            });
-                            onChange(question.id, newValues);
-                          }}
+                          value={values[`${question.id}_input`] || ''}
+                          onChange={(e) => onChange(`${question.id}_input`, e.target.value)}
                         />
                       </div>
                     </motion.div>
@@ -329,8 +313,8 @@ const QuestionRenderer: React.FC<{
                   type={field.type || 'text'}
                   placeholder={field.placeholder}
                   className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-                  value={value?.[field.id] || ''}
-                  onChange={(e) => onChange(question.id, { ...value, [field.id]: e.target.value })}
+                  value={values[field.id] || ''}
+                  onChange={(e) => onChange(field.id, e.target.value)}
                 />
                 {field.suffix && (
                   <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">

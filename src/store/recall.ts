@@ -1,5 +1,6 @@
 // File: src/store/recall.ts
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 export enum DangerLevel {
   WARNING = 'WARNING', // 黄色预警（如：用药超标）
@@ -29,41 +30,54 @@ interface RecallState {
   patientId: string | null;
   timestamp: number | null;
   
+  // 历史追溯记录
+  history: RecallPayload[];
+  
   // Actions
   triggerRecall: (payload: RecallPayload) => void;
   dismissRecall: (authCode: string) => boolean; // 需要极高权限（如医生授权码或家属强确认）才能解除
 }
 
-export const useRecallStore = create<RecallState>((set) => ({
-  isTriggered: false,
-  dangerLevel: null,
-  triggerReason: null,
-  message: null,
-  patientId: null,
-  timestamp: null,
+export const useRecallStore = create<RecallState>()(
+  persist(
+    (set) => ({
+      isTriggered: false,
+      dangerLevel: null,
+      triggerReason: null,
+      message: null,
+      patientId: null,
+      timestamp: null,
+      history: [],
 
-  triggerRecall: (payload) => set({
-    isTriggered: true,
-    dangerLevel: payload.level,
-    triggerReason: payload.reason,
-    message: payload.message,
-    patientId: payload.patientId,
-    timestamp: payload.timestamp,
-  }),
+      triggerRecall: (payload) => set((state) => ({
+        isTriggered: true,
+        dangerLevel: payload.level,
+        triggerReason: payload.reason,
+        message: payload.message,
+        patientId: payload.patientId,
+        timestamp: payload.timestamp,
+        history: [...state.history, payload],
+      })),
 
-  dismissRecall: (authCode) => {
-    // 模拟权限校验：只有特定授权码才能解除红色熔断
-    if (authCode === 'EMERGENCY_OVERRIDE_120') {
-      set({
-        isTriggered: false,
-        dangerLevel: null,
-        triggerReason: null,
-        message: null,
-        patientId: null,
-        timestamp: null,
-      });
-      return true;
+      dismissRecall: (authCode) => {
+        // 模拟权限校验：只有特定授权码才能解除红色熔断
+        if (authCode === 'EMERGENCY_OVERRIDE_120') {
+          set({
+            isTriggered: false,
+            dangerLevel: null,
+            triggerReason: null,
+            message: null,
+            patientId: null,
+            timestamp: null,
+          });
+          return true;
+        }
+        return false;
+      }
+    }),
+    {
+      name: 'neuro-link-recall-storage',
+      storage: createJSONStorage(() => localStorage),
     }
-    return false;
-  }
-}));
+  )
+);

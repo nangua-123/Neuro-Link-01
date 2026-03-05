@@ -1,5 +1,6 @@
 // File: src/store/index.ts
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { UserIdentity } from '../interfaces/user';
 import { DiseaseTag } from '../configs/constants';
 
@@ -25,35 +26,43 @@ interface AppState {
   recordPainkiller: () => void;
 }
 
-export const useAppStore = create<AppState>((set) => ({
-  isAuthenticated: false,
-  userToken: null,
-  identity: null,
-  familyId: null,
-  hasSignedAgreement: false,
-  selectedDiseaseTag: DiseaseTag.NONE,
-  painkillerDays: 14, // Mock：默认14天，逼近15天红线以便测试 MOH 拦截
-  
-  setAuth: (token, identity, familyId) => set({ 
-    isAuthenticated: true, 
-    userToken: token, 
-    identity, 
-    familyId: familyId || null 
-  }),
-  
-  signAgreement: () => set({ hasSignedAgreement: true }),
-  
-  clearAuth: () => set({ 
-    isAuthenticated: false, 
-    userToken: null, 
-    identity: null, 
-    familyId: null, 
-    hasSignedAgreement: false,
-    selectedDiseaseTag: DiseaseTag.NONE,
-    painkillerDays: 14
-  }),
-  
-  setDiseaseTag: (tag) => set({ selectedDiseaseTag: tag }),
-  
-  recordPainkiller: () => set((state) => ({ painkillerDays: state.painkillerDays + 1 })),
-}));
+export const useAppStore = create<AppState>()(
+  persist(
+    (set) => ({
+      isAuthenticated: false,
+      userToken: null,
+      identity: null,
+      familyId: null,
+      hasSignedAgreement: false,
+      selectedDiseaseTag: DiseaseTag.NONE,
+      painkillerDays: 14, // Mock：默认14天，逼近15天红线以便测试 MOH 拦截
+      
+      setAuth: (token, identity, familyId) => set({ 
+        isAuthenticated: true, 
+        userToken: token, 
+        identity, 
+        familyId: familyId || null 
+      }),
+      
+      signAgreement: () => set({ hasSignedAgreement: true }),
+      
+      clearAuth: () => set({ 
+        isAuthenticated: false, 
+        userToken: null, 
+        identity: null, 
+        familyId: null, 
+        hasSignedAgreement: false,
+        selectedDiseaseTag: DiseaseTag.NONE,
+        painkillerDays: 14
+      }),
+      
+      setDiseaseTag: (tag) => set({ selectedDiseaseTag: tag }),
+      
+      recordPainkiller: () => set((state) => ({ painkillerDays: state.painkillerDays + 1 })),
+    }),
+    {
+      name: 'neuro-link-app-storage',
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);
