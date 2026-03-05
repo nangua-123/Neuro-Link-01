@@ -1,34 +1,53 @@
-import React, { useState, useCallback } from 'react';
-import { ScaleSchema, ScaleQuestion, QuestionType } from '../../interfaces/scale';
+import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 
-interface AssessmentEngineProps {
-  schema: ScaleSchema;
-  onSubmit: (values: Record<string, any>) => void;
+// --- Types to support various schema formats ---
+export interface EngineSchema {
+  scaleId?: string;
+  id?: string;
+  title?: string;
+  name?: string;
+  description?: string;
+  questions: any[] | Record<string, any>; // Array or Object format
 }
 
-export const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ schema, onSubmit }) => {
-  const [values, setValues] = useState<Record<string, any>>({});
+interface AssessmentEngineProps {
+  schema: EngineSchema;
+  onSubmit: (values: Record<string, any>) => void;
+  initialValues?: Record<string, any>;
+}
+
+export const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ schema, onSubmit, initialValues = {} }) => {
+  const [values, setValues] = useState<Record<string, any>>(initialValues);
 
   const handleChange = useCallback((id: string, value: any) => {
-    setValues(prev => ({ ...prev, [id]: value }));
+    setValues(prev => {
+      const newValues = { ...prev, [id]: value };
+      // Note: A robust engine might also clear dependent fields here if the parent value changes,
+      // but for simplicity and to avoid data loss on accidental clicks, we keep the values.
+      return newValues;
+    });
   }, []);
 
   const handleSubmit = () => {
+    // Before submit, we could filter out values of questions that are hidden by skip logic.
+    // For now, we submit the raw values.
     onSubmit(values);
   };
 
+  const title = schema.title || schema.name || '评估问卷';
+
   return (
-    <div className="w-full max-w-2xl mx-auto pb-24">
-      <div className="mb-8 px-4">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-2">{schema.name || (schema as any).title}</h2>
+    <div className="w-full max-w-2xl mx-auto pb-32">
+      <div className="mb-8 px-4 pt-6">
+        <h2 className="text-2xl font-semibold text-gray-900 mb-2">{title}</h2>
         {schema.description && (
-          <p className="text-sm text-gray-500">{schema.description}</p>
+          <p className="text-sm text-gray-500 leading-relaxed">{schema.description}</p>
         )}
       </div>
 
       <div className="space-y-6 px-4">
-        {schema.questions.map(q => (
+        {schema.questions && (Array.isArray(schema.questions) ? schema.questions : Object.values(schema.questions)).map((q: any) => (
           <QuestionRenderer 
             key={q.id} 
             question={q} 
@@ -38,10 +57,10 @@ export const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ schema, onSu
         ))}
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-md border-t border-gray-100">
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-xl border-t border-gray-100 z-50">
         <button
           onClick={handleSubmit}
-          className="w-full max-w-2xl mx-auto block bg-blue-600 text-white rounded-full py-4 font-medium text-lg shadow-lg shadow-blue-600/20 active:scale-[0.98] transition-all"
+          className="w-full max-w-2xl mx-auto block bg-blue-600 text-white rounded-2xl py-4 font-medium text-lg shadow-lg shadow-blue-600/20 active:scale-[0.98] transition-all"
         >
           提交评估
         </button>
@@ -51,118 +70,122 @@ export const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ schema, onSu
 };
 
 const QuestionRenderer: React.FC<{
-  question: ScaleQuestion;
+  question: any;
   values: Record<string, any>;
   onChange: (id: string, value: any) => void;
   depth?: number;
 }> = ({ question, values, onChange, depth = 0 }) => {
-  // Check dependency
+  // --- Skip Logic (dependsOn) ---
+  let isMatch = true;
   if (question.dependsOn) {
-    const depValue = values[question.dependsOn.questionId];
-    if (depValue !== question.dependsOn.value) {
-      return null;
+    const dep = question.dependsOn;
+    const depValue = values[dep.questionId];
+    
+    isMatch = false;
+    if (depValue !== undefined && depValue !== null) {
+      if (typeof depValue === 'object' && 'selected' in depValue) {
+        isMatch = depValue.selected === dep.value;
+      } else if (Array.isArray(depValue)) {
+        isMatch = depValue.some(v => (typeof v === 'object' ? v.selected === dep.value : v === dep.value));
+      } else {
+        isMatch = depValue === dep.value;
+      }
     }
   }
 
+  useEffect(() => {
+    if (!isMatch && values[question.id] !== undefined) {
+      onChange(question.id, undefined);
+    }
+  }, [isMatch, question.id, values, onChange]);
+
+  if (!isMatch) {
+    return null;
+  }
+
   const value = values[question.id];
+  const qType = (question.type || '').toLowerCase();
+  const qTitle = question.title || question.text;
 
   const renderContent = () => {
-    switch (question.type) {
-      case QuestionType.RADIO:
-      case QuestionType.RADIO_WITH_COMPLEX_SUB:
-      case QuestionType.RADIO_WITH_INPUT:
-      case QuestionType.RADIO_WITH_NESTED_INPUT:
-        return (
-          <div className="space-y-3">
-            {question.options?.map(opt => {
-              const isSelected = value?.selected === opt.value || value === opt.value;
-              return (
-                <div key={opt.value} className="flex flex-col space-y-3">
-                  <label 
-                    className={`
-                      flex items-center p-4 rounded-2xl border transition-all cursor-pointer
-                      ${isSelected 
-                        ? 'bg-blue-50/50 border-blue-200 shadow-sm' 
-                        : 'bg-white border-gray-100 hover:border-blue-100 hover:bg-gray-50/50'}
-                    `}
-                  >
-                    <div className={`
-                      w-5 h-5 rounded-full border-2 flex items-center justify-center mr-3
-                      ${isSelected ? 'border-blue-500' : 'border-gray-300'}
-                    `}>
-                      {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />}
-                    </div>
-                    <span className={`text-base ${isSelected ? 'text-blue-900 font-medium' : 'text-gray-700'}`}>
+    // 1. RADIO and its variants
+    if (qType.includes('radio')) {
+      return (
+        <div className="space-y-3">
+          {question.options?.map((opt: any) => {
+            const isSelected = value?.selected === opt.value || value === opt.value;
+            
+            return (
+              <div key={opt.value} className="flex flex-col">
+                <label 
+                  className={`
+                    flex items-start p-4 rounded-2xl border transition-all cursor-pointer
+                    ${isSelected 
+                      ? 'bg-blue-50/60 border-blue-200 shadow-[0_2px_10px_rgba(37,99,235,0.05)]' 
+                      : 'bg-white border-gray-100 hover:border-blue-100 hover:bg-gray-50/50'}
+                  `}
+                >
+                  <div className={`
+                    w-5 h-5 rounded-full border-2 flex items-center justify-center mr-3 mt-0.5 shrink-0 transition-colors
+                    ${isSelected ? 'border-blue-500' : 'border-gray-300'}
+                  `}>
+                    {isSelected && <motion.div layoutId={`radio-${question.id}`} className="w-2.5 h-2.5 rounded-full bg-blue-500" />}
+                  </div>
+                  <div className="flex-1">
+                    <span className={`text-base block leading-snug ${isSelected ? 'text-blue-900 font-medium' : 'text-gray-700'}`}>
                       {opt.label}
                     </span>
-                    <input
-                      type="radio"
-                      className="hidden"
-                      name={question.id}
-                      value={opt.value}
-                      checked={isSelected}
-                      onChange={() => {
-                        if (question.type === QuestionType.RADIO) {
-                          onChange(question.id, opt.value);
-                        } else {
-                          onChange(question.id, { selected: opt.value });
-                        }
-                      }}
-                    />
-                  </label>
+                  </div>
+                  <input
+                    type="radio"
+                    className="hidden"
+                    name={question.id}
+                    value={opt.value}
+                    checked={isSelected}
+                    onChange={() => {
+                      if (qType === 'radio') {
+                        onChange(question.id, opt.value);
+                      } else {
+                        // Preserve existing input if switching back, or reset
+                        onChange(question.id, { selected: opt.value, input: value?.input });
+                      }
+                    }}
+                  />
+                </label>
 
-                  <AnimatePresence>
-                    {isSelected && opt.requiresInput && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="pl-8 overflow-hidden"
-                      >
+                {/* Nested Input for RADIO_WITH_INPUT */}
+                <AnimatePresence>
+                  {isSelected && opt.requiresInput && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                      animate={{ opacity: 1, height: 'auto', marginTop: 12 }}
+                      exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="pl-12 pr-4 pb-2">
                         <input
                           type="text"
-                          placeholder={opt.inputPlaceholder || '请输入...'}
-                          className="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                          placeholder={opt.inputPlaceholder || '请输入详细信息...'}
+                          className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
                           value={value?.input || ''}
                           onChange={(e) => onChange(question.id, { ...value, input: e.target.value })}
                         />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
-                  <AnimatePresence>
-                    {isSelected && opt.nestedFields && opt.nestedFields.length > 0 && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="pl-8 overflow-hidden space-y-3 mt-2"
-                      >
-                        {opt.nestedFields.map(field => (
-                          <div key={field.id} className="w-full">
-                            {field.label && <span className="block text-xs text-gray-500 mb-1 ml-1">{field.label}</span>}
-                            <input
-                              type={field.type || 'text'}
-                              placeholder={field.placeholder || '请输入...'}
-                              className="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-                              value={value?.[field.id] || ''}
-                              onChange={(e) => onChange(question.id, { ...value, [field.id]: e.target.value })}
-                            />
-                          </div>
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  <AnimatePresence>
-                    {isSelected && opt.subQuestions && opt.subQuestions.length > 0 && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="pl-4 border-l-2 border-blue-100 ml-2 mt-2 space-y-4 overflow-hidden"
-                      >
-                        {opt.subQuestions.map(subQ => (
+                {/* Complex Sub-questions for RADIO_WITH_COMPLEX_SUB */}
+                <AnimatePresence>
+                  {isSelected && opt.subQuestions && opt.subQuestions.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                      animate={{ opacity: 1, height: 'auto', marginTop: 16 }}
+                      exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="pl-6 ml-6 border-l-2 border-blue-100/50 space-y-6 pb-4">
+                        {opt.subQuestions.map((subQ: any) => (
                           <QuestionRenderer
                             key={subQ.id}
                             question={subQ}
@@ -171,101 +194,110 @@ const QuestionRenderer: React.FC<{
                             depth={depth + 1}
                           />
                         ))}
-                      </motion.div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+
+    // 2. CHECKBOX and its variants
+    if (qType.includes('checkbox')) {
+      return (
+        <div className="space-y-3">
+          {question.options?.map((opt: any) => {
+            const selectedValues = Array.isArray(value) ? value : [];
+            const isSelected = selectedValues.some((v: any) => (typeof v === 'object' ? v.selected === opt.value : v === opt.value));
+            const currentValue = selectedValues.find((v: any) => (typeof v === 'object' ? v.selected === opt.value : v === opt.value));
+
+            return (
+              <div key={opt.value} className="flex flex-col">
+                <label 
+                  className={`
+                    flex items-start p-4 rounded-2xl border transition-all cursor-pointer
+                    ${isSelected 
+                      ? 'bg-blue-50/60 border-blue-200 shadow-[0_2px_10px_rgba(37,99,235,0.05)]' 
+                      : 'bg-white border-gray-100 hover:border-blue-100 hover:bg-gray-50/50'}
+                  `}
+                >
+                  <div className={`
+                    w-5 h-5 rounded-md border-2 flex items-center justify-center mr-3 mt-0.5 shrink-0 transition-colors
+                    ${isSelected ? 'bg-blue-500 border-blue-500' : 'border-gray-300'}
+                  `}>
+                    {isSelected && (
+                      <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
                     )}
-                  </AnimatePresence>
-                </div>
-              );
-            })}
-          </div>
-        );
-
-      case QuestionType.CHECKBOX:
-      case QuestionType.CHECKBOX_WITH_INPUT:
-        return (
-          <div className="space-y-3">
-            {question.options?.map(opt => {
-              const selectedValues = Array.isArray(value) ? value : [];
-              const isSelected = selectedValues.some((v: any) => v.selected === opt.value || v === opt.value);
-              const currentValue = selectedValues.find((v: any) => v.selected === opt.value || v === opt.value);
-
-              return (
-                <div key={opt.value} className="flex flex-col space-y-3">
-                  <label 
-                    className={`
-                      flex items-center p-4 rounded-2xl border transition-all cursor-pointer
-                      ${isSelected 
-                        ? 'bg-blue-50/50 border-blue-200 shadow-sm' 
-                        : 'bg-white border-gray-100 hover:border-blue-100 hover:bg-gray-50/50'}
-                    `}
-                  >
-                    <div className={`
-                      w-5 h-5 rounded border-2 flex items-center justify-center mr-3 transition-colors
-                      ${isSelected ? 'bg-blue-500 border-blue-500' : 'border-gray-300'}
-                    `}>
-                      {isSelected && (
-                        <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                        </svg>
-                      )}
-                    </div>
-                    <span className={`text-base ${isSelected ? 'text-blue-900 font-medium' : 'text-gray-700'}`}>
+                  </div>
+                  <div className="flex-1">
+                    <span className={`text-base block leading-snug ${isSelected ? 'text-blue-900 font-medium' : 'text-gray-700'}`}>
                       {opt.label}
                     </span>
-                    <input
-                      type="checkbox"
-                      className="hidden"
-                      name={question.id}
-                      value={opt.value}
-                      checked={isSelected}
-                      onChange={(e) => {
-                        let newValues = [...selectedValues];
-                        if (e.target.checked) {
-                          newValues.push(question.type === QuestionType.CHECKBOX ? opt.value : { selected: opt.value });
-                        } else {
-                          newValues = newValues.filter((v: any) => v.selected !== opt.value && v !== opt.value);
-                        }
-                        onChange(question.id, newValues);
-                      }}
-                    />
-                  </label>
+                  </div>
+                  <input
+                    type="checkbox"
+                    className="hidden"
+                    name={question.id}
+                    value={opt.value}
+                    checked={isSelected}
+                    onChange={(e) => {
+                      let newValues = [...selectedValues];
+                      if (e.target.checked) {
+                        newValues.push(qType === 'checkbox' ? opt.value : { selected: opt.value });
+                      } else {
+                        newValues = newValues.filter((v: any) => (typeof v === 'object' ? v.selected !== opt.value : v !== opt.value));
+                      }
+                      onChange(question.id, newValues);
+                    }}
+                  />
+                </label>
 
-                  <AnimatePresence>
-                    {isSelected && opt.requiresInput && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="pl-8 overflow-hidden"
-                      >
+                {/* Nested Input for CHECKBOX_WITH_INPUT */}
+                <AnimatePresence>
+                  {isSelected && opt.requiresInput && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                      animate={{ opacity: 1, height: 'auto', marginTop: 12 }}
+                      exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="pl-12 pr-4 pb-2">
                         <input
                           type="text"
-                          placeholder={opt.inputPlaceholder || '请输入...'}
-                          className="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                          placeholder={opt.inputPlaceholder || '请输入详细信息...'}
+                          className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
                           value={currentValue?.input || ''}
                           onChange={(e) => {
                             const newValues = selectedValues.map((v: any) => {
-                              if (v.selected === opt.value) {
-                                return { ...v, input: e.target.value };
+                              if ((typeof v === 'object' ? v.selected : v) === opt.value) {
+                                return { selected: opt.value, input: e.target.value };
                               }
                               return v;
                             });
                             onChange(question.id, newValues);
                           }}
                         />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
-                  <AnimatePresence>
-                    {isSelected && opt.subQuestions && opt.subQuestions.length > 0 && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="pl-4 border-l-2 border-blue-100 ml-2 mt-2 space-y-4 overflow-hidden"
-                      >
-                        {opt.subQuestions.map(subQ => (
+                {/* Complex Sub-questions for CHECKBOX */}
+                <AnimatePresence>
+                  {isSelected && opt.subQuestions && opt.subQuestions.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                      animate={{ opacity: 1, height: 'auto', marginTop: 16 }}
+                      exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="pl-6 ml-6 border-l-2 border-blue-100/50 space-y-6 pb-4">
+                        {opt.subQuestions.map((subQ: any) => (
                           <QuestionRenderer
                             key={subQ.id}
                             question={subQ}
@@ -274,70 +306,97 @@ const QuestionRenderer: React.FC<{
                             depth={depth + 1}
                           />
                         ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              );
-            })}
-          </div>
-        );
-
-      case QuestionType.INPUT_GROUP:
-        return (
-          <div className="flex flex-wrap gap-3">
-            {question.fields?.map(field => (
-              <div key={field.id} className="flex-1 min-w-[120px]">
-                {field.label && <span className="block text-xs text-gray-500 mb-1 ml-1">{field.label}</span>}
-                <div className="relative">
-                  <input
-                    type={field.type}
-                    placeholder={field.placeholder}
-                    className="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-                    value={value?.[field.id] || ''}
-                    onChange={(e) => onChange(question.id, { ...value, [field.id]: e.target.value })}
-                  />
-                  {field.unit && (
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
-                      {field.unit}
-                    </span>
+                      </div>
+                    </motion.div>
                   )}
-                </div>
+                </AnimatePresence>
               </div>
-            ))}
-          </div>
-        );
-
-      case QuestionType.TEXTAREA:
-        return (
-          <div className="w-full">
-            <textarea
-              rows={4}
-              placeholder={question.placeholder || '请输入...'}
-              className="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-y min-h-[100px]"
-              value={value || ''}
-              onChange={(e) => onChange(question.id, e.target.value)}
-            />
-          </div>
-        );
-
-      default:
-        return <div className="text-sm text-gray-400">Unsupported question type: {question.type}</div>;
+            );
+          })}
+        </div>
+      );
     }
+
+    // 3. INPUT_GROUP (Multiple inputs in one question)
+    if (qType === 'input_group') {
+      return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {question.fields?.map((field: any) => (
+            <div key={field.id} className="flex flex-col">
+              {field.label && <span className="block text-sm text-gray-600 mb-1.5 ml-1">{field.label}</span>}
+              <div className="relative">
+                <input
+                  type={field.type || 'text'}
+                  placeholder={field.placeholder}
+                  className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                  value={value?.[field.id] || ''}
+                  onChange={(e) => onChange(question.id, { ...value, [field.id]: e.target.value })}
+                />
+                {field.suffix && (
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
+                    {field.suffix}
+                  </span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    // 4. TEXTAREA
+    if (qType === 'textarea') {
+      return (
+        <div className="w-full">
+          <textarea
+            rows={4}
+            placeholder={question.placeholder || '请输入详细描述...'}
+            className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-y min-h-[120px]"
+            value={value || ''}
+            onChange={(e) => onChange(question.id, e.target.value)}
+          />
+        </div>
+      );
+    }
+
+    // 5. SINGLE INPUT
+    if (qType === 'input' || qType === 'text' || qType === 'number' || qType === 'date') {
+      return (
+        <div className="w-full">
+          <input
+            type={qType === 'input' ? 'text' : qType}
+            placeholder={question.placeholder || '请输入...'}
+            className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+            value={value || ''}
+            onChange={(e) => onChange(question.id, e.target.value)}
+          />
+        </div>
+      );
+    }
+
+    return <div className="text-sm text-gray-400 p-4 bg-gray-50 rounded-xl">不支持的题型: {qType}</div>;
   };
 
   return (
-    <div className={`bg-white rounded-3xl p-5 shadow-sm border border-gray-50 ${depth > 0 ? 'bg-transparent shadow-none border-none p-0' : ''}`}>
-      <div className="mb-4">
-        <h3 className={`font-medium text-gray-900 ${depth > 0 ? 'text-sm' : 'text-base'}`}>
-          {question.title || (question as any).text}
-          {question.required && <span className="text-red-400 ml-1">*</span>}
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={`
+        relative
+        ${depth === 0 ? 'bg-white rounded-3xl p-6 shadow-sm border border-gray-100' : ''}
+      `}
+    >
+      <div className="mb-5">
+        <h3 className={`font-medium text-gray-900 leading-relaxed ${depth > 0 ? 'text-base' : 'text-lg'}`}>
+          {qTitle}
+          {question.required && <span className="text-red-500 ml-1.5">*</span>}
         </h3>
         {question.description && (
-          <p className="text-sm text-gray-500 mt-1">{question.description}</p>
+          <p className="text-sm text-gray-500 mt-2 leading-relaxed">{question.description}</p>
         )}
       </div>
       {renderContent()}
-    </div>
+    </motion.div>
   );
 };
+

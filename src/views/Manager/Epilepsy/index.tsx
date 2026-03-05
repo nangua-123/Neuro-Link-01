@@ -4,11 +4,13 @@ import { motion } from 'motion/react';
 import { Activity, CheckCircle2, Calendar, Phone, Pill, Video, ShieldAlert } from 'lucide-react';
 import { useRecallStore, DangerLevel, RecallReason } from '../../../store/recall';
 import { Button, Popup, Radio, Space } from 'antd-mobile';
+import SeizureCalendar from './SeizureCalendar';
 
 export default function EpilepsyManager() {
   const [isRecording, setIsRecording] = useState(false);
   const [countdown, setCountdown] = useState(3);
   const [showQuestion, setShowQuestion] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
   const [duration, setDuration] = useState<string>('');
   const { triggerRecall } = useRecallStore();
 
@@ -170,7 +172,10 @@ export default function EpilepsyManager() {
               <h3 className="text-sm font-medium text-slate-900 mb-1">专家在线复诊</h3>
               <p className="text-xs text-slate-500">华西专病团队</p>
             </div>
-            <div className="bg-white rounded-2xl p-4 shadow-[0_2px_10px_rgb(0,0,0,0.02)] border border-slate-100/80 active:scale-95 transition-transform cursor-pointer">
+            <div 
+              className="bg-white rounded-2xl p-4 shadow-[0_2px_10px_rgb(0,0,0,0.02)] border border-slate-100/80 active:scale-95 transition-transform cursor-pointer"
+              onClick={() => setShowCalendar(true)}
+            >
               <div className="w-8 h-8 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center mb-3">
                 <Activity className="w-4 h-4" />
               </div>
@@ -230,6 +235,21 @@ export default function EpilepsyManager() {
             保存记录
           </Button>
         </div>
+      </Popup>
+
+      {/* 发作日历与趋势弹窗 */}
+      <Popup
+        visible={showCalendar}
+        onMaskClick={() => setShowCalendar(false)}
+        bodyStyle={{
+          borderTopLeftRadius: '24px',
+          borderTopRightRadius: '24px',
+          minHeight: '60vh',
+          padding: '20px',
+          backgroundColor: '#F8FAFC'
+        }}
+      >
+        <SeizureCalendar />
       </Popup>
     </div>
   );

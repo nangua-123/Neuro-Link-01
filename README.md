@@ -48,6 +48,13 @@
 - `tailwindcss`: 样式引擎。
 
 ## Changelog
+### v0.9.2 (Phase 5.4 Cognitive Manager Dashboard & Dual Identity)
+- 重构 `src/views/Manager/Cognitive/index.tsx`，实现认知护航管家核心业务面板：
+  - **Status Overview**：引入身份双轨制，根据 `useAppStore` 的 `identity` 动态切换患者/家属视角的文案。实现“LBS 实时安全围栏”状态卡片，提供安心的视觉反馈。
+  - **Daily Actions**：实现“今日脑力训练”卡片（DTx 数字疗法入口）。针对家属视角，独家展示“照护微随访”模块，提供极轻量的日常状态收集（如睡眠质量评价）。
+  - **Medical Services**：实现“复查动态量表（CDR）”与“照护者心理支持”的常驻入口。
+  - 彻底规避适老化设计，保持与癫痫、偏头痛管家高度一致的“阿福式”现代科技质感，大量使用充裕留白、高级柔和阴影与深邃蓝/科技蓝弥散渐变。
+
 ### v0.9.1 (Phase 5.3 Migraine Manager Dashboard & MOH Firewall)
 - 重构 `src/views/Manager/Migraine/index.tsx`，实现偏头痛管家核心业务面板：
   - **Status Overview & MOH Firewall**：从 `useAppStore` 读取 `painkillerDays`。当达到 15 天红线时，看板呈现极强的红色警示状态，警告极易诱发 MOH；未达红线时显示安全的紫色系状态。

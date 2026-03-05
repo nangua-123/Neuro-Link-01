@@ -6,6 +6,7 @@ import { DiseaseTag } from '../../configs/constants';
 import { Brain, Activity, Zap, ArrowLeft, Clock, Bell, FileText } from 'lucide-react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import MigraineManager from './Migraine';
+import CognitiveManager from './Cognitive';
 
 export default function ManagerView() {
   const { selectedDiseaseTag, hasSignedAgreement } = useAppStore();
@@ -56,29 +57,6 @@ export default function ManagerView() {
     </div>
   );
 }
-
-const CognitiveManager = () => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    className="space-y-6"
-  >
-    <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-[32px] p-6 text-white shadow-xl shadow-blue-500/20 relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
-      <div className="flex items-center space-x-3 mb-4 relative z-10">
-        <div className="p-2.5 bg-white/20 rounded-2xl backdrop-blur-md">
-          <Brain className="w-6 h-6 text-white" />
-        </div>
-        <h2 className="text-xl font-semibold tracking-tight">认知护航管家</h2>
-      </div>
-      <p className="text-blue-50 text-sm leading-relaxed relative z-10 opacity-90">
-        您的 24 小时专属认知健康守护者。我们将为您提供个性化的干预训练与日常照护指导。
-      </p>
-    </div>
-
-    <PlaceholderCards />
-  </motion.div>
-);
 
 const EpilepsyManager = () => (
   <motion.div
