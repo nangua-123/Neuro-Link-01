@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { NavBar, SafeArea } from 'antd-mobile';
+import { NavBar, SafeArea, Toast } from 'antd-mobile';
 import { motion } from 'motion/react';
 import { calculateReport, ScoringResult } from '../../utils/scoring';
 import { Activity, AlertTriangle, Brain, ChevronRight, ShieldCheck, FileText } from 'lucide-react';
@@ -39,6 +39,14 @@ export default function ReportView() {
     signAgreement();
     setIsAgreementOpen(false);
     navigate('/manager');
+  };
+
+  const handleExpertConsultation = () => {
+    Toast.show({
+      content: '复核订单已生成，华西专家将在 48 小时内为您出具云端解读报告',
+      icon: 'success',
+      duration: 3000,
+    });
   };
 
   if (!result) {
@@ -183,7 +191,10 @@ export default function ReportView() {
             <ShieldCheck className="w-5 h-5" />
             <span>{result.ctaText}</span>
           </button>
-          <button className="w-full py-4 rounded-full bg-white text-gray-700 font-medium text-[15px] tracking-wide border border-gray-200 shadow-sm transform transition active:scale-95 flex items-center justify-center space-x-2">
+          <button 
+            onClick={handleExpertConsultation}
+            className="w-full py-4 rounded-full bg-white text-gray-700 font-medium text-[15px] tracking-wide border border-gray-200 shadow-sm transform transition active:scale-95 flex items-center justify-center space-x-2"
+          >
             <FileText className="w-5 h-5 text-gray-400" />
             <span>预约华西神经内科专家解读</span>
           </button>

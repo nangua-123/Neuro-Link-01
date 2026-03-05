@@ -17,6 +17,7 @@ interface AppState {
   // 业务状态
   selectedDiseaseTag: DiseaseTag;
   painkillerDays: number; // 本月已服止痛药天数 (MOH 防火墙)
+  isDeviceBound: boolean; // IoT 设备绑定状态
   
   // Actions
   setAuth: (token: string, identity: UserIdentity, familyId?: string) => void;
@@ -25,6 +26,7 @@ interface AppState {
   clearAuth: () => void;
   setDiseaseTag: (tag: DiseaseTag) => void;
   recordPainkiller: () => void;
+  bindDevice: () => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -37,6 +39,7 @@ export const useAppStore = create<AppState>()(
       hasSignedAgreement: false,
       selectedDiseaseTag: DiseaseTag.NONE,
       painkillerDays: 14, // Mock：默认14天，逼近15天红线以便测试 MOH 拦截
+      isDeviceBound: false,
       
       setAuth: (token, identity, familyId) => set({ 
         isAuthenticated: true, 
@@ -55,12 +58,15 @@ export const useAppStore = create<AppState>()(
         familyId: null, 
         hasSignedAgreement: false,
         selectedDiseaseTag: DiseaseTag.NONE,
-        painkillerDays: 14
+        painkillerDays: 14,
+        isDeviceBound: false
       }),
       
       setDiseaseTag: (tag) => set({ selectedDiseaseTag: tag }),
       
       recordPainkiller: () => set((state) => ({ painkillerDays: state.painkillerDays + 1 })),
+      
+      bindDevice: () => set({ isDeviceBound: true }),
     }),
     {
       name: 'neuro-link-app-storage',

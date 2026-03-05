@@ -35,7 +35,7 @@ interface RecallState {
   
   // Actions
   triggerRecall: (payload: RecallPayload) => void;
-  dismissRecall: (authCode: string) => boolean; // 需要极高权限（如医生授权码或家属强确认）才能解除
+  dismissRecall: () => void; 
 }
 
 export const useRecallStore = create<RecallState>()(
@@ -59,20 +59,15 @@ export const useRecallStore = create<RecallState>()(
         history: [...state.history, payload],
       })),
 
-      dismissRecall: (authCode) => {
-        // 模拟权限校验：只有特定授权码才能解除红色熔断
-        if (authCode === 'EMERGENCY_OVERRIDE_120') {
-          set({
-            isTriggered: false,
-            dangerLevel: null,
-            triggerReason: null,
-            message: null,
-            patientId: null,
-            timestamp: null,
-          });
-          return true;
-        }
-        return false;
+      dismissRecall: () => {
+        set({
+          isTriggered: false,
+          dangerLevel: null,
+          triggerReason: null,
+          message: null,
+          patientId: null,
+          timestamp: null,
+        });
       }
     }),
     {

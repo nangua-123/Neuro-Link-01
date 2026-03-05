@@ -199,11 +199,15 @@ const DIALOGUE_TREE: Record<string, NodeDef> = {
   }
 };
 
+import { useAppStore } from '../../store';
+import { DiseaseTag } from '../../configs/constants';
+
 // ==========================================
 // 视图层：纯粹的渲染引擎与交互控制
 // ==========================================
 export default function HomeView() {
   const navigate = useNavigate();
+  const { setDiseaseTag } = useAppStore();
   
   // 核心状态
   const [currentNodeId, setCurrentNodeId] = useState<string>('root');
@@ -223,6 +227,7 @@ export default function HomeView() {
   const [inputMode, setInputMode] = useState<'text' | 'voice'>('text');
   const [inputText, setInputText] = useState('');
   const [isRecording, setIsRecording] = useState(false);
+  const [isPaying, setIsPaying] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -331,9 +336,26 @@ export default function HomeView() {
     }, 1500);
   };
 
-  const handlePayment = () => {
-    Toast.show({ icon: 'loading', content: '正在拉起支付...' });
+  const handlePayment = (tags: string[] = []) => {
+    if (isPaying) return;
+    setIsPaying(true);
+    
+    // Determine disease tag based on collected tags
+    let tag = DiseaseTag.NONE;
+    const tagString = tags.join(',');
+    if (tagString.includes('记忆') || tagString.includes('认知') || tagString.includes('病程')) {
+      tag = DiseaseTag.AD;
+    } else if (tagString.includes('抽搐') || tagString.includes('发作') || tagString.includes('失神')) {
+      tag = DiseaseTag.EPILEPSY;
+    } else if (tagString.includes('头痛') || tagString.includes('搏动')) {
+      tag = DiseaseTag.MIGRAINE;
+    }
+    
+    setDiseaseTag(tag);
+
+    Toast.show({ icon: 'loading', content: '正在处理支付...' });
     setTimeout(() => {
+      setIsPaying(false);
       Toast.show({ icon: 'success', content: '支付成功' });
       navigate('/assessment');
     }, 1500);
@@ -460,11 +482,14 @@ export default function HomeView() {
                     </div>
 
                     <button 
-                      onClick={handlePayment}
-                      className="w-full rounded-full bg-gradient-to-r from-[#1677FF] to-[#4096FF] text-white font-medium py-3.5 shadow-[0_8px_24px_rgba(22,119,255,0.3)] active:scale-95 transition-transform flex items-center justify-center relative z-10"
+                      onClick={() => handlePayment(msg.tags)}
+                      disabled={isPaying}
+                      className="w-full rounded-full bg-gradient-to-r from-[#1677FF] to-[#4096FF] text-white font-medium py-3.5 shadow-[0_8px_24px_rgba(22,119,255,0.3)] active:scale-95 transition-transform flex items-center justify-center relative z-10 disabled:opacity-70"
                     >
-                      <span className="tracking-wide text-[15px]">支付 1 元解锁华西标准深度解析</span>
-                      <ChevronRight className="w-4 h-4 ml-1 opacity-80" />
+                      <span className="tracking-wide text-[15px]">
+                        {isPaying ? '处理中...' : '支付 1 元解锁华西标准深度解析'}
+                      </span>
+                      {!isPaying && <ChevronRight className="w-4 h-4 ml-1 opacity-80" />}
                     </button>
                   </div>
                 </div>
