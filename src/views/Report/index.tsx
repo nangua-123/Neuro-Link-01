@@ -13,7 +13,7 @@ export default function ReportView() {
   const navigate = useNavigate();
   const [result, setResult] = useState<ScoringResult | null>(null);
   const [isAgreementOpen, setIsAgreementOpen] = useState(false);
-  const { hasSignedAgreement, signAgreement } = useAppStore();
+  const { hasSignedAgreement, signAgreement, setDiseaseTag } = useAppStore();
 
   useEffect(() => {
     const payload = location.state?.payload || {};
@@ -26,6 +26,8 @@ export default function ReportView() {
   }, [location.state]);
 
   const handleCTAClick = () => {
+    const diseaseTag = location.state?.diseaseTag || DiseaseTag.NONE;
+    setDiseaseTag(diseaseTag);
     if (hasSignedAgreement) {
       navigate('/manager');
     } else {

@@ -21,6 +21,7 @@ interface AppState {
   // Actions
   setAuth: (token: string, identity: UserIdentity, familyId?: string) => void;
   signAgreement: () => void;
+  revokeAgreement: () => void;
   clearAuth: () => void;
   setDiseaseTag: (tag: DiseaseTag) => void;
   recordPainkiller: () => void;
@@ -45,6 +46,7 @@ export const useAppStore = create<AppState>()(
       }),
       
       signAgreement: () => set({ hasSignedAgreement: true }),
+      revokeAgreement: () => set({ hasSignedAgreement: false }),
       
       clearAuth: () => set({ 
         isAuthenticated: false, 

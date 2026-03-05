@@ -6,6 +6,7 @@ import HomeView from '../views/Home';
 import ManagerView from '../views/Manager';
 import MallView from '../views/Mall';
 import ProfileView from '../views/Profile';
+import EHRTimelineView from '../views/Profile/EHRTimeline';
 import LoginView from '../views/Login';
 import AssessmentView from '../views/Assessment';
 import CRFAssessmentView from '../views/CRFAssessment';
@@ -41,6 +42,10 @@ export const router = createBrowserRouter([
   {
     path: '/report',
     element: <RequireAuth><RequireAgreement><ReportView /></RequireAgreement></RequireAuth>,
+  },
+  {
+    path: '/ehr-timeline',
+    element: <RequireAuth><RequireAgreement><EHRTimelineView /></RequireAgreement></RequireAuth>,
   },
   {
     path: '/',
