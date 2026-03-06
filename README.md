@@ -48,6 +48,15 @@
 - `tailwindcss`: 样式引擎。
 
 ## Changelog
+### v0.9.3 (Phase 5.5 LBS Triage & Neuro-Pass Routing)
+- 提取 `NeuroPassModal` 组件至 `src/components/NeuroPassModal.tsx`，实现跨组件复用的动态二维码凭证弹窗。
+- 重构 `src/views/Report/index.tsx`，在报告页尾部接入 LBS 智能分流与导诊闭环：
+  - **LBS 智能分流引擎**：当患者测评结果为“中高风险”（`riskScore < 80`）时，动态渲染“就近协作网络 (LBS)”卡片。
+  - **线下履约凭证流转**：
+    - 实现 Mock 的一键地图导航逻辑（Toast 提示）。
+    - 实现跨组件唤起 `NeuroPassModal`，打通“线上检出异常 -> LBS 匹配就近网点 -> 唤起动态码准备就医”的完整患者流转链路。
+  - 严格遵循 C 端管家范式，卡片采用纯白底色、柔和阴影与精致的标签排版。
+
 ### v0.9.2 (Phase 5.4 Cognitive Manager Dashboard & Dual Identity)
 - 重构 `src/views/Manager/Cognitive/index.tsx`，实现认知护航管家核心业务面板：
   - **Status Overview**：引入身份双轨制，根据 `useAppStore` 的 `identity` 动态切换患者/家属视角的文案。实现“LBS 实时安全围栏”状态卡片，提供安心的视觉反馈。

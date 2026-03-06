@@ -83,52 +83,52 @@ export default function MedicationPunchSheet({ visible, onClose }: Props) {
         borderTopLeftRadius: '32px',
         borderTopRightRadius: '32px',
         minHeight: '70vh',
-        backgroundColor: '#F8FAFC',
+        backgroundColor: '#FAFAFA',
         padding: '24px'
       }}
     >
       <div className="flex flex-col h-full">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
               <Pill className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-slate-900 tracking-tight">用药打卡</h2>
-              <p className="text-xs text-slate-500 font-medium">抗癫痫药物 (AEDs) 依从性追踪</p>
+              <h2 className="text-lg font-bold text-slate-900 tracking-tight">用药打卡</h2>
+              <p className="text-[11px] text-slate-400 font-medium">抗癫痫药物 (AEDs) 依从性追踪</p>
             </div>
           </div>
         </div>
 
-        <div className="space-y-6 flex-1 overflow-y-auto pb-24">
+        <div className="space-y-5 flex-1 overflow-y-auto pb-24">
           {medications.map(med => {
             const totalTaken = calculateTotal(med);
             const prescribedTotal = calculatePrescribedTotal(med);
             const progress = (totalTaken / prescribedTotal) * 100;
 
             return (
-              <div key={med.id} className="bg-white rounded-3xl p-5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100/50">
+              <div key={med.id} className="bg-white rounded-[24px] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-slate-100/50">
                 {/* 药物头部信息 */}
-                <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-100">
+                    <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-100/50">
                       <Pill className="w-4 h-4 text-slate-400" />
                     </div>
-                    <h3 className="font-bold text-slate-800 text-lg">{med.name}</h3>
+                    <h3 className="font-bold text-slate-800 text-[15px]">{med.name}</h3>
                   </div>
                   <div className="text-right">
-                    <div className="text-xs text-slate-400 font-medium mb-0.5">今日已服 / 处方总量</div>
+                    <div className="text-[10px] text-slate-400 font-medium mb-0.5">今日已服 / 处方总量</div>
                     <div className="flex items-baseline justify-end space-x-1">
-                      <span className={`text-xl font-bold tracking-tight ${totalTaken === prescribedTotal ? 'text-emerald-500' : 'text-blue-600'}`}>
+                      <span className={`text-lg font-bold tracking-tight ${totalTaken === prescribedTotal ? 'text-emerald-500' : 'text-blue-600'}`}>
                         {totalTaken}
                       </span>
-                      <span className="text-sm font-medium text-slate-400">/ {prescribedTotal} mg</span>
+                      <span className="text-[11px] font-medium text-slate-400">/ {prescribedTotal} mg</span>
                     </div>
                   </div>
                 </div>
 
                 {/* 进度条 */}
-                <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden mb-6">
+                <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden mb-5">
                   <motion.div 
                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
@@ -144,10 +144,10 @@ export default function MedicationPunchSheet({ visible, onClose }: Props) {
                     <motion.div 
                       whileTap={{ scale: 0.95 }}
                       onClick={() => toggleDose(med.id, 'morning')}
-                      className={`relative p-3 rounded-2xl border-2 transition-all cursor-pointer flex flex-col items-center justify-center ${
+                      className={`relative p-3 rounded-[18px] border-2 transition-all cursor-pointer flex flex-col items-center justify-center ${
                         med.doses.morning.taken 
                           ? 'border-emerald-500 bg-emerald-50/50 shadow-sm shadow-emerald-500/10' 
-                          : 'border-slate-100 bg-slate-50/50'
+                          : 'border-slate-100/50 bg-slate-50/50'
                       }`}
                     >
                       <div className="absolute top-2 right-2">
@@ -157,8 +157,8 @@ export default function MedicationPunchSheet({ visible, onClose }: Props) {
                           <Circle className="w-4 h-4 text-slate-300" />
                         )}
                       </div>
-                      <Clock className={`w-5 h-5 mb-1.5 ${med.doses.morning.taken ? 'text-emerald-600' : 'text-slate-400'}`} />
-                      <span className={`text-xs font-semibold mb-0.5 ${med.doses.morning.taken ? 'text-emerald-700' : 'text-slate-600'}`}>早</span>
+                      <Clock className={`w-4 h-4 mb-1.5 ${med.doses.morning.taken ? 'text-emerald-600' : 'text-slate-400'}`} />
+                      <span className={`text-[11px] font-semibold mb-0.5 ${med.doses.morning.taken ? 'text-emerald-700' : 'text-slate-600'}`}>早</span>
                       <span className={`text-[10px] font-medium ${med.doses.morning.taken ? 'text-emerald-600/80' : 'text-slate-400'}`}>{med.doses.morning.amount}mg</span>
                     </motion.div>
                   )}
@@ -168,10 +168,10 @@ export default function MedicationPunchSheet({ visible, onClose }: Props) {
                     <motion.div 
                       whileTap={{ scale: 0.95 }}
                       onClick={() => toggleDose(med.id, 'noon')}
-                      className={`relative p-3 rounded-2xl border-2 transition-all cursor-pointer flex flex-col items-center justify-center ${
+                      className={`relative p-3 rounded-[18px] border-2 transition-all cursor-pointer flex flex-col items-center justify-center ${
                         med.doses.noon.taken 
                           ? 'border-emerald-500 bg-emerald-50/50 shadow-sm shadow-emerald-500/10' 
-                          : 'border-slate-100 bg-slate-50/50'
+                          : 'border-slate-100/50 bg-slate-50/50'
                       }`}
                     >
                       <div className="absolute top-2 right-2">
@@ -181,8 +181,8 @@ export default function MedicationPunchSheet({ visible, onClose }: Props) {
                           <Circle className="w-4 h-4 text-slate-300" />
                         )}
                       </div>
-                      <Clock className={`w-5 h-5 mb-1.5 ${med.doses.noon.taken ? 'text-emerald-600' : 'text-slate-400'}`} />
-                      <span className={`text-xs font-semibold mb-0.5 ${med.doses.noon.taken ? 'text-emerald-700' : 'text-slate-600'}`}>中</span>
+                      <Clock className={`w-4 h-4 mb-1.5 ${med.doses.noon.taken ? 'text-emerald-600' : 'text-slate-400'}`} />
+                      <span className={`text-[11px] font-semibold mb-0.5 ${med.doses.noon.taken ? 'text-emerald-700' : 'text-slate-600'}`}>中</span>
                       <span className={`text-[10px] font-medium ${med.doses.noon.taken ? 'text-emerald-600/80' : 'text-slate-400'}`}>{med.doses.noon.amount}mg</span>
                     </motion.div>
                   )}
@@ -192,10 +192,10 @@ export default function MedicationPunchSheet({ visible, onClose }: Props) {
                     <motion.div 
                       whileTap={{ scale: 0.95 }}
                       onClick={() => toggleDose(med.id, 'evening')}
-                      className={`relative p-3 rounded-2xl border-2 transition-all cursor-pointer flex flex-col items-center justify-center ${
+                      className={`relative p-3 rounded-[18px] border-2 transition-all cursor-pointer flex flex-col items-center justify-center ${
                         med.doses.evening.taken 
                           ? 'border-emerald-500 bg-emerald-50/50 shadow-sm shadow-emerald-500/10' 
-                          : 'border-slate-100 bg-slate-50/50'
+                          : 'border-slate-100/50 bg-slate-50/50'
                       }`}
                     >
                       <div className="absolute top-2 right-2">
@@ -205,8 +205,8 @@ export default function MedicationPunchSheet({ visible, onClose }: Props) {
                           <Circle className="w-4 h-4 text-slate-300" />
                         )}
                       </div>
-                      <Clock className={`w-5 h-5 mb-1.5 ${med.doses.evening.taken ? 'text-emerald-600' : 'text-slate-400'}`} />
-                      <span className={`text-xs font-semibold mb-0.5 ${med.doses.evening.taken ? 'text-emerald-700' : 'text-slate-600'}`}>晚</span>
+                      <Clock className={`w-4 h-4 mb-1.5 ${med.doses.evening.taken ? 'text-emerald-600' : 'text-slate-400'}`} />
+                      <span className={`text-[11px] font-semibold mb-0.5 ${med.doses.evening.taken ? 'text-emerald-700' : 'text-slate-600'}`}>晚</span>
                       <span className={`text-[10px] font-medium ${med.doses.evening.taken ? 'text-emerald-600/80' : 'text-slate-400'}`}>{med.doses.evening.amount}mg</span>
                     </motion.div>
                   )}
@@ -216,10 +216,10 @@ export default function MedicationPunchSheet({ visible, onClose }: Props) {
           })}
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#F8FAFC] via-[#F8FAFC] to-transparent">
+        <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-[#FAFAFA] via-[#FAFAFA] to-transparent">
           <button
             onClick={handleSubmit}
-            className="w-full py-4 rounded-full bg-slate-900 text-white font-medium text-[15px] tracking-wide shadow-xl shadow-slate-900/20 active:scale-95 transition-transform"
+            className="w-full py-3.5 rounded-full bg-slate-900 text-white font-medium text-[14px] tracking-wide shadow-xl shadow-slate-900/20 active:scale-95 transition-transform"
           >
             完成今日打卡
           </button>
