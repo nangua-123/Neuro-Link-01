@@ -19,6 +19,12 @@ interface AppState {
   painkillerDays: number; // 本月已服止痛药天数 (MOH 防火墙)
   isDeviceBound: boolean; // IoT 设备绑定状态
   
+  // 癫痫管家状态
+  medicationStatus: { morning: boolean; noon: boolean; evening: boolean };
+  
+  // 认知管家状态
+  sleepRating: number | null;
+  
   // Actions
   setAuth: (token: string, identity: UserIdentity, familyId?: string) => void;
   signAgreement: () => void;
@@ -27,6 +33,8 @@ interface AppState {
   setDiseaseTag: (tag: DiseaseTag) => void;
   recordPainkiller: () => void;
   bindDevice: () => void;
+  checkInMedication: (time: 'morning' | 'noon' | 'evening') => void;
+  rateSleep: (rating: number) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -40,6 +48,8 @@ export const useAppStore = create<AppState>()(
       selectedDiseaseTag: DiseaseTag.NONE,
       painkillerDays: 14, // Mock：默认14天，逼近15天红线以便测试 MOH 拦截
       isDeviceBound: false,
+      medicationStatus: { morning: false, noon: false, evening: false },
+      sleepRating: null,
       
       setAuth: (token, identity, familyId) => set({ 
         isAuthenticated: true, 
@@ -59,7 +69,9 @@ export const useAppStore = create<AppState>()(
         hasSignedAgreement: false,
         selectedDiseaseTag: DiseaseTag.NONE,
         painkillerDays: 14,
-        isDeviceBound: false
+        isDeviceBound: false,
+        medicationStatus: { morning: false, noon: false, evening: false },
+        sleepRating: null
       }),
       
       setDiseaseTag: (tag) => set({ selectedDiseaseTag: tag }),
@@ -67,6 +79,12 @@ export const useAppStore = create<AppState>()(
       recordPainkiller: () => set((state) => ({ painkillerDays: state.painkillerDays + 1 })),
       
       bindDevice: () => set({ isDeviceBound: true }),
+      
+      checkInMedication: (time) => set((state) => ({
+        medicationStatus: { ...state.medicationStatus, [time]: true }
+      })),
+      
+      rateSleep: (rating) => set({ sleepRating: rating }),
     }),
     {
       name: 'neuro-link-app-storage',

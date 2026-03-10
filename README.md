@@ -16,6 +16,7 @@
 - `src/interfaces/scale.ts`: 动态量表 JSON Schema 与画钟数据结构。
 - `src/interfaces/scaleEngine.ts`: 动态表单渲染引擎 Schema。
 - `src/interfaces/manager.ts`: 专病管家核心业务 Schema (ILAE, 头痛日记, CDR)。
+- `src/interfaces/manager_dashboard.ts`: [新增] 趋势洞察与 IoT 体征数据的契约。
 - `src/mocks/chat.ts`: 模拟的数字华佗 AI 交互流数据。
 - `src/services/envCapture.ts`: 静默环境探针服务（Mock LBS 与气象数据）。
 - `src/services/speech.ts`: 底层语音识别服务封装 (Web Speech API)。
@@ -27,6 +28,9 @@
 - `src/components/DynamicScale/index.tsx`: 动态量表渲染引擎。
 - `src/components/RecallOverlay/types.ts`: 全局 Recall 熔断总线高阶组件 Props 定义。
 - `src/components/RecallOverlay/index.tsx`: 全局最高优先级预警组件（全屏红色熔断）。
+- `src/components/Charts/TrendBarChart.tsx`: [新增] 基于 recharts 的柱状趋势图。
+- `src/components/Charts/VitalsGrid.tsx`: [新增] IoT 体征数据网格。
+- `src/components/IoTStatusCard/index.tsx`: [新增] 穿戴设备连接状态与快捷操作卡片。
 - `src/router/index.tsx`: 全局路由骨架（接入 AuthGuard 与 RequireAuth）。
 - `src/views/Login/index.tsx`: 极简准入登录页（支持双轨身份选择）。
 - `src/views/Layout/index.tsx`: 底部 TabBar 导航布局。
@@ -34,8 +38,9 @@
 - `src/views/Home/components/SymptomCard.tsx`: 初步症状提取图谱卡片与 1 元转化钩子。
 - `src/views/Assessment/index.tsx`: 深度医学测评页（含前置动态补录与动态量表引擎）。
 - `src/views/Manager/index.tsx`: 居家管家 Tab 占位（根据疾病标签动态渲染）。
-- `src/views/Manager/Epilepsy/index.tsx`: 癫痫【护航管家】视图（含紧急录像与熔断触发）。
-- `src/views/Manager/Migraine/index.tsx`: 偏头痛【头痛管家】视图（含头痛日记与 MOH 防火墙）。
+- `src/views/Manager/Epilepsy/index.tsx`: [重构] 癫痫【护航管家】视图（高密度排版、趋势图表、IoT 接入）。
+- `src/views/Manager/Migraine/index.tsx`: [重构] 偏头痛【头痛管家】视图（高密度排版、趋势图表、IoT 接入）。
+- `src/views/Manager/Cognitive/index.tsx`: [重构] 认知【护航管家】视图（高密度排版、趋势图表、IoT 接入）。
 - `src/views/Mall/index.tsx`: 商城 Tab 占位。
 - `src/views/Profile/index.tsx`: 档案 Tab 占位。
 - `src/App.tsx`: 挂载 RouterProvider 与 RecallOverlay。
@@ -46,8 +51,31 @@
 - `zustand`: 状态管理。
 - `antd-mobile`, `antd-mobile-icons`: UI 组件库。
 - `tailwindcss`: 样式引擎。
+- `recharts`: [新增] 数据可视化图表库。
 
 ## Changelog
+### v1.1.0 (Phase 6.1 Data Flow & Business Loop Integration)
+- **Batch 2: 身份双轨制深度适配 (Dual-Identity Adaptation)**：
+  - **癫痫管家 (`EpilepsyManager`)**：读取 `useAppStore` 中的 `identity`。当身份为家属 (`UserIdentity.FAMILY`) 时，动态将标题切换为“长辈癫痫护航管家”，并将紧急录像后的熔断报警文案切换为第三人称视角（“长辈癫痫发作已超过 5 分钟...”）。
+  - **偏头痛管家 (`MigraineManager`)**：读取 `identity`。当身份为家属时，动态将标题切换为“长辈偏头痛管家”，将干预按钮文案切换为“记录长辈头痛”、“长辈服用止痛药”，并将 MOH 红色防火墙的警告文案切换为第三人称视角的协助提醒。
+  - **设备看板 (`DeviceView`)**：读取 `identity`。当身份为家属时，将夜间持续异常放电的熔断报警文案从“我已安全”切换为“长辈已安全”，并将系统通知文案调整为“系统已自动通知其他紧急联系人”。
+- **Batch 1: 全局状态持久化与业务闭环 (State Persistence & Business Loop)**：
+  - 在 `src/store/index.ts` 中新增 `medicationStatus`（癫痫服药状态）和 `sleepRating`（认知睡眠评价）状态。
+  - 接入 Zustand `persist` 中间件，确保用户打卡数据在本地持久化存储。
+  - **认知管家**：打通“复查动态量表”入口，精准路由至 `/assessment?diseaseTag=AD`；“今日脑力训练”接入 Mock 交互。
+  - **癫痫管家**：重构“服药打卡”逻辑，直接读取并更新全局 Store；“专家在线复诊”接入 Mock 交互。
+  - **偏头痛管家**：重构“服用止痛药”逻辑，点击后更新全局 `painkillerDays` 并触发 Toast 提示；“CGRP 靶向药”入口精准路由至 `/assessment?diseaseTag=Migraine`；“记录今日头痛”与“历史日历”接入 Mock 交互。
+
+### v1.0.0 (Phase 6 Manager Dashboard Commercial Refactor)
+- **UI/UX 体验红线纠偏**：全面重构 `Manager` 目录下的三大专病管家视图。彻底摒弃适老化的大字体设计，将字号降级为 `text-sm`、`text-xs`，采用更紧凑的间距（`gap-3`, `p-4`），恢复标准的、严肃的、现代 C 端消费级 SaaS 的排版体系。
+- **业务目标 1：新增“健康趋势洞察”看板**：
+  - 引入 `recharts` 库，新增 `TrendBarChart` 组件。
+  - 在管家首页的“专属核心舱”区域，基于 Mock 的历史打卡记录，渲染直观的趋势分析（如：近 7 日用药依从性、近 30 天发作频率变化）。
+- **业务目标 2：深化“IoT 软硬一体化”数据生态**：
+  - 新增 `IoTStatusCard` 和 `VitalsGrid` 组件。
+  - 在“日常健康基座”区域，动态展示由 Neuro-Band 同步的 24 小时高价值体征数据概览（如 HRV、夜间深睡比例、EEG 脑电波形健康度）。
+  - 强化设备接入感，未连接时提供极简的连接引导。
+
 ### v0.9.3 (Phase 5.5 LBS Triage & Neuro-Pass Routing)
 - 提取 `NeuroPassModal` 组件至 `src/components/NeuroPassModal.tsx`，实现跨组件复用的动态二维码凭证弹窗。
 - 重构 `src/views/Report/index.tsx`，在报告页尾部接入 LBS 智能分流与导诊闭环：

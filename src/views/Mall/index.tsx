@@ -3,7 +3,7 @@ import { NavBar, Toast, Popup, SafeArea } from 'antd-mobile';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../store';
 import { DiseaseTag } from '../../configs/constants';
-import { Check, Shield, Zap, Watch, Brain, Bluetooth, Loader2 } from 'lucide-react';
+import { Check, Shield, Zap, Watch, Brain, Bluetooth, Loader2, ChevronLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface PackageInfo {
@@ -97,17 +97,26 @@ export default function MallView() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col pb-24">
-      <div className="bg-white/80 backdrop-blur-xl sticky top-0 z-10 border-b border-slate-100/50">
-        <NavBar onBack={() => navigate(-1)}>
-          <span className="font-medium text-slate-800">服务商城</span>
+    <div className="min-h-screen bg-[#FAFAFA] flex flex-col pb-24 relative overflow-hidden">
+      {/* 极浅弥散暖色渐变背景 */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+        <div className="absolute -top-[10%] -right-[10%] w-[120%] h-[50%] bg-gradient-to-b from-[#E8F3FF] to-transparent opacity-60 blur-3xl" />
+        <div className="absolute top-[20%] -left-[20%] w-[80%] h-[60%] bg-gradient-to-tr from-[#FFF0E6] to-transparent opacity-30 blur-3xl" />
+      </div>
+
+      <div className="bg-white/80 backdrop-blur-xl sticky top-0 z-10 border-b border-slate-100/50 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+        <NavBar 
+          onBack={() => navigate(-1)}
+          backArrow={<ChevronLeft className="w-6 h-6 text-slate-700" />}
+        >
+          <span className="font-medium text-slate-900">服务商城</span>
         </NavBar>
       </div>
 
-      <div className="p-6">
-        <div className="mb-8 text-center">
-          <h1 className="text-2xl font-semibold text-slate-900 tracking-tight mb-2">专病生命守护服务</h1>
-          <p className="text-sm text-slate-500">软硬一体化闭环，全天候医疗级护航</p>
+      <div className="p-5 relative z-10">
+        <div className="mb-8 text-center mt-2">
+          <h1 className="text-[24px] font-bold text-slate-900 tracking-tight mb-2">专病生命守护服务</h1>
+          <p className="text-[14px] text-slate-500 font-medium">软硬一体化闭环，全天候医疗级护航</p>
         </div>
 
         <div className="space-y-6">
@@ -121,43 +130,43 @@ export default function MallView() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="relative bg-white rounded-[32px] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/80"
+                className="relative bg-white rounded-[28px] overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100/50"
               >
                 {isMatch && (
-                  <div className="absolute top-0 right-0 bg-gradient-to-l from-amber-400 to-amber-500 text-white text-[10px] font-bold px-4 py-1.5 rounded-bl-2xl z-10 tracking-wider">
+                  <div className="absolute top-0 right-0 bg-gradient-to-l from-amber-400 to-amber-500 text-white text-[11px] font-bold px-4 py-1.5 rounded-bl-[16px] z-10 tracking-wider shadow-sm">
                     推荐匹配
                   </div>
                 )}
 
                 {/* Header Section */}
-                <div className={`p-8 relative overflow-hidden ${isBlue ? 'bg-gradient-to-br from-blue-600 to-indigo-700' : 'bg-gradient-to-br from-indigo-600 to-purple-700'}`}>
+                <div className={`p-6 relative overflow-hidden ${isBlue ? 'bg-gradient-to-br from-blue-600 to-indigo-700' : 'bg-gradient-to-br from-indigo-600 to-purple-700'}`}>
                   <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
                   
                   <div className="relative z-10 text-white">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="p-2.5 bg-white/20 rounded-2xl backdrop-blur-md">
+                      <div className="p-2.5 bg-white/20 rounded-[16px] backdrop-blur-md border border-white/20 shadow-inner">
                         <pkg.icon className="w-6 h-6" />
                       </div>
-                      <h2 className="text-xl font-semibold tracking-tight">{pkg.title}</h2>
+                      <h2 className="text-[20px] font-semibold tracking-tight">{pkg.title}</h2>
                     </div>
                     
                     <div className="flex items-baseline gap-1 mb-2">
-                      <span className="text-sm opacity-80">¥</span>
-                      <span className="text-4xl font-bold tracking-tight">{pkg.price}</span>
-                      <span className="text-sm opacity-80">/{pkg.duration}</span>
+                      <span className="text-[16px] opacity-80 font-medium">¥</span>
+                      <span className="text-[40px] font-bold tracking-tight">{pkg.price}</span>
+                      <span className="text-[14px] opacity-80 font-medium">/{pkg.duration}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Content Section */}
                 <div className="p-6">
-                  <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl mb-6">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isBlue ? 'bg-blue-100 text-blue-600' : 'bg-indigo-100 text-indigo-600'}`}>
+                  <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-[20px] mb-6 border border-slate-100/50">
+                    <div className={`w-10 h-10 rounded-[16px] flex items-center justify-center ${isBlue ? 'bg-blue-100 text-blue-600' : 'bg-indigo-100 text-indigo-600'}`}>
                       <Watch className="w-5 h-5" />
                     </div>
                     <div>
                       <div className="text-[11px] text-slate-400 font-medium uppercase tracking-wider mb-0.5">配套硬件</div>
-                      <div className="text-sm font-semibold text-slate-900">{pkg.hardware}</div>
+                      <div className="text-[14px] font-semibold text-slate-900">{pkg.hardware}</div>
                     </div>
                   </div>
 
@@ -167,7 +176,7 @@ export default function MallView() {
                         <div className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${isBlue ? 'bg-blue-50 text-blue-500' : 'bg-indigo-50 text-indigo-500'}`}>
                           <Check className="w-3 h-3" strokeWidth={3} />
                         </div>
-                        <span className="text-sm text-slate-600 leading-relaxed">{feature}</span>
+                        <span className="text-[14px] text-slate-600 leading-relaxed font-medium">{feature}</span>
                       </div>
                     ))}
                   </div>
@@ -175,10 +184,10 @@ export default function MallView() {
                   <button
                     onClick={() => handleSubscribe(pkg.id)}
                     disabled={isSubscribing !== null}
-                    className={`w-full py-4 rounded-2xl font-medium text-[15px] tracking-wide flex items-center justify-center gap-2 transition-transform active:scale-95 ${
+                    className={`w-full py-4 rounded-[24px] font-medium text-[16px] tracking-wide flex items-center justify-center gap-2 transition-transform active:scale-95 ${
                       isBlue 
-                        ? 'bg-blue-600 text-white shadow-[0_8px_20px_rgba(37,99,235,0.2)]' 
-                        : 'bg-indigo-600 text-white shadow-[0_8px_20px_rgba(79,70,229,0.2)]'
+                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_8px_24px_rgba(79,70,229,0.25)]' 
+                        : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-[0_8px_24px_rgba(124,58,237,0.25)]'
                     }`}
                   >
                     {isSubscribing === pkg.id ? (
@@ -227,7 +236,7 @@ export default function MallView() {
                     transition={{ duration: 2, repeat: Infinity }}
                     className="absolute inset-0 bg-blue-400 rounded-full blur-xl"
                   />
-                  <div className="relative w-32 h-32 bg-gradient-to-br from-slate-50 to-slate-100 rounded-full shadow-xl border border-white flex items-center justify-center z-10">
+                  <div className="relative w-32 h-32 bg-gradient-to-br from-slate-50 to-slate-100 rounded-full shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-white flex items-center justify-center z-10">
                     <Watch className="w-16 h-16 text-slate-800" strokeWidth={1.5} />
                     <div className="absolute bottom-2 right-2 w-8 h-8 bg-blue-500 rounded-full border-2 border-white flex items-center justify-center shadow-md">
                       <Bluetooth className="w-4 h-4 text-white" />
@@ -235,21 +244,21 @@ export default function MallView() {
                   </div>
                 </div>
 
-                <h2 className="text-2xl font-semibold text-slate-900 mb-3 tracking-tight">Neuro-Band Pro</h2>
-                <p className="text-sm text-slate-500 text-center mb-10 px-4 leading-relaxed">
+                <h2 className="text-[24px] font-bold text-slate-900 mb-3 tracking-tight">Neuro-Band Pro</h2>
+                <p className="text-[14px] text-slate-500 text-center mb-10 px-4 leading-relaxed font-medium">
                   检测到您的专属穿戴设备已开机，是否立即绑定以开启 24 小时生命体征守护？
                 </p>
 
                 <div className="w-full space-y-3">
                   <button
                     onClick={handleBind}
-                    className="w-full py-4 bg-blue-600 text-white rounded-2xl font-medium text-[15px] shadow-[0_8px_20px_rgba(37,99,235,0.2)] active:scale-95 transition-transform"
+                    className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-[24px] font-medium text-[16px] shadow-[0_8px_24px_rgba(79,70,229,0.25)] active:scale-95 transition-transform"
                   >
                     立即绑定
                   </button>
                   <button
                     onClick={() => setShowBindModal(false)}
-                    className="w-full py-4 bg-slate-50 text-slate-600 rounded-2xl font-medium text-[15px] active:scale-95 transition-transform"
+                    className="w-full py-4 bg-slate-50 text-slate-600 rounded-[24px] font-medium text-[16px] active:scale-95 transition-transform border border-slate-100/50"
                   >
                     稍后设置
                   </button>
@@ -271,8 +280,8 @@ export default function MallView() {
                     <Bluetooth className="w-8 h-8 text-blue-600" />
                   </div>
                 </div>
-                <h3 className="text-lg font-medium text-slate-900 mb-2">正在建立加密连接...</h3>
-                <p className="text-sm text-slate-500">请保持设备靠近手机</p>
+                <h3 className="text-[18px] font-semibold text-slate-900 mb-2 tracking-tight">正在建立加密连接...</h3>
+                <p className="text-[14px] text-slate-500 font-medium">请保持设备靠近手机</p>
               </motion.div>
             )}
           </AnimatePresence>

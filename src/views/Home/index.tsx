@@ -362,25 +362,25 @@ export default function HomeView() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#F7F8FA] relative overflow-hidden">
+    <div className="flex flex-col h-full bg-[#FAFAFA] relative overflow-hidden">
       {/* 极浅弥散暖色渐变背景 */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-        <div className="absolute -top-[10%] -right-[10%] w-[120%] h-[50%] bg-gradient-to-b from-[#E8F3FF] to-transparent opacity-80 blur-3xl" />
-        <div className="absolute top-[20%] -left-[20%] w-[80%] h-[60%] bg-gradient-to-tr from-[#FFF0E6] to-transparent opacity-40 blur-3xl" />
+        <div className="absolute -top-[10%] -right-[10%] w-[120%] h-[50%] bg-gradient-to-b from-[#E8F3FF] to-transparent opacity-60 blur-3xl" />
+        <div className="absolute top-[20%] -left-[20%] w-[80%] h-[60%] bg-gradient-to-tr from-[#FFF0E6] to-transparent opacity-30 blur-3xl" />
       </div>
 
       {/* 极窄顶部状态栏 */}
-      <div className="absolute top-0 left-0 w-full z-20 bg-white/80 backdrop-blur-md pt-3 pb-2 px-4 flex items-center justify-between shadow-[0_2px_10px_rgba(0,0,0,0.02)] border-b border-white/50">
+      <div className="absolute top-0 left-0 w-full z-20 bg-white/80 backdrop-blur-md pt-3 pb-2 px-4 flex items-center justify-between shadow-[0_2px_10px_rgba(0,0,0,0.02)] border-b border-slate-100/50">
         <div className="w-8 flex items-center justify-start cursor-pointer active:opacity-70"></div>
         <div className="flex flex-col items-center justify-center">
           <div className="flex items-center space-x-1.5">
             <div className="relative w-5 h-5 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center border border-white/80 shadow-sm">
-              <div className="absolute inset-0 rounded-full bg-[#1677FF] opacity-20 animate-pulse" />
-              <Sparkles className="text-[#1677FF] w-3 h-3 z-10" />
+              <div className="absolute inset-0 rounded-full bg-blue-500 opacity-20 animate-pulse" />
+              <Sparkles className="text-blue-600 w-3 h-3 z-10" />
             </div>
-            <span className="text-[14px] font-semibold text-gray-900 tracking-wide">数字华佗</span>
+            <span className="text-[14px] font-semibold text-slate-900 tracking-wide">数字华佗</span>
           </div>
-          <span className="text-[10px] text-gray-500 font-medium tracking-wide mt-0.5">
+          <span className="text-[10px] text-slate-500 font-medium tracking-wide mt-0.5">
             {isThinking ? '正在分析症状...' : '全天候在线管家'}
           </span>
         </div>
@@ -396,20 +396,20 @@ export default function HomeView() {
                 <div key={msg.id} className="flex flex-col items-start max-w-[92%] animate-fade-in">
                   <div className="flex items-start">
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center border border-white/80 shadow-sm mr-2 flex-shrink-0 mt-1">
-                      <Sparkles className="text-[#1677FF] w-4 h-4" />
+                      <Sparkles className="text-blue-600 w-4 h-4" />
                     </div>
                     <div className="flex flex-col">
                       {msg.progress && (
                         <div className="flex items-center space-x-1 mb-1.5 ml-1">
-                          <span className="text-[11px] text-gray-400 font-medium">问诊进度 {msg.progress}%</span>
-                          <div className="w-2 h-2 rounded-full border border-gray-300 border-t-[#1677FF] animate-spin" />
+                          <span className="text-[11px] text-slate-400 font-medium">问诊进度 {msg.progress}%</span>
+                          <div className="w-2 h-2 rounded-full border border-slate-300 border-t-blue-500 animate-spin" />
                         </div>
                       )}
-                      <div className={`bg-white text-gray-800 rounded-2xl rounded-tl-sm px-4 py-3 text-[15px] leading-relaxed tracking-wide shadow-sm border border-gray-100/50 ${msg.isConclusion ? 'border-l-4 border-l-green-400' : ''}`}>
+                      <div className={`bg-white text-slate-800 rounded-[20px] rounded-tl-sm px-4 py-3 text-[15px] leading-relaxed tracking-wide shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-slate-100/50 ${msg.isConclusion ? 'border-l-4 border-l-emerald-400' : ''}`}>
                         {/* 简单的高亮处理逻辑 */}
                         {msg.content?.split(/(记忆力下降|突发抽搐|剧烈头痛|典型偏头痛|认知功能衰退|癫痫发作)/g).map((part, i) => 
                           /(记忆力下降|突发抽搐|剧烈头痛|典型偏头痛|认知功能衰退|癫痫发作)/.test(part) ? 
-                            <span key={i} className="font-semibold text-[#1677FF]">{part}</span> : 
+                            <span key={i} className="font-semibold text-blue-600">{part}</span> : 
                             <span key={i}>{part}</span>
                         )}
                       </div>
@@ -421,7 +421,7 @@ export default function HomeView() {
                         <div 
                           key={idx}
                           onClick={() => handleOptionClick(opt, msg.id, msg.nodeId!)}
-                          className="bg-white text-[#1677FF] border border-blue-100 shadow-sm rounded-xl px-4 py-2.5 text-[14px] font-medium cursor-pointer active:bg-blue-50 transition-colors flex items-center"
+                          className="bg-white text-blue-600 border border-blue-100 shadow-[0_2px_10px_rgba(37,99,235,0.05)] rounded-[16px] px-4 py-2.5 text-[14px] font-medium cursor-pointer active:bg-blue-50 transition-colors flex items-center"
                         >
                           {opt}
                         </div>
@@ -435,7 +435,7 @@ export default function HomeView() {
             if (msg.role === 'user') {
               return (
                 <div key={msg.id} className="flex items-start justify-end w-full animate-fade-in">
-                  <div className="bg-[#1677FF] text-white rounded-2xl rounded-tr-sm px-4 py-3 shadow-[0_4px_12px_rgba(22,119,255,0.2)] max-w-[85%] text-[15px] leading-relaxed tracking-wide">
+                  <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-[20px] rounded-tr-sm px-4 py-3 shadow-[0_4px_12px_rgba(79,70,229,0.2)] max-w-[85%] text-[15px] leading-relaxed tracking-wide">
                     {msg.content}
                   </div>
                 </div>
@@ -445,23 +445,23 @@ export default function HomeView() {
             if (msg.role === 'card') {
               return (
                 <div key={msg.id} className="w-full flex justify-center animate-fade-in-up mt-6">
-                  <div className="bg-white rounded-3xl border border-blue-100 shadow-[0_12px_40px_rgba(22,119,255,0.08)] p-5 w-full relative overflow-hidden">
+                  <div className="bg-white rounded-[28px] border border-blue-100/50 shadow-[0_12px_40px_rgba(37,99,235,0.08)] p-5 w-full relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full opacity-50 blur-2xl pointer-events-none" />
                     <div className="absolute -top-4 -right-4 opacity-[0.03] pointer-events-none transform rotate-12">
-                      <Activity className="w-32 h-32 text-[#1677FF]" />
+                      <Activity className="w-32 h-32 text-blue-600" />
                     </div>
 
                     <div className="flex items-center justify-between mb-4 relative z-10">
                       <div className="flex items-center">
                         <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center mr-3">
-                          <CheckCircle2 className="w-4 h-4 text-[#1677FF]" />
+                          <CheckCircle2 className="w-4 h-4 text-blue-600" />
                         </div>
-                        <h3 className="text-[17px] font-bold text-gray-900 tracking-wide">初步症状提取图谱</h3>
+                        <h3 className="text-[17px] font-bold text-slate-900 tracking-wide">初步症状提取图谱</h3>
                       </div>
                     </div>
 
                     {msg.riskText && (
-                      <div className="bg-red-50 rounded-lg p-2.5 mb-4 border border-red-100 flex items-start relative z-10">
+                      <div className="bg-red-50 rounded-[16px] p-3 mb-4 border border-red-100/50 flex items-start relative z-10">
                         <div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 mr-2 flex-shrink-0 animate-pulse" />
                         <span className="text-red-600 text-[13px] font-medium leading-relaxed">{msg.riskText}</span>
                       </div>
@@ -469,22 +469,22 @@ export default function HomeView() {
 
                     <div className="flex flex-wrap gap-2 mb-5 relative z-10">
                       {msg.tags?.map((tag, idx) => (
-                        <span key={idx} className="bg-blue-50 text-[#1677FF] rounded-full px-3.5 py-1.5 text-[13px] font-medium border border-blue-100/50">
+                        <span key={idx} className="bg-blue-50 text-blue-600 rounded-full px-3.5 py-1.5 text-[13px] font-medium border border-blue-100/50">
                           #{tag}
                         </span>
                       ))}
                     </div>
 
-                    <div className="bg-gray-50 rounded-xl p-3 mb-5 relative z-10 border border-gray-100">
-                      <p className="text-[12px] text-gray-500 leading-relaxed">
-                        为了排除器质性病变风险，我为您生成了一份<span className="font-semibold text-gray-700">《华西标准脑健康预检报告》</span>，包含用药禁忌筛查。
+                    <div className="bg-slate-50 rounded-[16px] p-3 mb-5 relative z-10 border border-slate-100/50">
+                      <p className="text-[12px] text-slate-500 leading-relaxed">
+                        为了排除器质性病变风险，我为您生成了一份<span className="font-semibold text-slate-700">《华西标准脑健康预检报告》</span>，包含用药禁忌筛查。
                       </p>
                     </div>
 
                     <button 
                       onClick={() => handlePayment(msg.tags)}
                       disabled={isPaying}
-                      className="w-full rounded-full bg-gradient-to-r from-[#1677FF] to-[#4096FF] text-white font-medium py-3.5 shadow-[0_8px_24px_rgba(22,119,255,0.3)] active:scale-95 transition-transform flex items-center justify-center relative z-10 disabled:opacity-70"
+                      className="w-full rounded-[24px] bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium py-3.5 shadow-[0_8px_24px_rgba(79,70,229,0.25)] active:scale-95 transition-transform flex items-center justify-center relative z-10 disabled:opacity-70"
                     >
                       <span className="tracking-wide text-[15px]">
                         {isPaying ? '处理中...' : '支付 1 元解锁华西标准深度解析'}
@@ -502,12 +502,12 @@ export default function HomeView() {
           {isThinking && (
             <div className="flex items-start max-w-[85%] animate-fade-in">
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center border border-white/80 shadow-sm mr-2 flex-shrink-0 mt-1">
-                <Sparkles className="text-[#1677FF] w-4 h-4" />
+                <Sparkles className="text-blue-600 w-4 h-4" />
               </div>
-              <div className="bg-white border border-gray-100/50 text-gray-500 rounded-2xl rounded-tl-sm px-5 py-3.5 shadow-sm flex items-center space-x-1.5">
-                <div className="w-1.5 h-1.5 bg-[#1677FF] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                <div className="w-1.5 h-1.5 bg-[#1677FF] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                <div className="w-1.5 h-1.5 bg-[#1677FF] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+              <div className="bg-white border border-slate-100/50 text-slate-500 rounded-[20px] rounded-tl-sm px-5 py-3.5 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex items-center space-x-1.5">
+                <div className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                <div className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                <div className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
               </div>
             </div>
           )}
@@ -516,11 +516,11 @@ export default function HomeView() {
       </div>
 
       {/* 悬浮药丸输入舱 (Floating Pill) - 完美解决间距问题并支持多模态 */}
-      <div className="absolute bottom-4 left-4 right-4 z-30 bg-white/90 backdrop-blur-xl rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-white/60 p-2 flex items-center space-x-2">
+      <div className="absolute bottom-4 left-4 right-4 z-30 bg-white/90 backdrop-blur-xl rounded-[24px] shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-white/60 p-2 flex items-center space-x-2">
         {/* 语音/键盘切换 */}
         <div 
           onClick={() => setInputMode(m => m === 'voice' ? 'text' : 'voice')} 
-          className="w-9 h-9 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 active:bg-gray-100 transition-colors cursor-pointer flex-shrink-0"
+          className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-600 active:bg-slate-100 transition-colors cursor-pointer flex-shrink-0"
         >
           {inputMode === 'voice' ? <Keyboard className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
         </div>
@@ -532,7 +532,7 @@ export default function HomeView() {
             value={inputText}
             onChange={e => setInputText(e.target.value)}
             placeholder="发消息或按住说话..."
-            className="flex-1 h-9 bg-transparent outline-none text-[14px] text-gray-800 placeholder-gray-400 px-2"
+            className="flex-1 h-10 bg-transparent outline-none text-[15px] text-slate-800 placeholder-slate-400 px-2"
             onKeyDown={e => {
               if (e.key === 'Enter') handleCustomInput(inputText, 'text');
             }}
@@ -545,10 +545,10 @@ export default function HomeView() {
               handleCustomInput('我感觉头晕，而且有点想吐...', 'voice'); 
             }}
             onPointerLeave={() => setIsRecording(false)}
-            className={`flex-1 h-9 rounded-full flex items-center justify-center text-white text-[14px] font-medium transition-all select-none cursor-pointer ${
+            className={`flex-1 h-10 rounded-full flex items-center justify-center text-white text-[15px] font-medium transition-all select-none cursor-pointer ${
               isRecording 
                 ? 'bg-gradient-to-r from-red-500 to-red-600 scale-[0.98] shadow-inner' 
-                : 'bg-gradient-to-r from-[#1677FF] to-[#4096FF] active:scale-[0.98]'
+                : 'bg-gradient-to-r from-blue-600 to-indigo-600 active:scale-[0.98]'
             }`}
           >
             {isRecording ? '松开 发送' : '按住 说话'}
@@ -559,7 +559,7 @@ export default function HomeView() {
         {inputMode === 'text' && inputText.trim() ? (
           <div 
             onClick={() => handleCustomInput(inputText, 'text')} 
-            className="w-9 h-9 rounded-full bg-[#1677FF] flex items-center justify-center text-white active:bg-blue-600 transition-colors cursor-pointer flex-shrink-0"
+            className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white active:bg-blue-700 transition-colors cursor-pointer flex-shrink-0"
           >
             <Send className="w-4 h-4 ml-0.5" />
           </div>
@@ -567,13 +567,13 @@ export default function HomeView() {
           <div className="flex items-center space-x-2 flex-shrink-0">
             <div 
               onClick={() => handleCustomInput('[图片]', 'camera')}
-              className="w-9 h-9 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 active:bg-gray-100 transition-colors cursor-pointer"
+              className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-600 active:bg-slate-100 transition-colors cursor-pointer"
             >
               <Plus className="w-5 h-5" />
             </div>
             <div 
               onClick={() => handleCustomInput('[图片]', 'camera')}
-              className="w-9 h-9 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 active:bg-gray-100 transition-colors cursor-pointer"
+              className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-600 active:bg-slate-100 transition-colors cursor-pointer"
             >
               <Camera className="w-5 h-5" />
             </div>

@@ -39,14 +39,14 @@ export const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ schema, onSu
 
   return (
     <div className="w-full max-w-2xl mx-auto pb-32">
-      <div className="mb-8 px-4 pt-6">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-2">{title}</h2>
+      <div className="mb-8 px-5 pt-6">
+        <h2 className="text-2xl font-semibold text-slate-900 mb-2 tracking-tight">{title}</h2>
         {schema.description && (
-          <p className="text-sm text-gray-500 leading-relaxed">{schema.description}</p>
+          <p className="text-[13px] text-slate-500 leading-relaxed">{schema.description}</p>
         )}
       </div>
 
-      <div className="space-y-6 px-4">
+      <div className="space-y-5 px-5">
         {schema.questions && (Array.isArray(schema.questions) ? schema.questions : Object.values(schema.questions)).map((q: any) => (
           <QuestionRenderer 
             key={q.id} 
@@ -57,10 +57,10 @@ export const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ schema, onSu
         ))}
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-xl border-t border-gray-100 z-50">
+      <div className="fixed bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-[#f9fafb] via-[#f9fafb] to-transparent z-50 pointer-events-none">
         <button
           onClick={handleSubmit}
-          className="w-full max-w-2xl mx-auto block bg-blue-600 text-white rounded-2xl py-4 font-medium text-lg shadow-lg shadow-blue-600/20 active:scale-[0.98] transition-all"
+          className="w-full max-w-2xl mx-auto block bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-[24px] py-4 font-medium text-[15px] shadow-[0_8px_20px_rgba(79,70,229,0.25)] active:scale-95 transition-all pointer-events-auto"
         >
           提交评估
         </button>
@@ -117,20 +117,20 @@ const QuestionRenderer: React.FC<{
               <div key={opt.value} className="flex flex-col">
                 <label 
                   className={`
-                    flex items-start p-4 rounded-2xl border transition-all cursor-pointer
+                    flex items-start p-4 rounded-[20px] border transition-all cursor-pointer
                     ${isSelected 
-                      ? 'bg-blue-50/60 border-blue-200 shadow-[0_2px_10px_rgba(37,99,235,0.05)]' 
-                      : 'bg-white border-gray-100 hover:border-blue-100 hover:bg-gray-50/50'}
+                      ? 'bg-blue-50/60 border-blue-200 shadow-[0_4px_20px_rgba(37,99,235,0.05)]' 
+                      : 'bg-white border-slate-100 hover:border-blue-100 hover:bg-slate-50/50'}
                   `}
                 >
                   <div className={`
                     w-5 h-5 rounded-full border-2 flex items-center justify-center mr-3 mt-0.5 shrink-0 transition-colors
-                    ${isSelected ? 'border-blue-500' : 'border-gray-300'}
+                    ${isSelected ? 'border-blue-500' : 'border-slate-300'}
                   `}>
                     {isSelected && <motion.div layoutId={`radio-${question.id}`} className="w-2.5 h-2.5 rounded-full bg-blue-500" />}
                   </div>
                   <div className="flex-1">
-                    <span className={`text-base block leading-snug ${isSelected ? 'text-blue-900 font-medium' : 'text-gray-700'}`}>
+                    <span className={`text-[15px] block leading-snug ${isSelected ? 'text-blue-900 font-medium' : 'text-slate-700'}`}>
                       {opt.label}
                     </span>
                   </div>
@@ -159,7 +159,7 @@ const QuestionRenderer: React.FC<{
                         <input
                           type="text"
                           placeholder={opt.inputPlaceholder || '请输入详细信息...'}
-                          className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                          className="w-full bg-slate-50/50 border border-slate-200 rounded-[16px] px-4 py-3 text-[15px] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
                           value={values[`${question.id}_input`] || ''}
                           onChange={(e) => onChange(`${question.id}_input`, e.target.value)}
                         />
@@ -210,15 +210,15 @@ const QuestionRenderer: React.FC<{
               <div key={opt.value} className="flex flex-col">
                 <label 
                   className={`
-                    flex items-start p-4 rounded-2xl border transition-all cursor-pointer
+                    flex items-start p-4 rounded-[20px] border transition-all cursor-pointer
                     ${isSelected 
-                      ? 'bg-blue-50/60 border-blue-200 shadow-[0_2px_10px_rgba(37,99,235,0.05)]' 
-                      : 'bg-white border-gray-100 hover:border-blue-100 hover:bg-gray-50/50'}
+                      ? 'bg-blue-50/60 border-blue-200 shadow-[0_4px_20px_rgba(37,99,235,0.05)]' 
+                      : 'bg-white border-slate-100 hover:border-blue-100 hover:bg-slate-50/50'}
                   `}
                 >
                   <div className={`
                     w-5 h-5 rounded-md border-2 flex items-center justify-center mr-3 mt-0.5 shrink-0 transition-colors
-                    ${isSelected ? 'bg-blue-500 border-blue-500' : 'border-gray-300'}
+                    ${isSelected ? 'bg-blue-500 border-blue-500' : 'border-slate-300'}
                   `}>
                     {isSelected && (
                       <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -227,7 +227,7 @@ const QuestionRenderer: React.FC<{
                     )}
                   </div>
                   <div className="flex-1">
-                    <span className={`text-base block leading-snug ${isSelected ? 'text-blue-900 font-medium' : 'text-gray-700'}`}>
+                    <span className={`text-[15px] block leading-snug ${isSelected ? 'text-blue-900 font-medium' : 'text-slate-700'}`}>
                       {opt.label}
                     </span>
                   </div>
@@ -262,7 +262,7 @@ const QuestionRenderer: React.FC<{
                         <input
                           type="text"
                           placeholder={opt.inputPlaceholder || '请输入详细信息...'}
-                          className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                          className="w-full bg-slate-50/50 border border-slate-200 rounded-[16px] px-4 py-3 text-[15px] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
                           value={values[`${question.id}_input`] || ''}
                           onChange={(e) => onChange(`${question.id}_input`, e.target.value)}
                         />
@@ -307,17 +307,17 @@ const QuestionRenderer: React.FC<{
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {question.fields?.map((field: any) => (
             <div key={field.id} className="flex flex-col">
-              {field.label && <span className="block text-sm text-gray-600 mb-1.5 ml-1">{field.label}</span>}
+              {field.label && <span className="block text-[13px] text-slate-600 mb-1.5 ml-1">{field.label}</span>}
               <div className="relative">
                 <input
                   type={field.type || 'text'}
                   placeholder={field.placeholder}
-                  className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                  className="w-full bg-slate-50/50 border border-slate-200 rounded-[16px] px-4 py-3 text-[15px] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
                   value={values[field.id] || ''}
                   onChange={(e) => onChange(field.id, e.target.value)}
                 />
                 {field.suffix && (
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-[13px]">
                     {field.suffix}
                   </span>
                 )}
@@ -335,7 +335,7 @@ const QuestionRenderer: React.FC<{
           <textarea
             rows={4}
             placeholder={question.placeholder || '请输入详细描述...'}
-            className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-y min-h-[120px]"
+            className="w-full bg-slate-50/50 border border-slate-200 rounded-[16px] px-4 py-3 text-[15px] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-y min-h-[120px]"
             value={value || ''}
             onChange={(e) => onChange(question.id, e.target.value)}
           />
@@ -350,7 +350,7 @@ const QuestionRenderer: React.FC<{
           <input
             type={qType === 'input' ? 'text' : qType}
             placeholder={question.placeholder || '请输入...'}
-            className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+            className="w-full bg-slate-50/50 border border-slate-200 rounded-[16px] px-4 py-3 text-[15px] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
             value={value || ''}
             onChange={(e) => onChange(question.id, e.target.value)}
           />
@@ -358,7 +358,7 @@ const QuestionRenderer: React.FC<{
       );
     }
 
-    return <div className="text-sm text-gray-400 p-4 bg-gray-50 rounded-xl">不支持的题型: {qType}</div>;
+    return <div className="text-[13px] text-slate-400 p-4 bg-slate-50 rounded-[16px]">不支持的题型: {qType}</div>;
   };
 
   return (
@@ -367,16 +367,16 @@ const QuestionRenderer: React.FC<{
       animate={{ opacity: 1, y: 0 }}
       className={`
         relative
-        ${depth === 0 ? 'bg-white rounded-3xl p-6 shadow-sm border border-gray-100' : ''}
+        ${depth === 0 ? 'bg-white rounded-[28px] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-slate-100/50' : ''}
       `}
     >
       <div className="mb-5">
-        <h3 className={`font-medium text-gray-900 leading-relaxed ${depth > 0 ? 'text-base' : 'text-lg'}`}>
+        <h3 className={`font-medium text-slate-900 leading-relaxed ${depth > 0 ? 'text-[15px]' : 'text-[16px]'}`}>
           {qTitle}
           {question.required && <span className="text-red-500 ml-1.5">*</span>}
         </h3>
         {question.description && (
-          <p className="text-sm text-gray-500 mt-2 leading-relaxed">{question.description}</p>
+          <p className="text-[13px] text-slate-500 mt-2 leading-relaxed">{question.description}</p>
         )}
       </div>
       {renderContent()}

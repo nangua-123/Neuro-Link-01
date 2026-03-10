@@ -118,18 +118,22 @@ export default function AssessmentView() {
 
   if (isCompleted) {
     return (
-      <div className="min-h-screen bg-white flex flex-col">
-        <NavBar onBack={() => navigate(-1)} className="bg-white border-b border-gray-100">
-          测评完成
+      <div className="min-h-screen bg-[#FAFAFA] flex flex-col">
+        <NavBar onBack={() => navigate(-1)} className="bg-white border-b border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
+          <span className="font-semibold text-[16px] text-slate-900">测评完成</span>
         </NavBar>
         <div className="flex-1 flex flex-col items-center justify-center pb-20 px-6">
-          <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-6">
-            <svg className="w-10 h-10 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          <motion.div 
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="w-24 h-24 bg-blue-50 rounded-[32px] flex items-center justify-center mb-8 shadow-[0_8px_30px_rgba(59,130,246,0.15)]"
+          >
+            <svg className="w-12 h-12 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
             </svg>
-          </div>
-          <h2 className="text-2xl font-semibold text-gray-900 mb-2">测评已完成</h2>
-          <p className="text-gray-500 text-center">
+          </motion.div>
+          <h2 className="text-[24px] font-bold text-slate-900 mb-3 tracking-tight">测评已完成</h2>
+          <p className="text-[14px] text-slate-500 text-center leading-relaxed font-medium">
             正在为您生成华西 AI 脑健康风险分层报告...
           </p>
         </div>
@@ -141,20 +145,20 @@ export default function AssessmentView() {
   const progressPercent = ((currentStepIndex + 1) / assessmentSteps.length) * 100;
 
   return (
-    <div className="min-h-screen bg-[#f9fafb] flex flex-col overflow-hidden">
-      <div className="bg-white z-10 shadow-sm relative">
+    <div className="min-h-screen bg-[#FAFAFA] flex flex-col overflow-hidden">
+      <div className="bg-white z-10 shadow-[0_4px_20px_rgba(0,0,0,0.02)] relative">
         <NavBar
           onBack={handleBackStep}
           className="bg-white"
         >
           <div className="flex flex-col items-center">
-            <span className="text-base font-medium text-gray-900">
+            <span className="text-[16px] font-bold text-slate-900">
               {currentStepIndex + 1} / {assessmentSteps.length} {currentStep.title}
             </span>
-            <span className="text-xs text-gray-400 mt-0.5">{subtitle}</span>
+            <span className="text-[12px] text-slate-500 mt-0.5 tracking-wide font-medium">{subtitle}</span>
           </div>
         </NavBar>
-        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-100">
+        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-slate-100">
           <motion.div 
             className="h-full bg-blue-500"
             initial={{ width: `${(currentStepIndex / assessmentSteps.length) * 100}%` }}
