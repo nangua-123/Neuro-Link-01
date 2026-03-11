@@ -262,7 +262,7 @@ export default function EpilepsyManager() {
       </motion.div>
 
       {/* 紧急录像悬浮球 */}
-      <div className="fixed inset-0 max-w-md mx-auto pointer-events-none z-40">
+      <div className="fixed inset-0 max-w-md mx-auto right-0 left-0 pointer-events-none z-40">
         <button 
           onClick={startRecording}
           className="absolute bottom-24 right-6 pointer-events-auto flex items-center justify-center w-12 h-12 bg-rose-500 text-white rounded-full shadow-[0_8px_20px_rgba(244,63,94,0.3)] active:scale-95 transition-transform"

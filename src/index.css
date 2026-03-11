@@ -9,11 +9,12 @@
 }
 
 body {
-  background-color: #f1f5f9; /* slate-100 */
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%); /* slate-50 to indigo-50 */
   margin: 0;
   padding: 0;
   font-family: var(--adm-font-family);
   -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

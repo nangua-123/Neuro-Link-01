@@ -55,7 +55,7 @@ export default function Layout() {
       </div>
 
       {/* 高级毛玻璃导航栏 */}
-      <div className="absolute bottom-0 left-0 w-full z-50 pb-[env(safe-area-inset-bottom)] bg-white/80 backdrop-blur-xl border-t border-slate-100/50 shadow-[0_-4px_20px_rgba(0,0,0,0.02)]">
+      <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto z-50 pb-[env(safe-area-inset-bottom)] bg-white/80 backdrop-blur-xl border-t border-slate-100/50 shadow-[0_-4px_20px_rgba(0,0,0,0.02)]">
         <div className="flex justify-around items-center h-[64px] px-2">
           {tabs.map((item) => {
             // 精确匹配首页，其他路由支持前缀匹配
