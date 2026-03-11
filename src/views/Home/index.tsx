@@ -201,6 +201,7 @@ const DIALOGUE_TREE: Record<string, NodeDef> = {
 
 import { useAppStore } from '../../store';
 import { DiseaseTag } from '../../configs/constants';
+import { simulateNetworkRequest } from '../../utils/network';
 
 // ==========================================
 // 视图层：纯粹的渲染引擎与交互控制
@@ -257,42 +258,63 @@ export default function HomeView() {
 
     // 4. 推进状态机
     setIsThinking(true);
-    setCurrentNodeId(optionDef.nextNodeId);
 
-    setTimeout(() => {
-      setIsThinking(false);
-      const nextNode = DIALOGUE_TREE[optionDef.nextNodeId];
-      
-      if (nextNode.isConclusion) {
-        // 渲染结论安抚
-        setMessages(prev => [...prev, { 
-          id: Date.now().toString(), 
-          role: 'ai', 
-          content: nextNode.aiText,
-          isConclusion: true
-        }]);
+    const processNextNode = async () => {
+      try {
+        await simulateNetworkRequest(null, 1000, 0.15); // 15% 概率模拟网络异常
+        setIsThinking(false);
+        setCurrentNodeId(optionDef.nextNodeId);
         
-        // 延迟渲染转化卡片
-        setTimeout(() => {
+        const nextNode = DIALOGUE_TREE[optionDef.nextNodeId];
+        
+        if (nextNode.isConclusion) {
+          // 渲染结论安抚
           setMessages(prev => [...prev, { 
             id: Date.now().toString(), 
-            role: 'card', 
-            tags: [...collectedTags, optionDef.tag!].filter(Boolean).slice(0, 4), // 最多展示4个核心标签
-            riskText: nextNode.riskText
+            role: 'ai', 
+            content: nextNode.aiText,
+            isConclusion: true
           }]);
-        }, 1200);
-      } else {
-        // 渲染下一个问题
-        setMessages(prev => [...prev, { 
-          id: Date.now().toString(), 
-          role: 'ai', 
-          content: nextNode.aiText,
-          options: nextNode.options?.map(o => o.label),
-          progress: nextNode.progress,
-          nodeId: nextNode.id
-        }]);
+          
+          // 延迟渲染转化卡片
+          setTimeout(() => {
+            setMessages(prev => [...prev, { 
+              id: Date.now().toString(), 
+              role: 'card', 
+              tags: [...collectedTags, optionDef.tag!].filter(Boolean).slice(0, 4), // 最多展示4个核心标签
+              riskText: nextNode.riskText
+            }]);
+          }, 1200);
+        } else {
+          // 渲染下一个问题
+          setMessages(prev => [...prev, { 
+            id: Date.now().toString(), 
+            role: 'ai', 
+            content: nextNode.aiText,
+            options: nextNode.options?.map(o => o.label),
+            progress: nextNode.progress,
+            nodeId: nextNode.id
+          }]);
+        }
+      } catch (error) {
+        setIsThinking(false);
+        Toast.show({ content: '网络连接异常，请重试', icon: 'fail' });
+        // 恢复选项卡，允许用户重试
+        setMessages(prev => {
+          const newMsgs = [...prev];
+          // 移除刚才添加的用户气泡
+          newMsgs.pop();
+          // 恢复上一个 AI 气泡的选项卡
+          const lastAiIdx = newMsgs.map(m => m.role).lastIndexOf('ai');
+          if (lastAiIdx >= 0) {
+            newMsgs[lastAiIdx].options = DIALOGUE_TREE[nodeId].options?.map(o => o.label);
+          }
+          return newMsgs;
+        });
       }
-    }, 1000);
+    };
+
+    processNextNode();
   };
 
   // 处理多模态自定义输入 (打断与回归逻辑)
@@ -313,27 +335,39 @@ export default function HomeView() {
     setIsThinking(true);
 
     // 2. 模拟 NLP 意图识别与柔性兜底
-    setTimeout(() => {
-      setIsThinking(false);
-      const currentNode = DIALOGUE_TREE[currentNodeId];
-      
-      if (!currentNode || currentNode.isConclusion) return;
+    const processCustomInput = async () => {
+      try {
+        await simulateNetworkRequest(null, 1500, 0.1); // 10% 概率模拟网络异常
+        setIsThinking(false);
+        const currentNode = DIALOGUE_TREE[currentNodeId];
+        
+        if (!currentNode || currentNode.isConclusion) return;
 
-      let fallbackText = `我理解了，您提到了“${text}”。为了更全面地评估，我们继续刚才的问题：${currentNode.aiText}`;
-      if (type === 'camera') {
-        fallbackText = `已识别到您上传的图片。结合您刚才的描述，我们继续：${currentNode.aiText}`;
+        let fallbackText = `我理解了，您提到了“${text}”。为了更全面地评估，我们继续刚才的问题：${currentNode.aiText}`;
+        if (type === 'camera') {
+          fallbackText = `已识别到您上传的图片。结合您刚才的描述，我们继续：${currentNode.aiText}`;
+        }
+
+        // 重新渲染当前节点的问题和选项
+        setMessages(prev => [...prev, { 
+          id: Date.now().toString(), 
+          role: 'ai', 
+          content: fallbackText,
+          options: currentNode.options?.map(o => o.label),
+          progress: currentNode.progress,
+          nodeId: currentNode.id
+        }]);
+      } catch (error) {
+        setIsThinking(false);
+        Toast.show({ content: '网络连接异常，请重试', icon: 'fail' });
+        // 恢复输入框内容
+        if (type === 'text') setInputText(text);
+        // 移除刚才添加的用户气泡
+        setMessages(prev => prev.slice(0, -1));
       }
+    };
 
-      // 重新渲染当前节点的问题和选项
-      setMessages(prev => [...prev, { 
-        id: Date.now().toString(), 
-        role: 'ai', 
-        content: fallbackText,
-        options: currentNode.options?.map(o => o.label),
-        progress: currentNode.progress,
-        nodeId: currentNode.id
-      }]);
-    }, 1500);
+    processCustomInput();
   };
 
   const handlePayment = (tags: string[] = []) => {
@@ -362,7 +396,7 @@ export default function HomeView() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#FAFAFA] relative overflow-hidden">
+    <div className="flex flex-col flex-1 w-full bg-[#FAFAFA] relative overflow-hidden">
       {/* 极浅弥散暖色渐变背景 */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <div className="absolute -top-[10%] -right-[10%] w-[120%] h-[50%] bg-gradient-to-b from-[#E8F3FF] to-transparent opacity-60 blur-3xl" />

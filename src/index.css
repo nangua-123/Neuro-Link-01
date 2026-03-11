@@ -9,9 +9,34 @@
 }
 
 body {
-  background-color: var(--adm-color-background);
+  background-color: #f1f5f9; /* slate-100 */
   margin: 0;
   padding: 0;
   font-family: var(--adm-font-family);
   -webkit-font-smoothing: antialiased;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+* {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* antd-mobile portal overrides for max-w-md */
+.adm-mask,
+.adm-popup,
+.adm-popup-body,
+.adm-toast-wrap,
+.adm-modal-wrap,
+.adm-dialog-wrap {
+  max-width: 28rem !important; /* max-w-md */
+  margin-left: auto !important;
+  margin-right: auto !important;
+  left: 0 !important;
+  right: 0 !important;
 }

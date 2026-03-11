@@ -1,29 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { useAppStore } from '../../../store';
-import { UserIdentity } from '../../../interfaces/user';
-import { Brain, MapPin, Play, Moon, Sun, Coffee, ChevronRight, FileText, HeartHandshake, CheckCircle2 } from 'lucide-react';
+import { Play, Moon, Sun, Coffee, ChevronRight, FileText, HeartHandshake, CheckCircle2, Brain, MapPin, Plus } from 'lucide-react';
 import { TrendBarChart } from '../../../components/Charts/TrendBarChart';
-import { VitalsGrid } from '../../../components/Charts/VitalsGrid';
-import { IoTStatusCard } from '../../../components/IoTStatusCard';
+import { DailyHealthBase } from '../../../components/DailyHealthBase';
+import { DTxCard } from '../../../components/DTxCard';
+import { CDRDiarySheet } from '../../../components/CDRDiarySheet';
+import { MedicalToolbox } from '../../../components/MedicalToolbox';
+import { VisitSummaryModal } from '../../../components/VisitSummaryModal';
 import { useNavigate } from 'react-router-dom';
 import { Toast } from 'antd-mobile';
+import { useAppStore } from '../../../store';
+import { UserIdentity } from '../../../interfaces/user';
+import { DiseaseTag } from '../../../configs/constants';
+import { showComingSoon } from '../../../utils/ui';
+import { ManagerSkeleton } from '../../../components/ManagerSkeleton';
 
 export default function CognitiveManager() {
   const { identity } = useAppStore();
   const isFamily = identity === UserIdentity.FAMILY;
+  const [isLoading, setIsLoading] = useState(true);
+  const [isCDRDiaryVisible, setIsCDRDiaryVisible] = useState(false);
+  const [isVisitSummaryVisible, setIsVisitSummaryVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants: any = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
+  };
+
+  if (isLoading) return <ManagerSkeleton />;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
       className="space-y-6 pb-10"
     >
-      <StatusOverview isFamily={isFamily} />
-      <DataInsights />
-      <DailyHealthBase />
-      <DailyActions isFamily={isFamily} />
-      <MedicalServices />
+      <motion.div variants={itemVariants}><StatusOverview isFamily={isFamily} /></motion.div>
+      <motion.div variants={itemVariants}><DataInsights onOpenVisitSummary={() => setIsVisitSummaryVisible(true)} /></motion.div>
+      <motion.div variants={itemVariants}><DailyHealthBase /></motion.div>
+      <motion.div variants={itemVariants}><DailyActions isFamily={isFamily} onOpenCDRDiary={() => setIsCDRDiaryVisible(true)} /></motion.div>
+      <motion.div variants={itemVariants}><MedicalServices /></motion.div>
+      <motion.div variants={itemVariants}><MedicalToolbox /></motion.div>
+      <CDRDiarySheet visible={isCDRDiaryVisible} onClose={() => setIsCDRDiaryVisible(false)} />
+      <VisitSummaryModal visible={isVisitSummaryVisible} onClose={() => setIsVisitSummaryVisible(false)} diseaseTag={DiseaseTag.AD} />
     </motion.div>
   );
 }
@@ -73,93 +108,72 @@ function StatusOverview({ isFamily }: { isFamily: boolean }) {
   );
 }
 
-function DataInsights() {
-  // Mock Trend Data for Cognitive Training
-  const trainingData = [
-    { date: '10.21', value: 15 },
-    { date: '10.22', value: 20 },
-    { date: '10.23', value: 0, color: '#f59e0b' }, // Missed
-    { date: '10.24', value: 15 },
-    { date: '10.25', value: 30 },
-    { date: '10.26', value: 15 },
-    { date: '今日', value: 0, color: '#94a3b8' }, // Not started
-  ];
-
-  return (
-    <TrendBarChart 
-      data={trainingData} 
-      title="近 7 日脑力训练时长" 
-      subtitle="坚持每日 15 分钟数字疗法"
-      valueFormatter={(val) => `${val} 分钟`}
-      color="#6366f1" // indigo-500
-    />
-  );
-}
-
-function DailyHealthBase() {
-  const { isDeviceBound } = useAppStore();
-  
-  // Mock Vitals Data
-  const mockVitals = {
-    hrv: 38,
-    deepSleepRatio: 22,
-    eegStability: 88,
-    lastSyncTime: '刚刚'
-  };
+function DataInsights({ onOpenVisitSummary }: { onOpenVisitSummary: () => void }) {
+  const { cognitiveTrainingData } = useAppStore();
 
   return (
     <div className="space-y-3">
-      <div className="px-1">
-        <h3 className="text-base font-bold text-slate-900 tracking-tight">日常健康基座</h3>
+      <div className="flex items-center justify-between px-1">
+        <h3 className="text-base font-bold text-slate-900 tracking-tight">数据洞察</h3>
+        <button 
+          onClick={onOpenVisitSummary}
+          className="text-[11px] font-semibold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full active:scale-95 transition-transform"
+        >
+          生成就诊摘要
+        </button>
       </div>
-      
-      <IoTStatusCard />
-      
-      {isDeviceBound && (
-        <VitalsGrid vitals={mockVitals} />
-      )}
+      <TrendBarChart 
+        data={cognitiveTrainingData} 
+        title="近 7 日脑力训练时长" 
+        subtitle="坚持每日 15 分钟数字疗法"
+        valueFormatter={(val) => `${val} 分钟`}
+        color="#6366f1" // indigo-500
+        complianceRate={85}
+        complianceLabel="完成率"
+      />
     </div>
   );
 }
 
-function DailyActions({ isFamily }: { isFamily: boolean }) {
+
+
+function DailyActions({ isFamily, onOpenCDRDiary }: { isFamily: boolean, onOpenCDRDiary: () => void }) {
   const { sleepRating, rateSleep } = useAppStore();
 
   return (
     <div className="space-y-3">
-      <div className="px-1">
+      <div className="px-1 flex items-center justify-between">
         <h3 className="text-base font-bold text-slate-900 tracking-tight">今日干预</h3>
-        <p className="text-[10px] text-slate-500 mt-0.5 font-medium">
-          {isFamily ? '协助长辈完成今日的认知训练' : '完成今日的脑力挑战，保持大脑活力'}
-        </p>
       </div>
 
-      {/* DTx Training Card */}
-      <div className="bg-white rounded-[24px] p-5 shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-slate-100/50 relative overflow-hidden group">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        <div className="relative z-10">
-          <div className="flex justify-between items-start mb-4">
-            <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-500">
-              <Brain className="w-5 h-5" />
+      {isFamily && (
+        <button 
+          onClick={onOpenCDRDiary}
+          className="w-full bg-blue-50 hover:bg-blue-100 transition-colors p-4 rounded-[20px] border border-blue-100/50 flex items-center justify-between group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
+              <HeartHandshake className="w-5 h-5" />
             </div>
-            <span className="px-2.5 py-1 bg-indigo-50 text-indigo-600 text-[10px] font-semibold rounded-full">
-              数字疗法 (DTx)
-            </span>
+            <div className="text-left">
+              <h4 className="text-[14px] font-bold text-blue-900">记录照护日记</h4>
+              <p className="text-[11px] text-blue-700/70 mt-0.5 font-medium">记录长辈精神行为症状 (BPSD)</p>
+            </div>
           </div>
-          <h4 className="text-base font-bold text-slate-900 mb-1.5">空间记忆连连看</h4>
-          <p className="text-xs text-slate-500 mb-5 leading-relaxed font-medium">
-            通过趣味连线游戏，锻炼短期记忆与空间感知能力，建议每日完成 15 分钟。
-          </p>
-          <motion.button 
-            whileTap={{ scale: 0.98 }}
-            onClick={() => Toast.show({ content: '正在加载数字疗法游戏引擎...', icon: 'loading' })}
-            className="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-[16px] font-medium text-sm transition-colors flex items-center justify-center space-x-2 shadow-[0_4px_12px_rgba(0,0,0,0.1)]"
-          >
-            <Play className="w-4 h-4 fill-current" />
-            <span>开始今日训练</span>
-          </motion.button>
-        </div>
-      </div>
+          <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
+            <Plus className="w-4 h-4 text-blue-500" />
+          </div>
+        </button>
+      )}
+
+      {/* DTx Training Card */}
+      <DTxCard 
+        title="空间记忆连连看"
+        description="通过趣味连线游戏，锻炼短期记忆与空间感知能力，建议每日完成 15 分钟。"
+        icon={Brain}
+        theme="indigo"
+        streak={3}
+      />
 
       {/* Caregiver Micro-Follow-up (Only for Family) */}
       {isFamily && (
@@ -225,7 +239,7 @@ function MedicalServices() {
           title="照护者心理支持"
           desc="家属减负与专业心理疏导"
           color="indigo"
-          onClick={() => Toast.show({ content: '正在连接心理咨询师...', icon: 'loading' })}
+          onClick={() => showComingSoon('心理咨询室筹备中', '专业的心理疏导团队正在入驻，敬请期待。')}
         />
       </div>
     </div>

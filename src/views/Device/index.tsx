@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavBar, Button, Toast, SafeArea, Modal } from 'antd-mobile';
 import { HeartOutline } from 'antd-mobile-icons';
-import { Bluetooth, Battery, ChevronLeft } from 'lucide-react';
+import { Bluetooth, Battery, ChevronLeft, ShoppingBag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { bluetoothService } from '../../services/bluetooth';
 import { IoTDevice } from '../../interfaces/mall_device';
@@ -11,7 +11,7 @@ import { UserIdentity } from '../../interfaces/user';
 
 export default function DeviceView() {
   const navigate = useNavigate();
-  const { identity } = useAppStore();
+  const { identity, bindDevice, unbindDevice } = useAppStore();
   const isFamily = identity === UserIdentity.FAMILY;
   const [device, setDevice] = useState<IoTDevice | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
@@ -40,6 +40,7 @@ export default function DeviceView() {
     try {
       const connectedDevice = await bluetoothService.scanAndConnect();
       setDevice(connectedDevice);
+      bindDevice(); // 更新全局状态
       Toast.show({ icon: 'success', content: '连接成功' });
       
       // 连接成功后，自动开启夜间被动熔断监测
@@ -63,6 +64,7 @@ export default function DeviceView() {
       onConfirm: () => {
         bluetoothService.disconnect();
         setDevice(null);
+        unbindDevice(); // 更新全局状态
         setIsRecallTriggered(false);
       },
     });
@@ -71,7 +73,7 @@ export default function DeviceView() {
   // 致命红线：全局熔断报警态
   if (isRecallTriggered) {
     return (
-      <div className="min-h-screen bg-red-500 flex flex-col items-center justify-center p-6 text-white animate-pulse relative overflow-hidden">
+      <div className="min-h-screen max-w-md mx-auto bg-red-500 flex flex-col items-center justify-center p-6 text-white animate-pulse relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-red-400 to-red-600 opacity-50" />
         <div className="w-24 h-24 rounded-full bg-white/20 flex items-center justify-center mb-8 relative z-10 shadow-[0_0_40px_rgba(255,255,255,0.3)]">
           <HeartOutline fontSize={48} className="text-white" />
@@ -119,13 +121,22 @@ export default function DeviceView() {
           <h2 className="text-[22px] font-semibold text-slate-900 mb-3 tracking-tight">靠近设备以连接</h2>
           <p className="text-[14px] text-slate-500 text-center mb-12 leading-relaxed">请确保您的 Neuro-Band 手环电量充足<br/>并靠近手机</p>
           
-          <button 
-            onClick={handleConnect}
-            disabled={isConnecting}
-            className="w-[200px] rounded-[24px] bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium py-3.5 shadow-[0_8px_24px_rgba(79,70,229,0.25)] active:scale-95 transition-transform flex items-center justify-center disabled:opacity-70"
-          >
-            {isConnecting ? '连接中...' : '点击连接'}
-          </button>
+          <div className="w-full max-w-[240px] space-y-3">
+            <button 
+              onClick={handleConnect}
+              disabled={isConnecting}
+              className="w-full rounded-[24px] bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium py-3.5 shadow-[0_8px_24px_rgba(79,70,229,0.25)] active:scale-95 transition-transform flex items-center justify-center disabled:opacity-70"
+            >
+              {isConnecting ? '连接中...' : '点击连接'}
+            </button>
+            <button 
+              onClick={() => navigate('/mall')}
+              className="w-full rounded-[24px] bg-white text-slate-600 font-medium py-3.5 shadow-[0_4px_12px_rgba(0,0,0,0.04)] border border-slate-100/80 active:scale-95 transition-transform flex items-center justify-center gap-2"
+            >
+              <ShoppingBag className="w-4 h-4" />
+              还没有设备？去商城了解
+            </button>
+          </div>
         </div>
       </div>
     );

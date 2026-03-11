@@ -1,15 +1,17 @@
 import React from 'react';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { useOutlet, useNavigate, useLocation } from 'react-router-dom';
 import {
   MessageSquareText,
   HeartPulse,
   ShoppingBag,
   User
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 export default function Layout() {
   const navigate = useNavigate();
   const location = useLocation();
+  const outlet = useOutlet();
 
   const tabs = [
     {
@@ -37,8 +39,19 @@ export default function Layout() {
   return (
     <div className="flex flex-col h-screen w-full max-w-md mx-auto bg-[#FAFAFA] relative overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.05)]">
       {/* 沉浸式内容区，底部留出 TabBar 的高度与安全区 */}
-      <div className="flex-1 overflow-y-auto pb-[calc(env(safe-area-inset-bottom)+80px)]">
-        <Outlet />
+      <div className="flex-1 overflow-y-auto flex flex-col">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="flex-grow shrink-0 flex flex-col min-h-full pb-[calc(env(safe-area-inset-bottom)+80px)]"
+          >
+            {outlet}
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* 高级毛玻璃导航栏 */}

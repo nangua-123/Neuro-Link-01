@@ -3,8 +3,9 @@ import { NavBar, Toast, Popup, SafeArea } from 'antd-mobile';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../store';
 import { DiseaseTag } from '../../configs/constants';
-import { Check, Shield, Zap, Watch, Brain, Bluetooth, Loader2, ChevronLeft } from 'lucide-react';
+import { Check, Shield, Zap, Watch, Brain, Bluetooth, Loader2, ChevronLeft, Receipt } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { showComingSoon } from '../../utils/ui';
 
 interface PackageInfo {
   id: string;
@@ -93,11 +94,14 @@ export default function MallView() {
         content: '绑定成功，已开启 24 小时守护',
         icon: 'success',
       });
+      setTimeout(() => {
+        navigate('/device');
+      }, 500);
     }, 2000);
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] flex flex-col pb-24 relative overflow-hidden">
+    <div className="min-h-screen bg-[#FAFAFA] flex flex-col relative overflow-hidden">
       {/* 极浅弥散暖色渐变背景 */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <div className="absolute -top-[10%] -right-[10%] w-[120%] h-[50%] bg-gradient-to-b from-[#E8F3FF] to-transparent opacity-60 blur-3xl" />
@@ -106,8 +110,15 @@ export default function MallView() {
 
       <div className="bg-white/80 backdrop-blur-xl sticky top-0 z-10 border-b border-slate-100/50 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
         <NavBar 
-          onBack={() => navigate(-1)}
-          backArrow={<ChevronLeft className="w-6 h-6 text-slate-700" />}
+          backArrow={false}
+          right={
+            <div 
+              className="p-2 text-slate-600 active:bg-slate-100 rounded-full transition-colors"
+              onClick={() => showComingSoon('我的订单', '订单管理与物流追踪功能即将上线。')}
+            >
+              <Receipt className="w-5 h-5" />
+            </div>
+          }
         >
           <span className="font-medium text-slate-900">服务商城</span>
         </NavBar>

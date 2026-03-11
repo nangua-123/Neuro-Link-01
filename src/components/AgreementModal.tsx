@@ -17,7 +17,7 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({ isOpen, onClose,
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40"
+            className="fixed inset-0 max-w-md mx-auto right-0 left-0 bg-slate-900/40 backdrop-blur-sm z-40"
             onClick={onClose}
           />
           <motion.div
@@ -25,7 +25,7 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({ isOpen, onClose,
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[32px] z-50 overflow-hidden flex flex-col max-h-[85vh] shadow-[0_-8px_30px_rgba(0,0,0,0.08)]"
+            className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white rounded-t-[32px] z-50 overflow-hidden flex flex-col max-h-[85vh] shadow-[0_-8px_30px_rgba(0,0,0,0.08)]"
           >
             <div className="p-6 flex-1 overflow-y-auto">
               <div className="flex justify-between items-center mb-6">

@@ -1,11 +1,12 @@
 // File: src/views/Assessment/index.tsx
 import React, { useState, useCallback, useMemo } from 'react';
-import { NavBar, Result, SafeArea } from 'antd-mobile';
+import { NavBar, Result, SafeArea, Toast } from 'antd-mobile';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAppStore } from '../../store';
 import { DiseaseTag } from '../../configs/constants';
 import { AssessmentEngine } from '../../components/AssessmentEngine';
+import { simulateNetworkRequest } from '../../utils/network';
 import {
   scale_cdr_informant_memory,
   scale_cdr_informant_orientation_judgment,
@@ -25,6 +26,8 @@ export default function AssessmentView() {
   const [assessmentData, setAssessmentData] = useState<Record<string, any>>({});
   const [isCompleted, setIsCompleted] = useState(false);
   const [direction, setDirection] = useState(1);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { steps: assessmentSteps, subtitle } = useMemo(() => {
     switch (selectedDiseaseTag) {
@@ -89,7 +92,7 @@ export default function AssessmentView() {
   const currentStep = assessmentSteps[currentStepIndex];
 
   const handleNextStep = useCallback(
-    (stepData: Record<string, any>) => {
+    async (stepData: Record<string, any>) => {
       setAssessmentData(prev => ({ ...prev, ...stepData }));
       if (currentStepIndex < assessmentSteps.length - 1) {
         setDirection(1);
@@ -98,10 +101,19 @@ export default function AssessmentView() {
         // Last step, submit all data
         const finalData = { ...assessmentData, ...stepData };
         console.log('【测评完成】生成的答卷 Payload:', finalData);
-        setIsCompleted(true);
-        setTimeout(() => {
-          navigate('/report', { state: { payload: finalData, diseaseTag: selectedDiseaseTag } });
-        }, 1500);
+        
+        setIsSubmitting(true);
+        try {
+          await simulateNetworkRequest(null, 1500, 0.2); // 20% 概率模拟提交失败
+          setIsSubmitting(false);
+          setIsCompleted(true);
+          setTimeout(() => {
+            navigate('/report', { state: { payload: finalData, diseaseTag: selectedDiseaseTag } });
+          }, 1500);
+        } catch (error) {
+          setIsSubmitting(false);
+          Toast.show({ content: '提交失败，请重试', icon: 'fail' });
+        }
       }
     },
     [currentStepIndex, assessmentSteps.length, assessmentData, navigate, selectedDiseaseTag]
@@ -187,6 +199,7 @@ export default function AssessmentView() {
               <AssessmentEngine 
                 schema={currentStep.schema as any}
                 onSubmit={handleNextStep}
+                isSubmitting={isSubmitting}
               />
             </div>
           </motion.div>

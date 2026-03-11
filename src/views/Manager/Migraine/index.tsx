@@ -1,49 +1,61 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { useAppStore } from '../../../store';
 import { Zap, AlertTriangle, Plus, Pill, Calendar, Activity, ShieldAlert, ArrowRight } from 'lucide-react';
 import { TrendBarChart } from '../../../components/Charts/TrendBarChart';
-import { VitalsGrid } from '../../../components/Charts/VitalsGrid';
-import { IoTStatusCard } from '../../../components/IoTStatusCard';
+import { DailyHealthBase } from '../../../components/DailyHealthBase';
+import { MigraineDiarySheet } from '../../../components/MigraineDiarySheet';
+import { MedicalToolbox } from '../../../components/MedicalToolbox';
+import { VisitSummaryModal } from '../../../components/VisitSummaryModal';
 import { useNavigate } from 'react-router-dom';
 import { Toast } from 'antd-mobile';
 import { UserIdentity } from '../../../interfaces/user';
+import { DiseaseTag } from '../../../configs/constants';
+import { showComingSoon } from '../../../utils/ui';
+import { ManagerSkeleton } from '../../../components/ManagerSkeleton';
 
 export default function MigraineManager() {
-  const { painkillerDays, recordPainkiller, identity } = useAppStore();
+  const { painkillerDays, recordPainkiller, identity, vitals, migraineFrequencyData, recordMigraineAttack, isDeviceBound } = useAppStore();
   const navigate = useNavigate();
   const isFamily = identity === UserIdentity.FAMILY;
+  const [isDiarySheetVisible, setIsDiarySheetVisible] = useState(false);
+  const [isVisitSummaryVisible, setIsVisitSummaryVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
   
   // MOH 熔断机制：每月止痛药服用天数 >= 15 天为红线
   const isMOHRisk = painkillerDays >= 15;
 
-  // Mock Trend Data for Headache Frequency
-  const headacheData = [
-    { date: '10.21', value: 0 },
-    { date: '10.22', value: 2, color: '#f43f5e' }, // 2 attacks
-    { date: '10.23', value: 0 },
-    { date: '10.24', value: 1, color: '#f43f5e' }, // 1 attack
-    { date: '10.25', value: 0 },
-    { date: '10.26', value: 0 },
-    { date: '今日', value: 0, color: '#94a3b8' },
-  ];
-
-  // Mock Vitals Data
-  const mockVitals = {
-    hrv: 45,
-    deepSleepRatio: 18, // Poor sleep is a trigger
-    eegStability: 92,
-    lastSyncTime: '刚刚'
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
   };
+
+  const itemVariants: any = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
+  };
+
+  if (isLoading) return <ManagerSkeleton />;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
       className="space-y-6 pb-10"
     >
       {/* 模块一：头痛状态看板与 MOH 红色防火墙 (Status Overview) */}
-      <div className="space-y-3">
+      <motion.div variants={itemVariants} className="space-y-3">
         <div className="flex items-center justify-between px-1">
           <h2 className="text-lg font-bold text-slate-900 tracking-tight">
             {isFamily ? '长辈偏头痛管家' : '我的偏头痛管家'}
@@ -84,32 +96,37 @@ export default function MigraineManager() {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* 模块二：健康趋势洞察 (Data Insights) */}
-      <TrendBarChart 
-        data={headacheData} 
-        title="近 7 日头痛发作频率" 
-        subtitle="识别并规避诱发因素"
-        valueFormatter={(val) => `${val} 次`}
-        color="#8b5cf6" // violet-500
-      />
+      <motion.div variants={itemVariants} className="space-y-3">
+        <div className="flex items-center justify-between px-1">
+          <h3 className="text-base font-bold text-slate-900 tracking-tight">数据洞察</h3>
+          <button 
+            onClick={() => setIsVisitSummaryVisible(true)}
+            className="text-[11px] font-semibold text-violet-600 bg-violet-50 px-3 py-1.5 rounded-full active:scale-95 transition-transform"
+          >
+            生成就诊摘要
+          </button>
+        </div>
+        <TrendBarChart 
+          data={migraineFrequencyData} 
+          title="近 7 日头痛发作频率" 
+          subtitle="识别并规避诱发因素"
+          valueFormatter={(val) => `${val} 次`}
+          color="#8b5cf6" // violet-500
+          complianceRate={85}
+          complianceLabel="控制率"
+        />
+      </motion.div>
 
       {/* 模块三：日常健康基座 & IoT (Wearable Integration) */}
-      <div className="space-y-3">
-        <div className="px-1">
-          <h3 className="text-base font-bold text-slate-900 tracking-tight">日常健康基座</h3>
-        </div>
-        
-        <IoTStatusCard />
-        
-        {useAppStore().isDeviceBound && (
-          <VitalsGrid vitals={mockVitals} />
-        )}
-      </div>
+      <motion.div variants={itemVariants}>
+        <DailyHealthBase />
+      </motion.div>
 
       {/* 模块四：头痛发作日记与干预流 (Daily Actions) */}
-      <div className="space-y-3">
+      <motion.div variants={itemVariants} className="space-y-3">
         <div className="px-1">
           <h3 className="text-base font-bold text-slate-900 tracking-tight">发作干预</h3>
         </div>
@@ -117,7 +134,7 @@ export default function MigraineManager() {
         {/* 一键记录头痛 */}
         <motion.button 
           whileTap={{ scale: 0.98 }}
-          onClick={() => Toast.show({ content: '正在加载头痛记录表单...', icon: 'loading' })}
+          onClick={() => setIsDiarySheetVisible(true)}
           className="w-full bg-white p-4 rounded-[20px] shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-slate-100/50 flex items-center justify-between group hover:border-violet-200 transition-colors"
         >
           <div className="flex items-center space-x-3">
@@ -155,10 +172,10 @@ export default function MigraineManager() {
             打卡
           </button>
         </div>
-      </div>
+      </motion.div>
 
       {/* 模块五：医患连接与服务 (Medical Services) */}
-      <div className="space-y-3">
+      <motion.div variants={itemVariants} className="space-y-3">
         <div className="px-1">
           <h3 className="text-base font-bold text-slate-900 tracking-tight">医疗服务</h3>
         </div>
@@ -180,7 +197,7 @@ export default function MigraineManager() {
 
           <motion.button 
             whileTap={{ scale: 0.96 }}
-            onClick={() => Toast.show({ content: '正在加载历史日历...', icon: 'loading' })}
+            onClick={() => showComingSoon('历史日历升级中', '更直观的头痛发作趋势与诱因分析视图即将上线。')}
             className="bg-white p-4 rounded-[20px] shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-slate-100/50 flex flex-col items-start space-y-2 text-left group hover:border-blue-200 transition-colors"
           >
             <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500 group-hover:bg-blue-100 transition-colors">
@@ -192,7 +209,16 @@ export default function MigraineManager() {
             </div>
           </motion.button>
         </div>
-      </div>
+      </motion.div>
+
+      <motion.div variants={itemVariants}>
+        <MedicalToolbox />
+      </motion.div>
+
+      <MigraineDiarySheet visible={isDiarySheetVisible} onClose={() => setIsDiarySheetVisible(false)} />
+
+      {/* 就诊摘要弹窗 */}
+      <VisitSummaryModal visible={isVisitSummaryVisible} onClose={() => setIsVisitSummaryVisible(false)} diseaseTag={DiseaseTag.MIGRAINE} />
     </motion.div>
   );
 }

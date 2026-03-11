@@ -66,6 +66,77 @@
   - **癫痫管家**：重构“服药打卡”逻辑，直接读取并更新全局 Store；“专家在线复诊”接入 Mock 交互。
   - **偏头痛管家**：重构“服用止痛药”逻辑，点击后更新全局 `painkillerDays` 并触发 Toast 提示；“CGRP 靶向药”入口精准路由至 `/assessment?diseaseTag=Migraine`；“记录今日头痛”与“历史日历”接入 Mock 交互。
 
+### v1.4.0 (Phase 6.3 Manager Dashboard Deep Polish)
+- **Batch 1: 全局状态与 Mock 数据深度整合 (State & Data Linkage)**：
+  - 将三大管家（认知、癫痫、偏头痛）的图表数据（训练时长、用药依从性、头痛频率）与体征数据（HRV、深度睡眠、脑电稳定性）提取到 Zustand Store 中。
+  - 确保设备处于 `isDeviceBound` 状态时，三大管家视图读取统一的动态体征数据。
+- **Batch 2: 核心交互闭环与联动逻辑完善 (Interaction Loop)**：
+  - **偏头痛管家**：升级“记录今日头痛”为 ActionSheet 交互，用户选择疼痛等级后，动态更新图表数据。
+  - **癫痫管家**：服药打卡后，动态计算依从率并更新图表中的“今日”柱状图。
+  - **认知管家**：家属视角的“照护微随访（睡眠打分）”完成后，动态联动更新全局体征数据中的“深度睡眠比例”。
+- **Batch 3: UI 细节与体验打磨 (UI Polish)**：
+  - **加载动画优化 (Staggered Animation)**：为三大管家视图内的各个模块（Overview -> Insights -> Vitals -> Actions）增加了基于 `motion/react` 的阶梯式（Staggered）入场动画，增强页面的呼吸感与高级感。
+  - **统一未开放功能提示**：新增 `showComingSoon` 全局工具方法，将目前生硬的 `Toast.show('正在加载...')`（如专家在线复诊、心理支持等）统一替换为更优雅的定制化 Modal 提示，提升 C 端体验。
+
+### v1.5.0 (Phase 7 Profile & Mall Modules)
+- **Batch 1: 个人中心重构 (Profile Refactor)**：
+  - 引入身份双轨制切换入口，支持在患者本人与家属/照护者之间无缝切换（联动 Zustand Store）。
+  - 增加“隐私协议与授权管理”模块，允许用户查看《三方电子联合数据授权协议》详情，并支持撤销授权（撤销后联动触发路由守卫）。
+  - 引入 `motion/react` 阶梯式入场动画，提升页面加载时的呼吸感。
+- **Batch 2: 商城模块优化 (Mall Enhancement)**：
+  - 优化商城 UI，突出医疗级与消费级结合的质感，采用大图、弥散阴影和柔和的卡片设计。
+  - 完善订阅与发货的商业化闭环，模拟设备购买与绑定流程。
+  - 点击“立即绑定”后，更新全局 Store 中的 `isDeviceBound` 状态，并动态解锁首页和管家页面的“体征基座”模块。
+  - 增加“我的订单”入口占位。
+
+## Phase 10: Final Polish & Delivery (Current)
+- **Batch 1: 空状态与引导优化 & 商业化闭环**：
+  - 完善 `DeviceView`（我的设备）的蓝牙连接流，在未绑定设备时展示精美的空状态与引导文案，并新增“去商城了解”的转化入口。
+  - 深化 `MallView`（服务商城）的订阅闭环，模拟设备购买后的自动发现与绑定流程，绑定成功后自动跳转至设备看板。
+  - 引入全局 `ErrorBoundary`（错误边界）组件，捕获渲染异常并提供友好的重试界面。
+  - 引入 `useNetworkStatus` 钩子，实现全局弱网/断网环境下的 Toast 提示兜底。
+
+## Phase 9: Manager Dashboard Expansion
+- **Batch 4: 数据洞察与就诊报告 (Zone D)**：
+  - 升级 `TrendBarChart` 组件，新增 `complianceRate` 与 `complianceLabel` 属性，支持在图表右上角展示“依从性达标率”、“控制率”等复杂维度。
+  - 开发 `VisitSummaryModal`（生成就诊摘要）组件，模拟 AI 生成专业的 RWE（真实世界证据）总结文本。
+  - 根据不同的 `DiseaseTag`，动态生成针对癫痫（发作频次、用药依从性、EEG 稳定性）、偏头痛（VAS 评分、急性药天数、MOH 风险）和认知障碍（训练完成率、BPSD 追踪、睡眠比例）的专属医疗摘要。
+  - 将“生成就诊摘要”入口深度集成至三大专病管家的“数据洞察”模块中。
+- **Batch 3: 认知照护与全量工具箱 (Zone B - AD & Zone C)**：
+  - 开发 `CDRDiarySheet`（日常观察者日记）组件，为认知障碍家属提供 BPSD（精神行为症状）追踪打卡工具。
+  - 引入 BPSD 严重程度评估逻辑，当家属选择“重度 (有危险)”时，动态推入红色紧急就医提示。
+  - 开发 `MedicalToolbox`（全量工具箱）组件（Zone C），采用 Bento 网格风格平铺所有医疗工具（发作日记、头痛日记、照护日记、睡眠日志等）。
+  - 将 `MedicalToolbox` 挂载到所有 Manager 视图（包括无标签的 Default 视图）的底部，打破病种壁垒，支持跨病种的 RWE（真实世界证据）数据收集。
+- **Batch 2: 癫痫与偏头痛深度表单 (Zone B - EP & MG)**：
+  - 开发 `SeizureDiarySheet`（癫痫发作日记）组件，支持发作类型（全面/局灶）选择，并在选择局灶时动态展开“意识障碍”开关。
+  - 引入极端事件熔断逻辑：在癫痫发作日记中，若持续时间选择 `>5min`，保存时将立即触发全局红色熔断总线（SOS 预警）。
+  - 开发 `MedicationTracker`（早中晚用药打卡）组件，支持剂量进度条计算，并增加漏服补救提示（下午/晚上打卡时若早上未服药则触发警告）。
+  - 开发 `MigraineDiarySheet`（偏头痛日记）组件，引入 0-10 分 VAS 疼痛滑动条配以动态表情包反馈，支持伴随症状多选。
+  - 在偏头痛日记中明确区分“急性止痛药”与“预防性药物”，选择急性药时自动联动全局 MOH 防火墙统计。
+- **Batch 1: 底座完善与无标签引导 (Zone A & Zone B-Fallback)**：
+  - 重构 `ManagerView` 路由分发逻辑，新增 `DefaultManager` 组件处理无病种标签 (`DiseaseTag.NONE`) 的空状态，提供精美的“开启深度测评”引导卡片。
+  - 提取并升级 `DailyHealthBase` 组件（Zone A），新增“泛健康体能打卡”模块，采用类似苹果健身圆环的视觉反馈展示步数与屏幕使用时间。
+  - 引入异常体征微干预逻辑，当深度睡眠比例偏低时，动态推入助眠建议提示。
+  - 提取 `DTxCard` 组件，作为数字疗法 (DTx) 的统一入口，并增加连续打卡天数 (Streak) 的激励徽章展示。
+  - 将 `DailyHealthBase` 和 `DTxCard` 深度集成到认知、癫痫、偏头痛三大专病管家视图中。
+
+## Phase 8: Final Polish & Delivery
+- **Batch 1: 全局路由与导航优化 (Navigation Polish)**：
+  - 修复 TabBar 状态同步，确保底部 TabBar 在不同路由下的高亮状态完全准确。
+  - 增加全局页面转场动画，使用 `motion/react` 的 `AnimatePresence` 实现平滑过渡。
+  - 增加网络异常兜底机制，在 AI 预问诊和提交测评中模拟网络延迟与错误重试。
+  - 优化空状态，新增“我的设备”页面，在未绑定设备时展示精美的空状态与引导文案。
+
+- **Batch 2: 极端边界情况兜底 (Edge Cases & Fallbacks)**：
+  - 完善全局异常捕获与错误边界 (Error Boundary)，新增 `GlobalError` 组件并在路由层面拦截渲染错误。
+  - 优化弱网环境下的骨架屏 (Skeleton) 体验，为三大管家视图（癫痫、偏头痛、认知）新增 `ManagerSkeleton` 骨架屏加载状态。
+
+### v1.2.0 (Phase 6.2 IoT Interaction Enhancements)
+- **Batch 3: IoT 交互增强 (IoT Interaction Enhancements)**：
+  - **全局 Store**：新增 `unbindDevice` 动作，完善设备生命周期管理。
+  - **IoTStatusCard**：优化未连接态的引导动效与已连接态的动态数据展示（引入微图表与呼吸动效）。
+  - **DeviceView**：完善蓝牙扫描、连接、断开的交互闭环，并与全局 Store 状态强绑定，实现状态同步。
+
 ### v1.0.0 (Phase 6 Manager Dashboard Commercial Refactor)
 - **UI/UX 体验红线纠偏**：全面重构 `Manager` 目录下的三大专病管家视图。彻底摒弃适老化的大字体设计，将字号降级为 `text-sm`、`text-xs`，采用更紧凑的间距（`gap-3`, `p-4`），恢复标准的、严肃的、现代 C 端消费级 SaaS 的排版体系。
 - **业务目标 1：新增“健康趋势洞察”看板**：

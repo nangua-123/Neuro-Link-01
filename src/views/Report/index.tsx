@@ -269,8 +269,8 @@ export default function ReportView() {
       </div>
 
       {/* Bottom CTA */}
-      <div className="fixed bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-[#FAFAFA] via-[#FAFAFA] to-transparent z-30 pointer-events-none">
-        <div className="flex flex-col space-y-3 max-w-md mx-auto pointer-events-auto">
+      <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto p-5 bg-gradient-to-t from-[#FAFAFA] via-[#FAFAFA] to-transparent z-30 pointer-events-none">
+        <div className="flex flex-col space-y-3 pointer-events-auto">
           <button 
             onClick={handleCTAClick}
             className="w-full py-4 rounded-[24px] bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold text-[16px] tracking-wide shadow-[0_8px_20px_rgba(79,70,229,0.25)] transform transition active:scale-95 flex items-center justify-center space-x-2"

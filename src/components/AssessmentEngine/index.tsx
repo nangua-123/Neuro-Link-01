@@ -15,9 +15,10 @@ interface AssessmentEngineProps {
   schema: EngineSchema;
   onSubmit: (values: Record<string, any>) => void;
   initialValues?: Record<string, any>;
+  isSubmitting?: boolean;
 }
 
-export const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ schema, onSubmit, initialValues = {} }) => {
+export const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ schema, onSubmit, initialValues = {}, isSubmitting = false }) => {
   const [values, setValues] = useState<Record<string, any>>(initialValues);
 
   const handleChange = useCallback((id: string, value: any) => {
@@ -57,12 +58,23 @@ export const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ schema, onSu
         ))}
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-[#f9fafb] via-[#f9fafb] to-transparent z-50 pointer-events-none">
+      <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto p-5 bg-gradient-to-t from-[#f9fafb] via-[#f9fafb] to-transparent z-50 pointer-events-none">
         <button
           onClick={handleSubmit}
-          className="w-full max-w-2xl mx-auto block bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-[24px] py-4 font-medium text-[15px] shadow-[0_8px_20px_rgba(79,70,229,0.25)] active:scale-95 transition-all pointer-events-auto"
+          disabled={isSubmitting}
+          className="w-full max-w-2xl mx-auto block bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-[24px] py-4 font-medium text-[15px] shadow-[0_8px_20px_rgba(79,70,229,0.25)] active:scale-95 transition-all pointer-events-auto disabled:opacity-70 flex items-center justify-center"
         >
-          提交评估
+          {isSubmitting ? (
+            <>
+              <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              提交中...
+            </>
+          ) : (
+            '提交评估'
+          )}
         </button>
       </div>
     </div>
@@ -160,8 +172,8 @@ const QuestionRenderer: React.FC<{
                           type="text"
                           placeholder={opt.inputPlaceholder || '请输入详细信息...'}
                           className="w-full bg-slate-50/50 border border-slate-200 rounded-[16px] px-4 py-3 text-[15px] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-                          value={values[`${question.id}_input`] || ''}
-                          onChange={(e) => onChange(`${question.id}_input`, e.target.value)}
+                          value={values[`${question.id}_${opt.value}_input`] || ''}
+                          onChange={(e) => onChange(`${question.id}_${opt.value}_input`, e.target.value)}
                         />
                       </div>
                     </motion.div>
@@ -263,8 +275,8 @@ const QuestionRenderer: React.FC<{
                           type="text"
                           placeholder={opt.inputPlaceholder || '请输入详细信息...'}
                           className="w-full bg-slate-50/50 border border-slate-200 rounded-[16px] px-4 py-3 text-[15px] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-                          value={values[`${question.id}_input`] || ''}
-                          onChange={(e) => onChange(`${question.id}_input`, e.target.value)}
+                          value={values[`${question.id}_${opt.value}_input`] || ''}
+                          onChange={(e) => onChange(`${question.id}_${opt.value}_input`, e.target.value)}
                         />
                       </div>
                     </motion.div>

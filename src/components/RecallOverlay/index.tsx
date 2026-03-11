@@ -12,7 +12,7 @@ export const RecallOverlay: React.FC = () => {
 
   return (
     <div 
-      className="fixed inset-0 z-[9999] bg-gradient-to-b from-red-900 via-red-800 to-red-950 flex flex-col items-center justify-center p-6 text-white overflow-hidden" 
+      className="fixed inset-0 max-w-md mx-auto right-0 left-0 z-[9999] bg-gradient-to-b from-red-900 via-red-800 to-red-950 flex flex-col items-center justify-center p-6 text-white overflow-hidden" 
       style={{ touchAction: 'none' }} // 彻底锁死底层交互
     >
       {/* 闪烁的背景光晕 */}
