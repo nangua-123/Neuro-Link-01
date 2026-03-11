@@ -83,14 +83,14 @@ export function SeizureDiarySheet({ visible, onClose }: Props) {
           <div className="grid grid-cols-1 gap-2">
             <div 
               onClick={() => setType('generalized')}
-              className={`p-3 rounded-[16px] border transition-all ${type === 'generalized' ? 'bg-indigo-50 border-indigo-500 shadow-[0_0_0_1px_rgba(99,102,241,1)]' : 'bg-white border-slate-200'}`}
+              className={`p-4 sm:p-5 rounded-[24px] transition-all ${type === 'generalized' ? 'bg-indigo-50 shadow-[0_0_0_1px_rgba(99,102,241,1)]' : 'bg-slate-50/80 hover:bg-slate-100'}`}
             >
               <div className="text-[14px] font-bold text-slate-900">全面强直阵挛</div>
               <div className="text-[11px] text-slate-500 mt-0.5">全身僵硬、大抽搐、意识丧失</div>
             </div>
             <div 
               onClick={() => setType('focal')}
-              className={`p-3 rounded-[16px] border transition-all ${type === 'focal' ? 'bg-indigo-50 border-indigo-500 shadow-[0_0_0_1px_rgba(99,102,241,1)]' : 'bg-white border-slate-200'}`}
+              className={`p-4 sm:p-5 rounded-[24px] transition-all ${type === 'focal' ? 'bg-indigo-50 shadow-[0_0_0_1px_rgba(99,102,241,1)]' : 'bg-slate-50/80 hover:bg-slate-100'}`}
             >
               <div className="text-[14px] font-bold text-slate-900">局灶性发作</div>
               <div className="text-[11px] text-slate-500 mt-0.5">局部抽搐、发呆走神、感觉异常</div>
@@ -100,7 +100,7 @@ export function SeizureDiarySheet({ visible, onClose }: Props) {
 
         {/* 意识障碍联动 */}
         {type === 'focal' && (
-          <div className="flex items-center justify-between bg-white p-4 rounded-[16px] border border-slate-200 shadow-sm">
+          <div className="flex items-center justify-between bg-slate-50/80 p-4 sm:p-5 rounded-[24px] shadow-sm">
             <div>
               <div className="text-[14px] font-bold text-slate-900">是否伴有意识障碍？</div>
               <div className="text-[11px] text-slate-500 mt-0.5">呼之不应、事后遗忘</div>
@@ -120,7 +120,7 @@ export function SeizureDiarySheet({ visible, onClose }: Props) {
                 className={`px-4 py-2 rounded-full text-[12px] font-semibold transition-all ${
                   duration === opt.value 
                     ? (opt.danger ? 'bg-rose-500 text-white shadow-md' : 'bg-indigo-600 text-white shadow-md')
-                    : 'bg-white text-slate-600 border border-slate-200'
+                    : 'bg-slate-50/80 text-slate-600 hover:bg-slate-100'
                 }`}
               >
                 {opt.label}
@@ -128,7 +128,7 @@ export function SeizureDiarySheet({ visible, onClose }: Props) {
             ))}
           </div>
           {duration && durationOptions.find(o => o.value === duration)?.danger && (
-            <div className="flex items-start gap-2 mt-2 bg-rose-50 p-2.5 rounded-[12px]">
+            <div className="flex items-start gap-2 mt-2 bg-rose-50 p-3 rounded-[16px]">
               <AlertTriangle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
               <span className="text-[11px] text-rose-600 font-medium leading-relaxed">
                 发作超过5分钟属于医疗紧急情况，保存后系统将立即启动紧急熔断预警！
@@ -145,8 +145,8 @@ export function SeizureDiarySheet({ visible, onClose }: Props) {
               <button
                 key={t}
                 onClick={() => toggleTrigger(t)}
-                className={`px-3 py-1.5 rounded-[8px] text-[11px] font-medium transition-all ${
-                  triggers.includes(t) ? 'bg-indigo-100 text-indigo-700 border border-indigo-200' : 'bg-white text-slate-500 border border-slate-200'
+                className={`px-4 py-2 rounded-full text-[11px] font-medium transition-all ${
+                  triggers.includes(t) ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-50/80 text-slate-500 hover:bg-slate-100'
                 }`}
               >
                 {t}
@@ -157,7 +157,7 @@ export function SeizureDiarySheet({ visible, onClose }: Props) {
 
         <Button 
           block 
-          className="bg-slate-900 text-white border-none rounded-[16px] h-12 font-bold text-[15px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]"
+          className="bg-slate-900 text-white border-none rounded-full h-12 font-bold text-[15px] shadow-[0_8px_20px_rgba(15,23,42,0.15)] mt-4"
           onClick={handleSubmit}
         >
           保存日记

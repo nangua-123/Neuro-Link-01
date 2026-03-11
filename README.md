@@ -90,6 +90,11 @@
   - 增加“我的订单”入口占位。
 
 ## Phase 10: Final Polish & Delivery (Current)
+- **Batch 2: 动态医学量表渲染引擎 (Assessment Engine)**：
+  - 升级 `AssessmentEngine` 动态表单渲染引擎，新增对 `SLIDER`（滑动条）题型的支持，采用 C 端柔和视觉规范。
+  - 引入真实的医学量表数据配置：新增 `src/configs/scales/ad8.ts` (AD8 早期认知筛查) 与 `src/configs/scales/phq9.ts` (PHQ-9 抑郁筛查)。
+  - 实现动态跳题逻辑 (Skip Logic)：在 PHQ-9 中通过 `dependsOn` 字段实现高危自杀倾向的动态追问拦截。
+  - 重构 `/assessment` 测评流，将 AD8 与 PHQ-9 无缝串联至认知障碍综合评估路径（AD8 -> PHQ-9 -> CDR）。
 - **Batch 1: 空状态与引导优化 & 商业化闭环**：
   - 完善 `DeviceView`（我的设备）的蓝牙连接流，在未绑定设备时展示精美的空状态与引导文案，并新增“去商城了解”的转化入口。
   - 深化 `MallView`（服务商城）的订阅闭环，模拟设备购买后的自动发现与绑定流程，绑定成功后自动跳转至设备看板。

@@ -8,6 +8,8 @@ import { DiseaseTag } from '../../configs/constants';
 import { AgreementModal } from '../../components/AgreementModal';
 import { useAppStore } from '../../store';
 import NeuroPassModal from '../../components/NeuroPassModal';
+import { RadarChart } from '../../components/Charts/RadarChart';
+import { UserIdentity } from '../../interfaces/user';
 
 export default function ReportView() {
   const location = useLocation();
@@ -15,17 +17,18 @@ export default function ReportView() {
   const [result, setResult] = useState<ScoringResult | null>(null);
   const [isAgreementOpen, setIsAgreementOpen] = useState(false);
   const [isNeuroPassOpen, setIsNeuroPassOpen] = useState(false);
-  const { hasSignedAgreement, signAgreement, setDiseaseTag } = useAppStore();
+  const { hasSignedAgreement, signAgreement, setDiseaseTag, identity } = useAppStore();
+  const isFamily = identity === UserIdentity.FAMILY;
 
   useEffect(() => {
     const payload = location.state?.payload || {};
     const diseaseTag = location.state?.diseaseTag || DiseaseTag.NONE;
     // Simulate network delay for scoring
     const timer = setTimeout(() => {
-      setResult(calculateReport(payload, diseaseTag));
+      setResult(calculateReport(payload, diseaseTag, isFamily));
     }, 1500);
     return () => clearTimeout(timer);
-  }, [location.state]);
+  }, [location.state, isFamily]);
 
   const handleCTAClick = () => {
     const diseaseTag = location.state?.diseaseTag || DiseaseTag.NONE;
@@ -73,7 +76,45 @@ export default function ReportView() {
     );
   }
 
-  const isHighRisk = result.riskScore < 80;
+  // 动态风险分级主题
+  const themeConfig = {
+    low: {
+      bg: 'from-emerald-900 via-teal-900 to-slate-900',
+      icon: 'text-emerald-400',
+      text: 'text-emerald-400',
+      radarColor: '#34d399', // emerald-400
+      cardBorder: 'border-emerald-50/50',
+      btnBg: 'from-emerald-600 to-teal-600',
+      btnShadow: 'shadow-[0_8px_20px_rgba(16,185,129,0.25)]'
+    },
+    medium: {
+      bg: 'from-amber-900 via-orange-900 to-slate-900',
+      icon: 'text-amber-400',
+      text: 'text-amber-400',
+      radarColor: '#fbbf24', // amber-400
+      cardBorder: 'border-amber-50/50',
+      btnBg: 'from-amber-600 to-orange-600',
+      btnShadow: 'shadow-[0_8px_20px_rgba(245,158,11,0.25)]'
+    },
+    high: {
+      bg: 'from-rose-900 via-red-900 to-slate-900',
+      icon: 'text-rose-400',
+      text: 'text-rose-400',
+      radarColor: '#fb7185', // rose-400
+      cardBorder: 'border-rose-50/50',
+      btnBg: 'from-rose-600 to-red-600',
+      btnShadow: 'shadow-[0_8px_20px_rgba(225,29,72,0.25)]'
+    }
+  };
+
+  const riskLevel = result.riskScore >= 80 ? 'low' : result.riskScore >= 60 ? 'medium' : 'high';
+  const theme = themeConfig[riskLevel];
+
+  const radarData = result.dimensions.map(dim => ({
+    subject: dim.name,
+    A: dim.score,
+    fullMark: 100
+  }));
 
   const mockHospitals = [
     {
@@ -94,8 +135,8 @@ export default function ReportView() {
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] flex flex-col relative pb-40">
-      {/* Header Section with Deep Tech Blue Gradient */}
-      <div className="relative bg-gradient-to-b from-[#0f172a] via-[#1e293b] to-[#334155] pt-12 pb-24 px-6 overflow-hidden rounded-b-[40px] shadow-[0_8px_30px_rgba(0,0,0,0.1)]">
+      {/* Header Section with Dynamic Gradient */}
+      <div className={`relative bg-gradient-to-b ${theme.bg} pt-12 pb-24 px-6 overflow-hidden rounded-b-[40px] shadow-[0_8px_30px_rgba(0,0,0,0.1)] transition-colors duration-1000`}>
         {/* Watermark / Texture */}
         <div className="absolute inset-0 opacity-5 pointer-events-none flex items-center justify-center">
           <div className="text-[120px] font-black tracking-tighter transform -rotate-12 select-none text-white">
@@ -118,13 +159,13 @@ export default function ReportView() {
           className="relative z-10 mt-8"
         >
           <div className="flex items-center space-x-2 mb-4">
-            <ShieldCheck className="w-5 h-5 text-emerald-400" />
-            <span className="text-emerald-400 text-[12px] font-bold tracking-widest uppercase">AI 综合评估完成</span>
+            <ShieldCheck className={`w-5 h-5 ${theme.icon}`} />
+            <span className={`${theme.text} text-[12px] font-bold tracking-widest uppercase`}>AI 综合评估完成</span>
           </div>
           <h1 className="text-[32px] font-bold text-white mb-2 tracking-tight leading-tight">
             {result.riskLevel}
           </h1>
-          <p className="text-blue-200/70 text-[14px] font-medium">
+          <p className="text-white/70 text-[14px] font-medium">
             {result.reportSource}
           </p>
           
@@ -133,7 +174,7 @@ export default function ReportView() {
             <div className="text-[72px] font-bold text-white tracking-tighter leading-none">
               {result.riskScore}
             </div>
-            <div className="text-blue-200/60 text-[14px] pb-2 font-semibold tracking-wide">/ 100 综合健康指数</div>
+            <div className="text-white/60 text-[14px] pb-2 font-semibold tracking-wide">/ 100 综合健康指数</div>
           </div>
         </motion.div>
       </div>
@@ -146,11 +187,11 @@ export default function ReportView() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-[28px] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-red-50/50"
+          className={`bg-white/90 backdrop-blur-xl rounded-[28px] p-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border ${theme.cardBorder}`}
         >
           <div className="flex items-center space-x-2 mb-5">
-            <AlertTriangle className="w-5 h-5 text-red-500" />
-            <h3 className="text-slate-900 font-bold text-[18px] tracking-wide">高危症状预警</h3>
+            <AlertTriangle className={`w-5 h-5 ${riskLevel === 'low' ? 'text-emerald-500' : riskLevel === 'medium' ? 'text-amber-500' : 'text-rose-500'}`} />
+            <h3 className="text-slate-900 font-bold text-[18px] tracking-wide">核心发现</h3>
           </div>
           <div className="flex flex-wrap gap-2.5">
             {result.highRiskSymptoms.map((symptom, idx) => (
@@ -159,7 +200,7 @@ export default function ReportView() {
                 className={`px-3.5 py-1.5 rounded-[16px] text-[13px] font-semibold tracking-wide ${
                   symptom === '未见明显高危症状' 
                     ? 'bg-emerald-50 text-emerald-600'
-                    : 'bg-red-50 text-red-600 border border-red-100/50'
+                    : riskLevel === 'medium' ? 'bg-amber-50 text-amber-700 border border-amber-100/50' : 'bg-rose-50 text-rose-600 border border-rose-100/50'
                 }`}
               >
                 {symptom}
@@ -168,53 +209,51 @@ export default function ReportView() {
           </div>
         </motion.div>
 
-        {/* Dimensions Card */}
+        {/* Dimensions Radar Card */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-[28px] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-slate-100/50"
+          className="bg-white/90 backdrop-blur-xl rounded-[28px] p-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100/50"
         >
-          <div className="flex items-center space-x-2 mb-6">
-            <Activity className="w-5 h-5 text-blue-500" />
+          <div className="flex items-center space-x-2 mb-2">
+            <Activity className="w-5 h-5 text-slate-700" />
             <h3 className="text-slate-900 font-bold text-[18px] tracking-wide">多维能力图谱</h3>
           </div>
+          <p className="text-xs text-slate-500 mb-4">{isFamily ? '长辈各项核心能力指标分布' : '您的各项核心能力指标分布'}</p>
           
-          <div className="space-y-6">
+          <div className="relative">
+            {/* Watermark inside chart */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 opacity-[0.03]">
+              <Brain className="w-32 h-32" />
+            </div>
+            <div className="relative z-10">
+              <RadarChart data={radarData} color={theme.radarColor} />
+            </div>
+          </div>
+
+          <div className="mt-4 space-y-3">
             {result.dimensions.map((dim, idx) => (
-              <div key={idx} className="space-y-2.5">
-                <div className="flex justify-between items-center text-[14px]">
-                  <span className="text-slate-600 font-semibold">{dim.name}</span>
-                  <span className={`font-bold ${
-                    dim.status === 'normal' ? 'text-emerald-500' :
-                    dim.status === 'warning' ? 'text-orange-500' : 'text-red-500'
-                  }`}>
-                    {dim.score} 分
-                  </span>
-                </div>
-                <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    animate={{ width: `${dim.score}%` }}
-                    transition={{ duration: 1, delay: 0.3 + idx * 0.1, ease: "easeOut" }}
-                    className={`h-full rounded-full ${
-                      dim.status === 'normal' ? 'bg-emerald-400' :
-                      dim.status === 'warning' ? 'bg-orange-400' : 'bg-red-400'
-                    }`}
-                  />
-                </div>
+              <div key={idx} className="flex justify-between items-center text-[13px] px-2">
+                <span className="text-slate-600 font-medium">{dim.name}</span>
+                <span className={`font-bold ${
+                  dim.status === 'normal' ? 'text-emerald-500' :
+                  dim.status === 'warning' ? 'text-amber-500' : 'text-rose-500'
+                }`}>
+                  {dim.score} 分
+                </span>
               </div>
             ))}
           </div>
         </motion.div>
 
-        {/* LBS Triage Card (Only for High Risk) */}
-        {isHighRisk && (
+        {/* LBS Triage Card (Only for High/Medium Risk) */}
+        {(riskLevel === 'high' || riskLevel === 'medium') && (
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white rounded-[28px] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-blue-50/50"
+            className="bg-white/90 backdrop-blur-xl rounded-[28px] p-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-blue-50/50"
           >
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center space-x-2">
@@ -225,7 +264,9 @@ export default function ReportView() {
             </div>
             
             <p className="text-[14px] text-slate-500 mb-5 leading-relaxed font-medium">
-              检测到您的健康指标存在异常，建议尽快前往线下 Neuro-Link 协作医院进行复核。
+              {isFamily 
+                ? '检测到长辈的健康指标存在异常，建议尽快带长辈前往线下 Neuro-Link 协作医院进行复核。' 
+                : '检测到您的健康指标存在异常，建议尽快前往线下 Neuro-Link 协作医院进行复核。'}
             </p>
 
             <div className="space-y-4">
@@ -273,7 +314,7 @@ export default function ReportView() {
         <div className="flex flex-col space-y-3 pointer-events-auto">
           <button 
             onClick={handleCTAClick}
-            className="w-full py-4 rounded-[24px] bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold text-[16px] tracking-wide shadow-[0_8px_20px_rgba(79,70,229,0.25)] transform transition active:scale-95 flex items-center justify-center space-x-2"
+            className={`w-full py-4 rounded-[24px] bg-gradient-to-r ${theme.btnBg} text-white font-semibold text-[16px] tracking-wide ${theme.btnShadow} transform transition active:scale-95 flex items-center justify-center space-x-2`}
           >
             <ShieldCheck className="w-5 h-5" />
             <span>{result.ctaText}</span>

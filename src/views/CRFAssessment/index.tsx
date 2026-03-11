@@ -10,7 +10,6 @@ export default function CRFAssessmentView() {
   const [isCompleted, setIsCompleted] = useState(false);
 
   const handleComplete = (answers: Record<string, any>) => {
-    console.log('【CRF 测评完成】生成的答卷 Payload:', answers);
     setIsCompleted(true);
   };
 

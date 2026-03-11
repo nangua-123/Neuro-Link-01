@@ -27,23 +27,23 @@ export function MedicalToolbox() {
         <span className="text-[11px] text-slate-400 font-medium bg-slate-100 px-2 py-0.5 rounded-full">Zone C</span>
       </div>
       
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4">
         {tools.map((tool) => (
           <motion.button
             key={tool.id}
             whileTap={{ scale: 0.96 }}
             onClick={tool.onClick}
-            className="bg-white p-3.5 rounded-[20px] shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-slate-100/50 flex flex-col items-start space-y-2 text-left group hover:border-slate-200 transition-colors"
+            className="bg-white p-4 sm:p-5 rounded-[24px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100/50 flex flex-col justify-between text-left group hover:border-slate-200 transition-colors aspect-square"
           >
-            <div className="flex items-center justify-between w-full">
-              <div className={`w-8 h-8 rounded-xl ${tool.bg} flex items-center justify-center ${tool.color}`}>
-                <tool.icon className="w-4 h-4" />
+            <div className="flex items-start justify-between w-full">
+              <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full ${tool.bg} flex items-center justify-center ${tool.color} group-hover:scale-110 transition-transform`}>
+                <tool.icon className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
-              <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-slate-400 transition-colors" />
+              <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-400 transition-colors mt-1" />
             </div>
-            <div>
-              <h4 className="text-[13px] font-bold text-slate-900 leading-tight">{tool.title}</h4>
-              <p className="text-[10px] text-slate-500 mt-0.5 font-medium">{tool.desc}</p>
+            <div className="mt-auto">
+              <h4 className="text-sm sm:text-[15px] font-bold text-slate-900 leading-tight line-clamp-1">{tool.title}</h4>
+              <p className="text-[11px] sm:text-xs text-slate-500 mt-1 font-medium line-clamp-1">{tool.desc}</p>
             </div>
           </motion.button>
         ))}

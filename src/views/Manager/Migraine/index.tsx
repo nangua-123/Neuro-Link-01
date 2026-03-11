@@ -111,7 +111,7 @@ export default function MigraineManager() {
         </div>
         <TrendBarChart 
           data={migraineFrequencyData} 
-          title="近 7 日头痛发作频率" 
+          title={isFamily ? "长辈近 7 日头痛发作频率" : "近 7 日头痛发作频率"}
           subtitle="识别并规避诱发因素"
           valueFormatter={(val) => `${val} 次`}
           color="#8b5cf6" // violet-500

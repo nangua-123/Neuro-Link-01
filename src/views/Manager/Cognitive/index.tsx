@@ -52,10 +52,10 @@ export default function CognitiveManager() {
       className="space-y-6 pb-10"
     >
       <motion.div variants={itemVariants}><StatusOverview isFamily={isFamily} /></motion.div>
-      <motion.div variants={itemVariants}><DataInsights onOpenVisitSummary={() => setIsVisitSummaryVisible(true)} /></motion.div>
+      <motion.div variants={itemVariants}><DataInsights isFamily={isFamily} onOpenVisitSummary={() => setIsVisitSummaryVisible(true)} /></motion.div>
       <motion.div variants={itemVariants}><DailyHealthBase /></motion.div>
       <motion.div variants={itemVariants}><DailyActions isFamily={isFamily} onOpenCDRDiary={() => setIsCDRDiaryVisible(true)} /></motion.div>
-      <motion.div variants={itemVariants}><MedicalServices /></motion.div>
+      <motion.div variants={itemVariants}><MedicalServices isFamily={isFamily} /></motion.div>
       <motion.div variants={itemVariants}><MedicalToolbox /></motion.div>
       <CDRDiarySheet visible={isCDRDiaryVisible} onClose={() => setIsCDRDiaryVisible(false)} />
       <VisitSummaryModal visible={isVisitSummaryVisible} onClose={() => setIsVisitSummaryVisible(false)} diseaseTag={DiseaseTag.AD} />
@@ -108,7 +108,7 @@ function StatusOverview({ isFamily }: { isFamily: boolean }) {
   );
 }
 
-function DataInsights({ onOpenVisitSummary }: { onOpenVisitSummary: () => void }) {
+function DataInsights({ isFamily, onOpenVisitSummary }: { isFamily: boolean, onOpenVisitSummary: () => void }) {
   const { cognitiveTrainingData } = useAppStore();
 
   return (
@@ -124,8 +124,8 @@ function DataInsights({ onOpenVisitSummary }: { onOpenVisitSummary: () => void }
       </div>
       <TrendBarChart 
         data={cognitiveTrainingData} 
-        title="近 7 日脑力训练时长" 
-        subtitle="坚持每日 15 分钟数字疗法"
+        title={isFamily ? "长辈近 7 日脑力训练时长" : "近 7 日脑力训练时长"}
+        subtitle={isFamily ? "督促长辈每日坚持 15 分钟数字疗法" : "坚持每日 15 分钟数字疗法"}
         valueFormatter={(val) => `${val} 分钟`}
         color="#6366f1" // indigo-500
         complianceRate={85}
@@ -169,7 +169,7 @@ function DailyActions({ isFamily, onOpenCDRDiary }: { isFamily: boolean, onOpenC
       {/* DTx Training Card */}
       <DTxCard 
         title="空间记忆连连看"
-        description="通过趣味连线游戏，锻炼短期记忆与空间感知能力，建议每日完成 15 分钟。"
+        description={isFamily ? "通过趣味连线游戏，锻炼长辈短期记忆与空间感知能力，建议每日完成 15 分钟。" : "通过趣味连线游戏，锻炼短期记忆与空间感知能力，建议每日完成 15 分钟。"}
         icon={Brain}
         theme="indigo"
         streak={3}
@@ -217,7 +217,7 @@ function DailyActions({ isFamily, onOpenCDRDiary }: { isFamily: boolean, onOpenC
   );
 }
 
-function MedicalServices() {
+function MedicalServices({ isFamily }: { isFamily: boolean }) {
   const navigate = useNavigate();
 
   return (
@@ -229,18 +229,20 @@ function MedicalServices() {
       <div className="grid grid-cols-1 gap-3">
         <ServiceCard 
           icon={FileText}
-          title="复查动态量表"
+          title={isFamily ? "长辈复查动态量表" : "复查动态量表"}
           desc="CDR 临床痴呆评定量表"
           color="blue"
           onClick={() => navigate('/assessment?diseaseTag=AD')}
         />
-        <ServiceCard 
-          icon={HeartHandshake}
-          title="照护者心理支持"
-          desc="家属减负与专业心理疏导"
-          color="indigo"
-          onClick={() => showComingSoon('心理咨询室筹备中', '专业的心理疏导团队正在入驻，敬请期待。')}
-        />
+        {isFamily && (
+          <ServiceCard 
+            icon={HeartHandshake}
+            title="照护者心理支持"
+            desc="家属减负与专业心理疏导"
+            color="indigo"
+            onClick={() => showComingSoon('心理咨询室筹备中', '专业的心理疏导团队正在入驻，敬请期待。')}
+          />
+        )}
       </div>
     </div>
   );

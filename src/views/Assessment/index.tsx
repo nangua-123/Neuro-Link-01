@@ -12,6 +12,8 @@ import {
   scale_cdr_informant_orientation_judgment,
   scale_cdr_informant_social_home_care,
 } from '../../configs/scales/cdr';
+import { scale_ad8 } from '../../configs/scales/ad8';
+import { scale_phq9 } from '../../configs/scales/phq9';
 import {
   scale_epilepsy_crf_v0_part1,
   scale_epilepsy_crf_v0_part2,
@@ -67,21 +69,31 @@ export default function AssessmentView() {
       case DiseaseTag.NONE:
       default:
         return {
-          subtitle: 'CDR 知情者评估',
+          subtitle: '认知障碍综合评估',
           steps: [
             {
+              id: 'ad8_step',
+              title: 'AD8 早期筛查',
+              schema: scale_ad8,
+            },
+            {
+              id: 'phq9_step',
+              title: 'PHQ-9 抑郁筛查',
+              schema: scale_phq9,
+            },
+            {
               id: 'cdr_step1',
-              title: '记忆篇',
+              title: 'CDR 记忆篇',
               schema: scale_cdr_informant_memory,
             },
             {
               id: 'cdr_step2',
-              title: '定向与判断篇',
+              title: 'CDR 定向与判断篇',
               schema: scale_cdr_informant_orientation_judgment,
             },
             {
               id: 'cdr_step3',
-              title: '社会与生活自理篇',
+              title: 'CDR 社会与生活自理篇',
               schema: scale_cdr_informant_social_home_care,
             },
           ],
@@ -100,7 +112,6 @@ export default function AssessmentView() {
       } else {
         // Last step, submit all data
         const finalData = { ...assessmentData, ...stepData };
-        console.log('【测评完成】生成的答卷 Payload:', finalData);
         
         setIsSubmitting(true);
         try {

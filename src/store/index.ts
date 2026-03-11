@@ -1,7 +1,7 @@
 // File: src/store/index.ts
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { UserIdentity } from '../interfaces/user';
+import { UserIdentity, PatientProfile } from '../interfaces/user';
 import { DiseaseTag } from '../configs/constants';
 
 interface ChartDataPoint {
@@ -23,6 +23,8 @@ interface AppState {
   userToken: string | null;
   identity: UserIdentity | null;
   familyId: string | null;
+  boundPatients: PatientProfile[];
+  currentPatientId: string | null;
   
   // 核心合规状态
   hasSignedAgreement: boolean;
@@ -48,6 +50,8 @@ interface AppState {
   
   // Actions
   setAuth: (token: string, identity: UserIdentity, familyId?: string) => void;
+  bindPatient: (patient: PatientProfile) => void;
+  switchPatient: (patientId: string) => void;
   signAgreement: () => void;
   revokeAgreement: () => void;
   clearAuth: () => void;
@@ -104,6 +108,8 @@ export const useAppStore = create<AppState>()(
       userToken: null,
       identity: null,
       familyId: null,
+      boundPatients: [],
+      currentPatientId: null,
       hasSignedAgreement: false,
       selectedDiseaseTag: DiseaseTag.NONE,
       painkillerDays: 14, // Mock：默认14天，逼近15天红线以便测试 MOH 拦截
@@ -121,6 +127,26 @@ export const useAppStore = create<AppState>()(
         identity, 
         familyId: familyId || null 
       }),
+
+      bindPatient: (patient) => set((state) => {
+        const newPatients = [...state.boundPatients, patient];
+        return {
+          boundPatients: newPatients,
+          currentPatientId: state.currentPatientId || patient.id, // 如果没有当前患者，则默认选中新绑定的
+          selectedDiseaseTag: patient.diseaseTag as DiseaseTag || state.selectedDiseaseTag
+        };
+      }),
+
+      switchPatient: (patientId) => set((state) => {
+        const patient = state.boundPatients.find(p => p.id === patientId);
+        if (patient) {
+          return {
+            currentPatientId: patientId,
+            selectedDiseaseTag: patient.diseaseTag as DiseaseTag || DiseaseTag.NONE
+          };
+        }
+        return state;
+      }),
       
       signAgreement: () => set({ hasSignedAgreement: true }),
       revokeAgreement: () => set({ hasSignedAgreement: false }),
@@ -130,6 +156,8 @@ export const useAppStore = create<AppState>()(
         userToken: null, 
         identity: null, 
         familyId: null, 
+        boundPatients: [],
+        currentPatientId: null,
         hasSignedAgreement: false,
         selectedDiseaseTag: DiseaseTag.NONE,
         painkillerDays: 14,

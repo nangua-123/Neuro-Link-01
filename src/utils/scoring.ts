@@ -13,45 +13,82 @@ export interface ScoringResult {
   ctaText: string; // e.g., "开启 24 小时认知护航管家"
 }
 
-export function calculateReport(payload: Record<string, any>, diseaseTag: DiseaseTag): ScoringResult {
+export function calculateReport(payload: Record<string, any>, diseaseTag: DiseaseTag, isFamily: boolean = false): ScoringResult {
   switch (diseaseTag) {
     case DiseaseTag.EPILEPSY:
-      return calculateEpilepsyReport(payload);
+      return calculateEpilepsyReport(payload, isFamily);
     case DiseaseTag.MIGRAINE:
-      return calculateMigraineReport(payload);
+      return calculateMigraineReport(payload, isFamily);
     case DiseaseTag.AD:
     case DiseaseTag.NONE:
     default:
-      return calculateADReport(payload);
+      return calculateADReport(payload, isFamily);
   }
 }
 
-function calculateADReport(payload: Record<string, any>): ScoringResult {
+function calculateADReport(payload: Record<string, any>, isFamily: boolean): ScoringResult {
   let memoryScore = 85;
   let orientationScore = 90;
   let socialScore = 75;
   let homeCareScore = 80;
+  let moodScore = 100; // New dimension for PHQ-9
   
   const symptoms: string[] = [];
   const randomFactor = Math.random();
   
-  if (randomFactor > 0.7) {
-    memoryScore = 40;
-    symptoms.push('近期记忆显著减退');
-    symptoms.push('无法回忆几天前发生的事');
-  } else if (randomFactor > 0.3) {
-    memoryScore = 65;
-    symptoms.push('偶发性遗忘');
+  // Parse AD8 logic
+  let ad8Score = 0;
+  for (let i = 1; i <= 8; i++) {
+    if (payload[`ad8_${i}`] === 1) {
+      ad8Score++;
+    }
+  }
+  if (ad8Score >= 2) {
+    memoryScore -= 30;
+    symptoms.push(`AD8 筛查异常 (得分: ${ad8Score}/8)`);
+  }
+
+  // Parse PHQ-9 logic
+  let phq9Score = 0;
+  for (let i = 1; i <= 9; i++) {
+    const val = payload[`phq9_${i}`];
+    if (typeof val === 'number') {
+      phq9Score += val;
+    }
   }
   
-  if (payload['q_orientation_time'] === 'often_confused' || randomFactor > 0.5) {
+  if (phq9Score >= 10) {
+    moodScore -= 40;
+    symptoms.push(`中重度抑郁倾向 (PHQ-9: ${phq9Score}分)`);
+  } else if (phq9Score >= 5) {
+    moodScore -= 20;
+    symptoms.push(`轻度抑郁倾向 (PHQ-9: ${phq9Score}分)`);
+  }
+
+  if (payload['phq9_9'] > 0) {
+    moodScore -= 50;
+    symptoms.push('高危：存在自伤/自杀念头');
+    if (payload['phq9_9_risk'] === 2) {
+      symptoms.push('极高危：存在具体自杀计划');
+    }
+  }
+  
+  // Parse CDR logic (mock)
+  if (payload['cdr_m_1'] === 2 || randomFactor > 0.7) {
+    memoryScore -= 20;
+    if (!symptoms.includes('近期记忆显著减退')) {
+      symptoms.push('近期记忆显著减退');
+    }
+  }
+  
+  if (payload['cdr_o_1'] >= 3 || randomFactor > 0.8) {
     orientationScore -= 25;
     if (orientationScore < 60 && !symptoms.includes('时间定向力受损')) {
       symptoms.push('时间定向力受损');
     }
   }
   
-  if (payload['q_social_activities'] === 'rarely' || randomFactor > 0.6) {
+  if (payload['cdr_s_1'] === 2 || randomFactor > 0.8) {
     socialScore -= 35;
     if (socialScore < 60 && !symptoms.includes('社交活动显著减少')) {
       symptoms.push('社交活动显著减少');
@@ -59,13 +96,14 @@ function calculateADReport(payload: Record<string, any>): ScoringResult {
   }
   
   const dimensions = [
-    { name: '记忆力', score: memoryScore, status: (memoryScore > 80 ? 'normal' : memoryScore > 60 ? 'warning' : 'danger') as 'normal' | 'warning' | 'danger' },
-    { name: '定向力', score: orientationScore, status: (orientationScore > 80 ? 'normal' : orientationScore > 60 ? 'warning' : 'danger') as 'normal' | 'warning' | 'danger' },
-    { name: '社会活动', score: socialScore, status: (socialScore > 80 ? 'normal' : socialScore > 60 ? 'warning' : 'danger') as 'normal' | 'warning' | 'danger' },
-    { name: '生活自理', score: homeCareScore, status: (homeCareScore > 80 ? 'normal' : homeCareScore > 60 ? 'warning' : 'danger') as 'normal' | 'warning' | 'danger' }
+    { name: '记忆力', score: Math.max(0, memoryScore), status: (memoryScore > 80 ? 'normal' : memoryScore > 60 ? 'warning' : 'danger') as 'normal' | 'warning' | 'danger' },
+    { name: '定向力', score: Math.max(0, orientationScore), status: (orientationScore > 80 ? 'normal' : orientationScore > 60 ? 'warning' : 'danger') as 'normal' | 'warning' | 'danger' },
+    { name: '情绪状态', score: Math.max(0, moodScore), status: (moodScore > 80 ? 'normal' : moodScore > 60 ? 'warning' : 'danger') as 'normal' | 'warning' | 'danger' },
+    { name: '社会活动', score: Math.max(0, socialScore), status: (socialScore > 80 ? 'normal' : socialScore > 60 ? 'warning' : 'danger') as 'normal' | 'warning' | 'danger' },
+    { name: '生活自理', score: Math.max(0, homeCareScore), status: (homeCareScore > 80 ? 'normal' : homeCareScore > 60 ? 'warning' : 'danger') as 'normal' | 'warning' | 'danger' }
   ];
   
-  const avgScore = (memoryScore + orientationScore + socialScore + homeCareScore) / 4;
+  const avgScore = (memoryScore + orientationScore + moodScore + socialScore + homeCareScore) / 5;
   
   let riskLevel = '认知功能良好';
   if (avgScore < 60) {
@@ -83,12 +121,12 @@ function calculateADReport(payload: Record<string, any>): ScoringResult {
     riskScore: Math.round(avgScore),
     dimensions,
     highRiskSymptoms: symptoms,
-    reportSource: '基于华西 CDR 认知量表多维数据计算',
-    ctaText: '开启 24 小时认知护航管家',
+    reportSource: '基于 AD8、PHQ-9 及华西 CDR 综合解析',
+    ctaText: isFamily ? '开启长辈认知护航管家' : '开启 24 小时认知护航管家',
   };
 }
 
-function calculateEpilepsyReport(payload: Record<string, any>): ScoringResult {
+function calculateEpilepsyReport(payload: Record<string, any>, isFamily: boolean): ScoringResult {
   let controlScore = 80;
   let adherenceScore = 90;
   let lifeQualityScore = 85;
@@ -142,11 +180,11 @@ function calculateEpilepsyReport(payload: Record<string, any>): ScoringResult {
     dimensions,
     highRiskSymptoms: symptoms,
     reportSource: '基于华西癫痫基线期 (V0) 档案多维解析',
-    ctaText: '开启癫痫护航管家',
+    ctaText: isFamily ? '开启长辈癫痫护航管家' : '开启癫痫护航管家',
   };
 }
 
-function calculateMigraineReport(payload: Record<string, any>): ScoringResult {
+function calculateMigraineReport(payload: Record<string, any>, isFamily: boolean): ScoringResult {
   let disabilityScore = 90;
   let painIntensityScore = 85;
   let frequencyScore = 80;
@@ -190,6 +228,6 @@ function calculateMigraineReport(payload: Record<string, any>): ScoringResult {
     dimensions,
     highRiskSymptoms: symptoms,
     reportSource: '基于偏头痛 MIDAS 初筛量表解析',
-    ctaText: '开启偏头痛管家',
+    ctaText: isFamily ? '开启长辈偏头痛管家' : '开启偏头痛管家',
   };
 }

@@ -1,6 +1,6 @@
 // File: src/router/index.tsx
 import React from 'react';
-import { createBrowserRouter, Navigate, useLocation, useOutlet } from 'react-router-dom';
+import { createBrowserRouter, Navigate, useLocation, useOutlet, Outlet } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import Layout from '../views/Layout';
 import HomeView from '../views/Home';
@@ -45,17 +45,17 @@ const RootLayout: React.FC = () => {
 
   // 判断是否为底部导航栏的路由，如果是，则共用一个 key，避免 Layout 卸载
   const isTabRoute = ['/', '/manager', '/mall', '/profile'].includes(location.pathname);
-  const animationKey = isTabRoute ? 'tabs' : location.pathname.split('/')[1] || '/';
+  const animationKey = isTabRoute ? 'tabs' : location.pathname;
 
   return (
     <AnimatePresence mode="wait">
       <motion.div
         key={animationKey}
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 1.02 }}
-        transition={{ duration: 0.3, ease: 'easeInOut' }}
-        className="h-full w-full"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        className="h-full w-full absolute inset-0"
       >
         {outlet}
       </motion.div>

@@ -7,8 +7,6 @@ export class OcrEngine {
    * 扫描基层医院的处方单/收费单，提取关键信息用于 B 端分润核算对账
    */
   public async scanReceipt(imageFile: File | Blob | null): Promise<ReconciliationPayload> {
-    console.log('正在上传单据并进行 OCR 图像解析...');
-    
     // 模拟 1.5 秒的识别延迟
     await new Promise(resolve => setTimeout(resolve, 1500));
 
@@ -34,7 +32,6 @@ export class OcrEngine {
       aedConcentration: '丙戊酸血药谷浓度: 65.2 μg/mL (正常范围 50-100 μg/mL)'
     };
 
-    console.log('OCR 解析完成，提取对账载荷:', mockResult);
     return mockResult;
   }
 }

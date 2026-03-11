@@ -56,16 +56,16 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({ isOpen, onClose,
               </div>
             </div>
             
-            <div className="p-5 bg-white border-t border-slate-50 flex space-x-3 pb-8">
+            <div className="p-5 sm:p-6 bg-white border-t border-slate-50 flex space-x-3 pb-8">
               <button
                 onClick={onClose}
-                className="flex-1 py-4 rounded-[24px] font-medium text-[15px] text-slate-600 bg-slate-50 hover:bg-slate-100 transition-colors"
+                className="flex-1 py-4 rounded-full font-medium text-[15px] text-slate-600 bg-slate-50 hover:bg-slate-100 transition-colors"
               >
                 暂不授权
               </button>
               <button
                 onClick={onAgree}
-                className="flex-[2] py-4 rounded-[24px] font-medium text-[15px] text-white bg-slate-900 shadow-xl shadow-slate-900/20 active:scale-95 transition-all"
+                className="flex-[2] py-4 rounded-full font-medium text-[15px] text-white bg-slate-900 shadow-[0_8px_20px_rgba(15,23,42,0.15)] active:scale-95 transition-all"
               >
                 同意并签署
               </button>

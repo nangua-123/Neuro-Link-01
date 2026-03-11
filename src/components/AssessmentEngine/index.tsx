@@ -370,6 +370,28 @@ const QuestionRenderer: React.FC<{
       );
     }
 
+    // 6. SLIDER
+    if (qType === 'slider') {
+      return (
+        <div className="w-full px-2 pt-4 pb-6">
+          <input
+            type="range"
+            min={question.min || 0}
+            max={question.max || 10}
+            step={question.step || 1}
+            className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+            value={value !== undefined ? value : (question.min || 0)}
+            onChange={(e) => onChange(question.id, Number(e.target.value))}
+          />
+          <div className="flex justify-between text-[13px] text-slate-500 mt-3 font-medium">
+            <span>{question.minLabel || question.min || 0}</span>
+            <span className="text-blue-600 font-bold text-[15px]">{value !== undefined ? value : (question.min || 0)}</span>
+            <span>{question.maxLabel || question.max || 10}</span>
+          </div>
+        </div>
+      );
+    }
+
     return <div className="text-[13px] text-slate-400 p-4 bg-slate-50 rounded-[16px]">不支持的题型: {qType}</div>;
   };
 

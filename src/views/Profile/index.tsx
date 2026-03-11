@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../../store';
 import { Switch, List, Toast, Modal, ActionSheet, Dialog } from 'antd-mobile';
-import { Shield, User, QrCode, FileText, ChevronRight, LogOut, HeartPulse, Settings, Users } from 'lucide-react';
+import { Shield, User, QrCode, FileText, ChevronRight, LogOut, HeartPulse, Settings, Users, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import NeuroPassModal from '../../components/NeuroPassModal';
+import FamilyBindingModal from './components/FamilyBindingModal';
 import { UserIdentity } from '../../interfaces/user';
 import { showComingSoon } from '../../utils/ui';
 
 export default function ProfileView() {
-  const { hasSignedAgreement, signAgreement, revokeAgreement, clearAuth, identity, setAuth, userToken, familyId } = useAppStore();
+  const { hasSignedAgreement, signAgreement, revokeAgreement, clearAuth, identity, setAuth, userToken, familyId, boundPatients, currentPatientId, switchPatient } = useAppStore();
   const navigate = useNavigate();
   const [isNeuroPassOpen, setIsNeuroPassOpen] = useState(false);
   const [isIdentitySheetVisible, setIsIdentitySheetVisible] = useState(false);
+  const [isBindingModalVisible, setIsBindingModalVisible] = useState(false);
 
   const handleAuthChange = (checked: boolean) => {
     if (checked) {
@@ -63,15 +65,8 @@ export default function ProfileView() {
   const handleIdentitySwitch = (newIdentity: UserIdentity) => {
     if (newIdentity === identity) return;
     
-    if (newIdentity === UserIdentity.FAMILY && !familyId) {
-      Dialog.confirm({
-        title: '绑定患者',
-        content: '为演示目的，点击确认即模拟绑定成功',
-        onConfirm: async () => {
-          setAuth(userToken || 'mock_token', UserIdentity.FAMILY, 'mock_family_id');
-          Toast.show({ content: '已切换至家属视角', icon: 'success' });
-        },
-      });
+    if (newIdentity === UserIdentity.FAMILY && (!boundPatients || boundPatients.length === 0)) {
+      setIsBindingModalVisible(true);
     } else {
       setAuth(userToken || 'mock_token', newIdentity, familyId || undefined);
       Toast.show({ content: `已切换至${newIdentity === UserIdentity.PATIENT ? '患者' : '家属'}视角`, icon: 'success' });
@@ -97,8 +92,10 @@ export default function ProfileView() {
     show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
   };
 
+  const currentPatient = boundPatients?.find(p => p.id === currentPatientId);
+
   return (
-    <div className="min-h-screen bg-[#FAFAFA] flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-[#FAFAFA] flex flex-col relative overflow-hidden pb-24">
       {/* 极浅弥散暖色渐变背景 */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <div className="absolute -top-[10%] -right-[10%] w-[120%] h-[50%] bg-gradient-to-b from-[#E8F3FF] to-transparent opacity-60 blur-3xl" />
@@ -117,8 +114,12 @@ export default function ProfileView() {
           
           <div className="flex items-center gap-5 relative z-10">
             <div className="relative">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center text-blue-600 shadow-inner border border-blue-100/50">
-                <User className="w-8 h-8 opacity-80" />
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center text-blue-600 shadow-inner border border-blue-100/50 overflow-hidden">
+                {identity === UserIdentity.FAMILY && currentPatient?.avatarUrl ? (
+                  <img src={currentPatient.avatarUrl} alt="avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <User className="w-8 h-8 opacity-80" />
+                )}
               </div>
               <div 
                 onClick={() => setIsIdentitySheetVisible(true)}
@@ -129,7 +130,9 @@ export default function ProfileView() {
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <h2 className="text-[20px] font-bold text-slate-900 tracking-tight">138****5920</h2>
+                <h2 className="text-[20px] font-bold text-slate-900 tracking-tight">
+                  {identity === UserIdentity.FAMILY && currentPatient ? currentPatient.name : '138****5920'}
+                </h2>
                 <span className="px-2 py-0.5 bg-gradient-to-r from-amber-100 to-amber-50 text-amber-700 text-[10px] font-bold rounded-[8px] border border-amber-200/50 shadow-sm">VIP</span>
               </div>
               <p className="text-[13px] text-slate-500 font-medium flex items-center gap-1">
@@ -139,6 +142,45 @@ export default function ProfileView() {
           </div>
           <ChevronRight className="w-5 h-5 text-slate-300 relative z-10" />
         </motion.div>
+
+        {/* Module A.1: Family Management (Only visible if identity is FAMILY) */}
+        {identity === UserIdentity.FAMILY && (
+          <motion.div variants={itemVariants} className="bg-white rounded-[28px] p-4 mb-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100/50">
+            <div className="flex items-center justify-between mb-3 px-2">
+              <h3 className="font-semibold text-slate-900 text-[15px] tracking-tight">照护对象管理</h3>
+              <button 
+                onClick={() => setIsBindingModalVisible(true)}
+                className="text-blue-600 text-[13px] font-semibold flex items-center gap-1 bg-blue-50/50 px-3 py-1.5 rounded-full active:bg-blue-100/50 transition-colors"
+              >
+                <Plus className="w-3.5 h-3.5" /> 绑定长辈
+              </button>
+            </div>
+            <div className="flex gap-3 overflow-x-auto pb-2 px-2 snap-x">
+              {boundPatients?.map(patient => (
+                <div 
+                  key={patient.id}
+                  onClick={() => switchPatient(patient.id)}
+                  className={`flex-shrink-0 w-24 p-3 rounded-[20px] border flex flex-col items-center gap-2 snap-center transition-all ${
+                    currentPatientId === patient.id 
+                      ? 'bg-blue-50 border-blue-200 shadow-sm' 
+                      : 'bg-slate-50 border-slate-100 opacity-70 active:opacity-100'
+                  }`}
+                >
+                  <img src={patient.avatarUrl} alt={patient.name} className="w-10 h-10 rounded-full bg-white shadow-sm" />
+                  <div className="text-center">
+                    <div className="text-[13px] font-bold text-slate-900 leading-tight">{patient.name}</div>
+                    <div className="text-[10px] text-slate-500 font-medium">{patient.relation}</div>
+                  </div>
+                </div>
+              ))}
+              {(!boundPatients || boundPatients.length === 0) && (
+                <div className="w-full py-4 text-center text-slate-400 text-[13px]">
+                  暂无绑定的照护对象
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
 
         {/* Module B: Data Privacy */}
         <motion.div variants={itemVariants} className="bg-white rounded-[28px] p-6 mb-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100/50 relative overflow-hidden">
@@ -240,7 +282,7 @@ export default function ProfileView() {
         <motion.div variants={itemVariants}>
           <button 
             onClick={handleLogout}
-            className="w-full bg-white rounded-[28px] p-4 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100/50 flex items-center justify-center gap-2 text-rose-500 font-semibold active:bg-rose-50 transition-colors tracking-wide"
+            className="w-full bg-white rounded-full p-4 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100/50 flex items-center justify-center gap-2 text-rose-500 font-semibold active:bg-rose-50 transition-colors tracking-wide"
           >
             <LogOut className="w-5 h-5" />
             退出登录
@@ -251,6 +293,17 @@ export default function ProfileView() {
       <NeuroPassModal 
         visible={isNeuroPassOpen} 
         onClose={() => setIsNeuroPassOpen(false)} 
+      />
+
+      <FamilyBindingModal
+        visible={isBindingModalVisible}
+        onClose={() => {
+          setIsBindingModalVisible(false);
+          // 如果绑定成功且身份还是 PATIENT，则切换到 FAMILY
+          if (boundPatients && boundPatients.length > 0 && identity !== UserIdentity.FAMILY) {
+            setAuth(userToken || 'mock_token', UserIdentity.FAMILY, familyId || undefined);
+          }
+        }}
       />
 
       <ActionSheet

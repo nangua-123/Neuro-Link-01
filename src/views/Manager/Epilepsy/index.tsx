@@ -167,8 +167,8 @@ export default function EpilepsyManager() {
         </div>
         <TrendBarChart 
           data={epilepsyAdherenceData} 
-          title="近 7 日用药依从性" 
-          subtitle="保持规律服药是控制发作的关键"
+          title={isFamily ? "长辈近 7 日用药依从性" : "近 7 日用药依从性"}
+          subtitle={isFamily ? "督促长辈保持规律服药是控制发作的关键" : "保持规律服药是控制发作的关键"}
           valueFormatter={(val) => `${val}%`}
           complianceRate={95}
         />
@@ -196,7 +196,7 @@ export default function EpilepsyManager() {
                 <Activity className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h4 className="text-[14px] font-bold text-indigo-900">记录发作日记</h4>
+                <h4 className="text-[14px] font-bold text-indigo-900">{isFamily ? '记录长辈发作日记' : '记录发作日记'}</h4>
                 <p className="text-[11px] text-indigo-700/70 mt-0.5 font-medium">记录发作类型、时长与诱因</p>
               </div>
             </div>
@@ -265,9 +265,9 @@ export default function EpilepsyManager() {
       <div className="fixed inset-0 max-w-md mx-auto right-0 left-0 pointer-events-none z-40">
         <button 
           onClick={startRecording}
-          className="absolute bottom-24 right-6 pointer-events-auto flex items-center justify-center w-12 h-12 bg-rose-500 text-white rounded-full shadow-[0_8px_20px_rgba(244,63,94,0.3)] active:scale-95 transition-transform"
+          className="absolute bottom-24 right-6 pointer-events-auto flex items-center justify-center w-14 h-14 bg-gradient-to-tr from-rose-400 to-red-500 text-white rounded-full shadow-[0_8px_24px_rgba(225,29,72,0.3)] active:scale-95 transition-transform"
         >
-          <Video className="w-5 h-5" />
+          <Video className="w-6 h-6" />
         </button>
       </div>
 
@@ -278,7 +278,7 @@ export default function EpilepsyManager() {
             <div className="w-3 h-3 bg-rose-500 rounded-full animate-pulse"></div>
             <span className="text-rose-500 font-mono text-lg font-bold">00:0{3 - countdown}</span>
           </div>
-          <div className="w-24 h-24 border-2 border-white/20 rounded-xl mb-6 flex items-center justify-center">
+          <div className="w-24 h-24 border-2 border-white/20 rounded-full mb-6 flex items-center justify-center">
             <Video className="w-8 h-8 text-white/50" />
           </div>
           <span className="text-white text-2xl font-bold">正在录像...</span>
@@ -287,16 +287,16 @@ export default function EpilepsyManager() {
 
       {/* 录像结束后的必选项卡片 */}
       <Popup visible={showQuestion} maskStyle={{ backgroundColor: 'rgba(0,0,0,0.8)' }} closeOnMaskClick={false}>
-        <div className="p-6 bg-white rounded-t-[32px]">
+        <div className="p-6 sm:p-8 bg-white rounded-t-[32px]">
           <div className="flex items-center justify-center gap-2 mb-6">
             <ShieldAlert className="w-6 h-6 text-slate-900" />
             <h3 className="text-lg font-bold text-slate-900">发作了多久？</h3>
           </div>
           <Radio.Group value={duration} onChange={val => setDuration(val as string)}>
             <Space direction="vertical" block className="gap-3">
-              <Radio value="UNDER_1_MIN" className="w-full bg-slate-50 p-4 rounded-[20px] font-medium text-sm border border-slate-100">1分钟内</Radio>
-              <Radio value="UNDER_5_MIN" className="w-full bg-slate-50 p-4 rounded-[20px] font-medium text-sm border border-slate-100">不到5分钟</Radio>
-              <Radio value="OVER_5_MIN" className="w-full bg-rose-50 p-4 rounded-[20px] font-medium text-sm text-rose-600 border border-rose-200">
+              <Radio value="UNDER_1_MIN" className="w-full bg-slate-50/80 p-4 sm:p-5 rounded-[24px] font-medium text-sm border-none">1分钟内</Radio>
+              <Radio value="UNDER_5_MIN" className="w-full bg-slate-50/80 p-4 sm:p-5 rounded-[24px] font-medium text-sm border-none">不到5分钟</Radio>
+              <Radio value="OVER_5_MIN" className="w-full bg-rose-50/80 p-4 sm:p-5 rounded-[24px] font-medium text-sm text-rose-600 border-none">
                 超过5分钟了！
               </Radio>
             </Space>
@@ -305,7 +305,7 @@ export default function EpilepsyManager() {
             block 
             color="primary" 
             size="large" 
-            className="mt-6 rounded-[20px] font-medium text-sm h-12 bg-slate-900 border-none text-white shadow-[0_4px_12px_rgba(0,0,0,0.1)]" 
+            className="mt-6 rounded-full font-medium text-sm h-12 bg-gradient-to-r from-blue-500 to-indigo-500 border-none text-white shadow-[0_8px_20px_rgba(59,130,246,0.25)]" 
             disabled={!duration}
             onClick={handleSubmit}
           >

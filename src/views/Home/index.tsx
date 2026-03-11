@@ -46,10 +46,10 @@ interface Message {
 // ==========================================
 // 数据层：三大专病阶梯式问诊树 (状态机配置)
 // ==========================================
-const DIALOGUE_TREE: Record<string, NodeDef> = {
+const getDialogueTree = (isFamily: boolean): Record<string, NodeDef> => ({
   root: {
     id: 'root',
-    aiText: '您好，我是数字华佗。请问您或您的家人最近哪里不舒服？',
+    aiText: isFamily ? '您好，我是数字华佗。请问您的长辈最近哪里不舒服？' : '您好，我是数字华佗。请问您最近哪里不舒服？',
     options: [
       { label: '记忆力下降', tag: '记忆力下降', nextNodeId: 'ad_q1' },
       { label: '突发抽搐/晕厥', tag: '突发抽搐', nextNodeId: 'ep_q1' },
@@ -58,7 +58,7 @@ const DIALOGUE_TREE: Record<string, NodeDef> = {
   },
   // --- 分支 A: 认知衰退 ---
   ad_q1: {
-    id: 'ad_q1', aiText: '请问出现记忆力下降有多长时间了？', progress: 20,
+    id: 'ad_q1', aiText: isFamily ? '请问长辈出现记忆力下降有多长时间了？' : '请问出现记忆力下降有多长时间了？', progress: 20,
     options: [
       { label: '不到半年', tag: '病程<半年', nextNodeId: 'ad_q2' },
       { label: '1年左右', tag: '病程约1年', nextNodeId: 'ad_q2' },
@@ -74,7 +74,7 @@ const DIALOGUE_TREE: Record<string, NodeDef> = {
     ]
   },
   ad_q3: {
-    id: 'ad_q3', aiText: '在过去的一年中，会把最近发生的重要事情完全忘记吗（如聚会、吃药）？', progress: 60,
+    id: 'ad_q3', aiText: isFamily ? '在过去的一年中，长辈会把最近发生的重要事情完全忘记吗（如聚会、吃药）？' : '在过去的一年中，会把最近发生的重要事情完全忘记吗（如聚会、吃药）？', progress: 60,
     options: [
       { label: '经常忘记', tag: '近事遗忘严重', nextNodeId: 'ad_q4' },
       { label: '有时忘记', tag: '偶有近事遗忘', nextNodeId: 'ad_q4' },
@@ -82,7 +82,7 @@ const DIALOGUE_TREE: Record<string, NodeDef> = {
     ]
   },
   ad_q4: {
-    id: 'ad_q4', aiText: '记忆问题是否已经影响了日常活动（如独自购物、做饭做不好）？', progress: 80,
+    id: 'ad_q4', aiText: isFamily ? '记忆问题是否已经影响了长辈的日常活动（如独自购物、做饭做不好）？' : '记忆问题是否已经影响了日常活动（如独自购物、做饭做不好）？', progress: 80,
     options: [
       { label: '是，影响很大', tag: '日常能力受损', nextNodeId: 'ad_q5' },
       { label: '轻微影响', tag: '轻微影响日常', nextNodeId: 'ad_q5' },
@@ -90,7 +90,7 @@ const DIALOGUE_TREE: Record<string, NodeDef> = {
     ]
   },
   ad_q5: {
-    id: 'ad_q5', aiText: '是否伴有其他身体不适，比如肢体不自主抖动、无力或睡眠障碍？', progress: 95,
+    id: 'ad_q5', aiText: isFamily ? '长辈是否伴有其他身体不适，比如肢体不自主抖动、无力或睡眠障碍？' : '是否伴有其他身体不适，比如肢体不自主抖动、无力或睡眠障碍？', progress: 95,
     options: [
       { label: '没有', nextNodeId: 'ad_end' },
       { label: '有肢体抖动/无力', tag: '伴随运动症状', nextNodeId: 'ad_end' },
@@ -99,7 +99,7 @@ const DIALOGUE_TREE: Record<string, NodeDef> = {
   },
   ad_end: {
     id: 'ad_end', isConclusion: true,
-    aiText: '收到。根据您的描述，可能存在早期认知功能衰退的迹象。建议尽早干预，延缓病程发展。',
+    aiText: isFamily ? '收到。根据您的描述，长辈可能存在早期认知功能衰退的迹象。建议尽早干预，延缓病程发展。' : '收到。根据您的描述，可能存在早期认知功能衰退的迹象。建议尽早干预，延缓病程发展。',
     riskText: '高度疑似认知衰退，需警惕 AD 风险'
   },
 
@@ -129,7 +129,7 @@ const DIALOGUE_TREE: Record<string, NodeDef> = {
     ]
   },
   ep_q4: {
-    id: 'ep_q4', aiText: '最近三个月内，大概发作了多少次？', progress: 80,
+    id: 'ep_q4', aiText: isFamily ? '长辈最近三个月内，大概发作了多少次？' : '最近三个月内，大概发作了多少次？', progress: 80,
     options: [
       { label: '仅1次', tag: '单次发作', nextNodeId: 'ep_q5' },
       { label: '2-5次', tag: '低频发作', nextNodeId: 'ep_q5' },
@@ -137,7 +137,7 @@ const DIALOGUE_TREE: Record<string, NodeDef> = {
     ]
   },
   ep_q5: {
-    id: 'ep_q5', aiText: '请问之前是否已经规律服用过抗癫痫类药物？', progress: 95,
+    id: 'ep_q5', aiText: isFamily ? '请问长辈之前是否已经规律服用过抗癫痫类药物？' : '请问之前是否已经规律服用过抗癫痫类药物？', progress: 95,
     options: [
       { label: '未曾用药', tag: '初次发病/未治', nextNodeId: 'ep_end' },
       { label: '已规律用药', tag: '规律服药中', nextNodeId: 'ep_end' },
@@ -146,13 +146,13 @@ const DIALOGUE_TREE: Record<string, NodeDef> = {
   },
   ep_end: {
     id: 'ep_end', isConclusion: true,
-    aiText: '收到。您的症状具有典型的癫痫发作特征，尤其是伴随意识障碍的情况，需要引起高度重视。',
+    aiText: isFamily ? '收到。长辈的症状具有典型的癫痫发作特征，尤其是伴随意识障碍的情况，需要引起高度重视。' : '收到。您的症状具有典型的癫痫发作特征，尤其是伴随意识障碍的情况，需要引起高度重视。',
     riskText: '高度疑似癫痫发作，需警惕持续状态风险'
   },
 
   // --- 分支 C: 偏头痛 ---
   mg_q1: {
-    id: 'mg_q1', aiText: '请问您的头痛发作时，主要是什么感觉？', progress: 20,
+    id: 'mg_q1', aiText: isFamily ? '请问长辈的头痛发作时，主要是什么感觉？' : '请问您的头痛发作时，主要是什么感觉？', progress: 20,
     options: [
       { label: '像心跳一样跳痛/搏动痛', tag: '搏动性痛', nextNodeId: 'mg_q2' },
       { label: '像戴了紧箍咒的压迫感', tag: '压迫感', nextNodeId: 'mg_q2' },
@@ -185,7 +185,7 @@ const DIALOGUE_TREE: Record<string, NodeDef> = {
     ]
   },
   mg_q5: {
-    id: 'mg_q5', aiText: '头痛发作时，是否会严重影响您的工作、学习或日常活动？', progress: 95,
+    id: 'mg_q5', aiText: isFamily ? '头痛发作时，是否会严重影响长辈的工作、学习或日常活动？' : '头痛发作时，是否会严重影响您的工作、学习或日常活动？', progress: 95,
     options: [
       { label: '痛得完全没法动', tag: '重度失能', nextNodeId: 'mg_end' },
       { label: '还能勉强坚持', tag: '轻中度影响', nextNodeId: 'mg_end' },
@@ -194,21 +194,24 @@ const DIALOGUE_TREE: Record<string, NodeDef> = {
   },
   mg_end: {
     id: 'mg_end', isConclusion: true,
-    aiText: '收到。目前看，您的症状符合典型偏头痛的特征。别太担心，很多情况下这和压力或睡眠不足有关。',
+    aiText: isFamily ? '收到。目前看，长辈的症状符合典型偏头痛的特征。别太担心，很多情况下这和压力或睡眠不足有关。' : '收到。目前看，您的症状符合典型偏头痛的特征。别太担心，很多情况下这和压力或睡眠不足有关。',
     riskText: '高度疑似偏头痛，需警惕 MOH 风险'
   }
-};
+});
 
 import { useAppStore } from '../../store';
 import { DiseaseTag } from '../../configs/constants';
 import { simulateNetworkRequest } from '../../utils/network';
+import { UserIdentity } from '../../interfaces/user';
 
 // ==========================================
 // 视图层：纯粹的渲染引擎与交互控制
 // ==========================================
 export default function HomeView() {
   const navigate = useNavigate();
-  const { setDiseaseTag } = useAppStore();
+  const { setDiseaseTag, identity } = useAppStore();
+  const isFamily = identity === UserIdentity.FAMILY;
+  const DIALOGUE_TREE = getDialogueTree(isFamily);
   
   // 核心状态
   const [currentNodeId, setCurrentNodeId] = useState<string>('root');
@@ -518,12 +521,12 @@ export default function HomeView() {
                     <button 
                       onClick={() => handlePayment(msg.tags)}
                       disabled={isPaying}
-                      className="w-full rounded-[24px] bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium py-3.5 shadow-[0_8px_24px_rgba(79,70,229,0.25)] active:scale-95 transition-transform flex items-center justify-center relative z-10 disabled:opacity-70"
+                      className="w-full rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium py-3.5 shadow-[0_8px_24px_rgba(79,70,229,0.25)] active:scale-95 transition-transform flex items-center justify-center relative z-10 disabled:opacity-70"
                     >
-                      <span className="tracking-wide text-[15px]">
+                      <span className="tracking-wide text-[15px] line-clamp-1">
                         {isPaying ? '处理中...' : '支付 1 元解锁华西标准深度解析'}
                       </span>
-                      {!isPaying && <ChevronRight className="w-4 h-4 ml-1 opacity-80" />}
+                      {!isPaying && <ChevronRight className="w-4 h-4 ml-1 opacity-80 flex-shrink-0" />}
                     </button>
                   </div>
                 </div>
