@@ -13,11 +13,11 @@ export function MedicalToolbox() {
   const [showCDR, setShowCDR] = useState(false);
 
   // 引入全局状态，让工具箱具备动态数据感知能力
-  const { migraineFrequencyData, medicationStatus, sleepRating, seizureFrequencyData, todayCdrRecorded } = useAppStore();
+  const { migraineFrequencyData, todayTakenIds, sleepRating, seizureFrequencyData, todayCdrRecorded } = useAppStore();
 
   const todayMigraine = migraineFrequencyData.find(d => d.date === '今日')?.value || 0;
   const todaySeizure = seizureFrequencyData.find(d => d.date === '今日')?.value || 0;
-  const medsTaken = Object.values(medicationStatus).some(Boolean);
+  const medsTaken = todayTakenIds.length > 0;
 
   const tools = [
     { 
