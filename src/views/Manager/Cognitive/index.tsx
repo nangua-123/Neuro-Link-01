@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Play, Moon, Sun, Coffee, ChevronRight, FileText, HeartHandshake, CheckCircle2, Brain, MapPin, Plus } from 'lucide-react';
+import { Play, Moon, Sun, Coffee, ChevronRight, FileText, HeartHandshake, CheckCircle2, Brain, MapPin, Plus, Sparkles } from 'lucide-react';
 import { TrendBarChart } from '../../../components/Charts/TrendBarChart';
 import { DailyHealthBase } from '../../../components/DailyHealthBase';
 import { DTxCard } from '../../../components/DTxCard';
@@ -68,40 +68,22 @@ function StatusOverview({ isFamily }: { isFamily: boolean }) {
     <div className="space-y-3">
       <div className="flex items-center justify-between px-1">
         <h2 className="text-lg font-bold text-slate-900 tracking-tight">
-          {isFamily ? '长辈今日认知状态' : '我的脑力状态'}
+          {isFamily ? '长辈认知守护' : '我的认知守护'}
         </h2>
         <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center">
           <Brain className="w-4 h-4 text-blue-500" />
         </div>
       </div>
 
-      {/* LBS Security Fence Card */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-blue-500 to-indigo-600 rounded-[24px] p-5 shadow-[0_8px_30px_rgba(0,0,0,0.04)]">
-        <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-24 h-24 bg-indigo-400/20 rounded-full blur-2xl -ml-8 -mb-8 pointer-events-none" />
-        
-        <div className="relative z-10">
-          <div className="flex items-center space-x-2 mb-5">
-            <div className="p-1.5 bg-white/20 rounded-xl backdrop-blur-md">
-              <MapPin className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-blue-50 text-[10px] font-semibold tracking-wider uppercase">LBS 实时安全围栏</span>
-          </div>
-
-          <div className="flex items-end justify-between">
-            <div>
-              <div className="flex items-center space-x-2 mb-1">
-                <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse" />
-                <span className="text-white text-2xl font-bold tracking-tight">当前位于安全区</span>
-              </div>
-              <p className="text-blue-100/90 text-xs mt-1 font-medium">
-                {isFamily ? '长辈正在家中，一切安好' : '您当前处于设定的安全活动范围内'}
-              </p>
-            </div>
-            <div className="h-10 w-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/10">
-              <CheckCircle2 className="w-5 h-5 text-emerald-300" />
-            </div>
-          </div>
+      {/* LBS Security Fence Banner */}
+      <div className="bg-emerald-50 border border-emerald-100/50 rounded-full p-2 flex items-center justify-between shadow-sm">
+        <div className="flex items-center gap-2 px-2">
+          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse" />
+          <span className="text-[13px] font-bold text-emerald-900 tracking-tight">防走失守护</span>
+          <span className="text-[11px] text-emerald-700/80 font-medium ml-1">当前位于安全活动区</span>
+        </div>
+        <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
+          <MapPin className="w-4 h-4 text-emerald-500" />
         </div>
       </div>
     </div>
@@ -117,9 +99,10 @@ function DataInsights({ isFamily, onOpenVisitSummary }: { isFamily: boolean, onO
         <h3 className="text-base font-bold text-slate-900 tracking-tight">数据洞察</h3>
         <button 
           onClick={onOpenVisitSummary}
-          className="text-[11px] font-semibold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full active:scale-95 transition-transform"
+          className="text-[11px] font-semibold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full active:scale-95 transition-transform flex items-center gap-1"
         >
-          生成就诊摘要
+          <Sparkles className="w-3 h-3" />
+          AI 智能复诊小结
         </button>
       </div>
       <TrendBarChart 

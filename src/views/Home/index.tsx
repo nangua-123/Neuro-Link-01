@@ -418,7 +418,7 @@ export default function HomeView() {
             <span className="text-[14px] font-semibold text-slate-900 tracking-wide">数字华佗</span>
           </div>
           <span className="text-[10px] text-slate-500 font-medium tracking-wide mt-0.5">
-            {isThinking ? '正在分析症状...' : '全天候在线管家'}
+            {isThinking ? '正在分析症状...' : '您的专属脑健康管家'}
           </span>
         </div>
         <div className="w-8" />
@@ -482,49 +482,49 @@ export default function HomeView() {
             if (msg.role === 'card') {
               return (
                 <div key={msg.id} className="w-full flex justify-center animate-fade-in-up mt-6">
-                  <div className="bg-white rounded-[28px] border border-blue-100/50 shadow-[0_12px_40px_rgba(37,99,235,0.08)] p-5 w-full relative overflow-hidden">
+                  <div className="bg-white rounded-[24px] border border-blue-100/50 shadow-[0_12px_40px_rgba(37,99,235,0.08)] p-4 w-full relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full opacity-50 blur-2xl pointer-events-none" />
                     <div className="absolute -top-4 -right-4 opacity-[0.03] pointer-events-none transform rotate-12">
                       <Activity className="w-32 h-32 text-blue-600" />
                     </div>
 
-                    <div className="flex items-center justify-between mb-4 relative z-10">
+                    <div className="flex items-center justify-between mb-3 relative z-10">
                       <div className="flex items-center">
-                        <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center mr-3">
-                          <CheckCircle2 className="w-4 h-4 text-blue-600" />
+                        <div className="w-7 h-7 rounded-full bg-blue-50 flex items-center justify-center mr-2.5">
+                          <Sparkles className="w-3.5 h-3.5 text-blue-600" />
                         </div>
-                        <h3 className="text-[17px] font-bold text-slate-900 tracking-wide">初步症状提取图谱</h3>
+                        <h3 className="text-[16px] font-bold text-slate-900 tracking-wide">✨ AI 症状解析图谱</h3>
                       </div>
                     </div>
 
                     {msg.riskText && (
-                      <div className="bg-red-50 rounded-[16px] p-3 mb-4 border border-red-100/50 flex items-start relative z-10">
+                      <div className="bg-red-50 rounded-[12px] p-2.5 mb-3 border border-red-100/50 flex items-start relative z-10">
                         <div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 mr-2 flex-shrink-0 animate-pulse" />
-                        <span className="text-red-600 text-[13px] font-medium leading-relaxed">{msg.riskText}</span>
+                        <span className="text-red-600 text-[12px] font-medium leading-relaxed">{msg.riskText}</span>
                       </div>
                     )}
 
-                    <div className="flex flex-wrap gap-2 mb-5 relative z-10">
+                    <div className="flex flex-wrap gap-1.5 mb-3 relative z-10">
                       {msg.tags?.map((tag, idx) => (
-                        <span key={idx} className="bg-blue-50 text-blue-600 rounded-full px-3.5 py-1.5 text-[13px] font-medium border border-blue-100/50">
+                        <span key={idx} className="bg-blue-50 text-blue-600 rounded-full px-3 py-1 text-[12px] font-medium border border-blue-100/50">
                           #{tag}
                         </span>
                       ))}
                     </div>
 
-                    <div className="bg-slate-50 rounded-[16px] p-3 mb-5 relative z-10 border border-slate-100/50">
-                      <p className="text-[12px] text-slate-500 leading-relaxed">
-                        为了排除器质性病变风险，我为您生成了一份<span className="font-semibold text-slate-700">《华西标准脑健康预检报告》</span>，包含用药禁忌筛查。
+                    <div className="bg-slate-50 rounded-[12px] p-2.5 mb-4 relative z-10 border border-slate-100/50">
+                      <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
+                        基于您的症状描述，已生成专属<span className="font-semibold text-slate-700">《脑健康预检报告》</span>，建议进一步评估。
                       </p>
                     </div>
 
                     <button 
                       onClick={() => handlePayment(msg.tags)}
                       disabled={isPaying}
-                      className="w-full rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium py-3.5 shadow-[0_8px_24px_rgba(79,70,229,0.25)] active:scale-95 transition-transform flex items-center justify-center relative z-10 disabled:opacity-70"
+                      className="w-full rounded-[16px] bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium py-3 shadow-[0_8px_24px_rgba(79,70,229,0.25)] active:scale-95 transition-transform flex items-center justify-center relative z-10 disabled:opacity-70"
                     >
-                      <span className="tracking-wide text-[15px] line-clamp-1">
-                        {isPaying ? '处理中...' : '支付 1 元解锁华西标准深度解析'}
+                      <span className="tracking-wide text-[14px] line-clamp-1">
+                        {isPaying ? '处理中...' : '1元解锁完整评估报告'}
                       </span>
                       {!isPaying && <ChevronRight className="w-4 h-4 ml-1 opacity-80 flex-shrink-0" />}
                     </button>

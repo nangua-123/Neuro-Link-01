@@ -69,7 +69,6 @@ export function MedicalToolbox() {
     <div className="space-y-3 mt-8">
       <div className="px-1 flex items-center justify-between">
         <h3 className="text-[17px] font-bold text-slate-900 tracking-tight">全量工具箱</h3>
-        <span className="text-[11px] text-slate-400 font-medium bg-slate-100 px-2 py-0.5 rounded-full">Zone C</span>
       </div>
       
       <div className="bg-white rounded-[24px] shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-slate-100/50 overflow-hidden">

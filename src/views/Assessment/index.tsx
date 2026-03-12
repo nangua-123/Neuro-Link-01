@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { NavBar, Result, SafeArea, Toast } from 'antd-mobile';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
@@ -29,12 +29,22 @@ export default function AssessmentView() {
   const [direction, setDirection] = useState(1);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loadingTextIndex, setLoadingTextIndex] = useState(0);
+
+  useEffect(() => {
+    if (isCompleted) {
+      const timer = setInterval(() => {
+        setLoadingTextIndex(prev => (prev + 1) % 3);
+      }, 500);
+      return () => clearInterval(timer);
+    }
+  }, [isCompleted]);
 
   const { steps: assessmentSteps, subtitle } = useMemo(() => {
     switch (selectedDiseaseTag) {
       case DiseaseTag.EPILEPSY:
         return {
-          subtitle: '华西癫痫基线期 (V0) 档案',
+          subtitle: '华西癫痫基线期评估',
           steps: [
             {
               id: 'epi_step1',
@@ -139,25 +149,51 @@ export default function AssessmentView() {
   }, [currentStepIndex, navigate]);
 
   if (isCompleted) {
+    const loadingTexts = [
+      '正在比对华西专病数据库...',
+      '正在生成风险分层...',
+      '正在匹配干预方案...'
+    ];
+
     return (
       <div className="min-h-screen bg-[#FAFAFA] flex flex-col">
         <NavBar onBack={() => navigate(-1)} className="bg-white border-b border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
-          <span className="font-semibold text-[16px] text-slate-900">测评完成</span>
+          <span className="font-semibold text-[16px] text-slate-900">AI 分析中</span>
         </NavBar>
         <div className="flex-1 flex flex-col items-center justify-center pb-20 px-6">
           <motion.div 
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="w-24 h-24 bg-blue-50 rounded-[32px] flex items-center justify-center mb-8 shadow-[0_8px_30px_rgba(59,130,246,0.15)]"
+            className="relative w-24 h-24 mb-8"
           >
-            <svg className="w-12 h-12 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-            </svg>
+            <div className="absolute inset-0 bg-blue-100 rounded-full animate-ping opacity-60" />
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-full border border-blue-200 shadow-[0_8px_30px_rgba(59,130,246,0.15)] flex items-center justify-center z-10">
+              <svg className="w-10 h-10 text-blue-600 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+              </svg>
+            </div>
           </motion.div>
-          <h2 className="text-[24px] font-bold text-slate-900 mb-3 tracking-tight">测评已完成</h2>
-          <p className="text-[14px] text-slate-500 text-center leading-relaxed font-medium">
-            正在为您生成华西 AI 脑健康风险分层报告...
-          </p>
+          
+          <h2 className="text-[18px] font-bold text-slate-900 mb-8 tracking-tight h-7">
+            {loadingTexts[loadingTextIndex]}
+          </h2>
+          
+          {/* AI Analysis Skeleton */}
+          <div className="w-full max-w-[240px] space-y-5">
+            <div className="h-1.5 bg-blue-100/50 rounded-full overflow-hidden">
+              <motion.div 
+                className="h-full bg-blue-500 rounded-full"
+                initial={{ width: '0%' }}
+                animate={{ width: '100%' }}
+                transition={{ duration: 1.5, ease: "linear" }}
+              />
+            </div>
+            <div className="space-y-3">
+              <div className="h-2.5 bg-slate-200/60 rounded-full w-full animate-pulse" />
+              <div className="h-2.5 bg-slate-200/60 rounded-full w-5/6 animate-pulse" style={{ animationDelay: '150ms' }} />
+              <div className="h-2.5 bg-slate-200/60 rounded-full w-4/6 animate-pulse" style={{ animationDelay: '300ms' }} />
+            </div>
+          </div>
         </div>
         <SafeArea position="bottom" />
       </div>

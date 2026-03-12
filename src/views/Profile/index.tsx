@@ -95,7 +95,7 @@ export default function ProfileView() {
   const currentPatient = boundPatients?.find(p => p.id === currentPatientId);
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] flex flex-col relative overflow-hidden pb-24">
+    <div className="min-h-screen bg-[#FAFAFA] flex flex-col relative overflow-x-hidden pb-24">
       {/* 极浅弥散暖色渐变背景 */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <div className="absolute -top-[10%] -right-[10%] w-[120%] h-[50%] bg-gradient-to-b from-[#E8F3FF] to-transparent opacity-60 blur-3xl" />
@@ -182,34 +182,7 @@ export default function ProfileView() {
           </motion.div>
         )}
 
-        {/* Module B: Data Privacy */}
-        <motion.div variants={itemVariants} className="bg-white rounded-[28px] p-6 mb-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100/50 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
-          <div className="flex items-center justify-between mb-4 relative z-10">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-gradient-to-br from-emerald-50 to-teal-50 text-emerald-600 rounded-[16px] shadow-sm border border-emerald-100/50">
-                <Shield className="w-5 h-5" />
-              </div>
-              <h3 className="font-semibold text-slate-900 text-[16px] tracking-tight">数据资产与隐私安全</h3>
-            </div>
-            <Switch 
-              checked={hasSignedAgreement} 
-              onChange={handleAuthChange}
-              style={{ '--checked-color': '#2563eb' }}
-            />
-          </div>
-          <p className="text-[13px] text-slate-500 leading-relaxed mb-4 font-medium relative z-10">
-            您的授权将帮助医学界攻克脑神经难题，并为您提供更精准的 AI 管家服务。
-          </p>
-          <button 
-            onClick={showAgreement}
-            className="text-[13px] text-blue-600 font-semibold flex items-center gap-1 active:opacity-70 transition-opacity relative z-10 bg-blue-50/50 px-3 py-1.5 rounded-full"
-          >
-            查看《三方电子联合数据授权协议》 <ChevronRight className="w-3.5 h-3.5" />
-          </button>
-        </motion.div>
-
-        {/* Module C: Asset List */}
+        {/* Module B & C: Asset List & Privacy */}
         <motion.div variants={itemVariants} className="bg-white rounded-[28px] p-2 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100/50 overflow-hidden mb-6">
           <List className="border-none" style={{ '--border-inner': 'none', '--border-top': 'none', '--border-bottom': 'none' }}>
             <List.Item 
@@ -223,7 +196,7 @@ export default function ProfileView() {
               className="active:bg-slate-50 transition-colors"
             >
               <div className="py-1.5">
-                <div className="font-semibold text-slate-900 text-[15px] tracking-tight">我的 Neuro-Pass 专属码</div>
+                <div className="font-semibold text-slate-900 text-[15px] tracking-tight">Neuro-Pass 专属就诊码</div>
                 <div className="text-[12px] text-slate-400 mt-0.5 font-medium">线下就诊扫码，免除口述病史</div>
               </div>
             </List.Item>
@@ -239,7 +212,7 @@ export default function ProfileView() {
               className="active:bg-slate-50 transition-colors"
             >
               <div className="py-1.5">
-                <div className="font-semibold text-slate-900 text-[15px] tracking-tight">我的完整健康档案 (EHR)</div>
+                <div className="font-semibold text-slate-900 text-[15px] tracking-tight">全病程健康档案 (EHR)</div>
                 <div className="text-[12px] text-slate-400 mt-0.5 font-medium">查看历史测评与打卡记录</div>
               </div>
             </List.Item>
@@ -255,8 +228,34 @@ export default function ProfileView() {
               className="active:bg-slate-50 transition-colors"
             >
               <div className="py-1.5">
-                <div className="font-semibold text-slate-900 text-[15px] tracking-tight">设备管理</div>
+                <div className="font-semibold text-slate-900 text-[15px] tracking-tight">智能穿戴管理</div>
                 <div className="text-[12px] text-slate-400 mt-0.5 font-medium">管理 Neuro-Band 等智能穿戴设备</div>
+              </div>
+            </List.Item>
+            <div className="h-[1px] bg-slate-100/50 mx-4" />
+            <List.Item 
+              prefix={
+                <div className="w-10 h-10 rounded-[16px] bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center border border-emerald-100/50 shadow-sm">
+                  <Shield className="w-5 h-5 text-emerald-600" />
+                </div>
+              }
+              extra={
+                <Switch 
+                  checked={hasSignedAgreement} 
+                  onChange={handleAuthChange}
+                  style={{ '--checked-color': '#10b981', '--width': '36px', '--height': '20px' }}
+                />
+              }
+              className="active:bg-slate-50 transition-colors"
+            >
+              <div className="py-1.5">
+                <div className="font-semibold text-slate-900 text-[15px] tracking-tight">数据资产与隐私安全</div>
+                <div 
+                  className="text-[12px] text-blue-600 mt-0.5 font-medium active:opacity-70"
+                  onClick={(e) => { e.stopPropagation(); showAgreement(); }}
+                >
+                  查看《授权协议》
+                </div>
               </div>
             </List.Item>
             <div className="h-[1px] bg-slate-100/50 mx-4" />
@@ -266,12 +265,12 @@ export default function ProfileView() {
                   <Settings className="w-5 h-5 text-slate-600" />
                 </div>
               }
-              onClick={() => showComingSoon('系统设置', '通知、账号与通用设置功能即将开放。')}
+              onClick={() => showComingSoon('通用设置', '通知、账号与通用设置功能即将开放。')}
               arrow={<ChevronRight className="w-5 h-5 text-slate-300" />}
               className="active:bg-slate-50 transition-colors"
             >
               <div className="py-1.5">
-                <div className="font-semibold text-slate-900 text-[15px] tracking-tight">系统设置</div>
+                <div className="font-semibold text-slate-900 text-[15px] tracking-tight">通用设置</div>
                 <div className="text-[12px] text-slate-400 mt-0.5 font-medium">通知、账号与通用设置</div>
               </div>
             </List.Item>

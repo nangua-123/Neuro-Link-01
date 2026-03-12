@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { useAppStore } from '../../../store';
-import { Zap, AlertTriangle, Plus, Pill, Calendar, Activity, ShieldAlert, ArrowRight, RotateCcw } from 'lucide-react';
+import { Zap, AlertTriangle, Plus, Pill, Calendar, Activity, ShieldAlert, ArrowRight, RotateCcw, Sparkles } from 'lucide-react';
 import { TrendBarChart } from '../../../components/Charts/TrendBarChart';
 import { DailyHealthBase } from '../../../components/DailyHealthBase';
 import { MigraineDiarySheet } from '../../../components/MigraineDiarySheet';
@@ -68,43 +68,44 @@ export default function MigraineManager() {
       <motion.div variants={itemVariants} className="space-y-3">
         <div className="flex items-center justify-between px-1">
           <h2 className="text-lg font-bold text-slate-900 tracking-tight">
-            {isFamily ? '长辈偏头痛管家' : '我的偏头痛管家'}
+            {isFamily ? '长辈偏头痛守护' : '我的偏头痛守护'}
           </h2>
           <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isMOHRisk ? 'bg-rose-50' : 'bg-violet-50'}`}>
             {isMOHRisk ? <ShieldAlert className="w-4 h-4 text-rose-500" /> : <Zap className="w-4 h-4 text-violet-500" />}
           </div>
         </div>
 
+        {/* MOH Compact Banner */}
         <div 
-          className={`relative overflow-hidden rounded-[24px] p-5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] transition-all duration-500 ${
+          className={`flex items-center justify-between p-3 rounded-[16px] transition-all duration-500 ${
             isMOHRisk 
-              ? 'bg-gradient-to-br from-rose-500 to-red-600 shadow-rose-500/20 text-white' 
-              : 'bg-gradient-to-br from-violet-500 to-purple-600 shadow-violet-500/20 text-white'
+              ? 'bg-rose-50 border border-rose-100 shadow-sm' 
+              : 'bg-violet-50 border border-violet-100 shadow-sm'
           }`}
         >
-          <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
-          
-          <div className="relative z-10">
-            <div className="flex items-baseline space-x-2 mb-3">
-              <span className="text-4xl font-bold tracking-tighter">{currentMonthPainkillerDays}</span>
-              <span className="text-xs font-medium opacity-80">天 / 本月止痛药</span>
+          <div className="flex items-center gap-2">
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${isMOHRisk ? 'bg-rose-100' : 'bg-violet-100'}`}>
+              {isMOHRisk ? <AlertTriangle className="w-4 h-4 text-rose-600" /> : <Pill className="w-4 h-4 text-violet-600" />}
             </div>
-            
             <div>
-              {isMOHRisk ? (
-                <div className="flex items-start space-x-2 bg-white/20 p-3 rounded-xl backdrop-blur-sm border border-white/20">
-                  <AlertTriangle className="w-4 h-4 text-white shrink-0 mt-0.5" />
-                  <p className="text-[10px] font-medium leading-relaxed">
-                    {isFamily ? '长辈本月止痛药使用已达红线，极易诱发药物过度使用性头痛 (MOH)！请立即协助停止滥用并联系医生。' : '本月止痛药使用已达红线，极易诱发药物过度使用性头痛 (MOH)！请立即停止滥用并联系医生。'}
-                  </p>
-                </div>
-              ) : (
-                <p className="text-xs opacity-90 leading-relaxed font-medium">
-                  距离 MOH 风险红线还有 <span className="font-bold text-sm">{15 - currentMonthPainkillerDays}</span> 天。{isFamily ? '请提醒长辈谨慎使用单纯止痛药，记录诱因更重要。' : '请谨慎使用单纯止痛药，记录诱因更重要。'}
-                </p>
-              )}
+              <div className="flex items-baseline gap-1">
+                <span className={`text-[14px] font-bold ${isMOHRisk ? 'text-rose-700' : 'text-violet-700'}`}>
+                  本月止痛药 {currentMonthPainkillerDays} 天
+                </span>
+              </div>
+              <p className={`text-[10px] font-medium mt-0.5 ${isMOHRisk ? 'text-rose-600' : 'text-violet-600/80'}`}>
+                {isMOHRisk ? '已达红线，极易诱发 MOH！' : `距离 MOH 风险红线还有 ${15 - currentMonthPainkillerDays} 天`}
+              </p>
             </div>
           </div>
+          <button 
+            onClick={() => setIsCalendarVisible(true)}
+            className={`text-[11px] font-semibold px-3 py-1.5 rounded-full active:scale-95 transition-transform ${
+              isMOHRisk ? 'bg-rose-600 text-white' : 'bg-violet-600 text-white'
+            }`}
+          >
+            查看日历
+          </button>
         </div>
       </motion.div>
 
@@ -114,9 +115,10 @@ export default function MigraineManager() {
           <h3 className="text-base font-bold text-slate-900 tracking-tight">数据洞察</h3>
           <button 
             onClick={() => setIsVisitSummaryVisible(true)}
-            className="text-[11px] font-semibold text-violet-600 bg-violet-50 px-3 py-1.5 rounded-full active:scale-95 transition-transform"
+            className="text-[11px] font-semibold text-violet-600 bg-violet-50 px-3 py-1.5 rounded-full active:scale-95 transition-transform flex items-center gap-1"
           >
-            生成就诊摘要
+            <Sparkles className="w-3 h-3" />
+            AI 智能复诊小结
           </button>
         </div>
         <TrendBarChart 
@@ -141,63 +143,56 @@ export default function MigraineManager() {
           <h3 className="text-base font-bold text-slate-900 tracking-tight">发作干预</h3>
         </div>
         
-        {/* 一键记录头痛 */}
-        <motion.button 
-          whileTap={{ scale: 0.98 }}
-          onClick={() => setIsDiarySheetVisible(true)}
-          className="w-full bg-white p-4 rounded-[20px] shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-slate-100/50 flex items-center justify-between group hover:border-violet-200 transition-colors"
-        >
-          <div className="flex items-center space-x-3">
+        {/* Bento Box: 记录头痛 & 服药打卡 */}
+        <div className="grid grid-cols-2 gap-3">
+          <motion.button 
+            whileTap={{ scale: 0.96 }}
+            onClick={() => setIsDiarySheetVisible(true)}
+            className="bg-white p-4 rounded-[20px] shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-slate-100/50 flex flex-col items-start space-y-3 group hover:border-violet-200 transition-colors"
+          >
             <div className="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center text-violet-500 group-hover:bg-violet-100 transition-colors">
               <Plus className="w-5 h-5" />
             </div>
             <div className="text-left">
-              <h4 className="text-sm font-semibold text-slate-900">{isFamily ? '记录长辈头痛' : '记录今日头痛'}</h4>
-              <p className="text-[10px] text-slate-500 mt-0.5 font-medium">记录疼痛等级与发作诱因</p>
+              <h4 className="text-[14px] font-bold text-slate-900 leading-tight">{isFamily ? '记录长辈头痛' : '记录今日头痛'}</h4>
+              <p className="text-[10px] text-slate-500 mt-1 font-medium">记录发作诱因</p>
             </div>
-          </div>
-          <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-violet-50 transition-colors">
-            <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-violet-500" />
-          </div>
-        </motion.button>
+          </motion.button>
 
-        {/* 服药打卡 */}
-        <div className="bg-white p-4 rounded-[20px] shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-slate-100/50 flex items-center justify-between mt-3">
-          <div className="flex items-center space-x-3">
+          <div className="bg-white p-4 rounded-[20px] shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-slate-100/50 flex flex-col items-start space-y-3 relative group">
             <div className="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center text-rose-500">
               <Pill className="w-5 h-5" />
             </div>
-            <div>
-              <h4 className="text-sm font-semibold text-slate-900">{isFamily ? '长辈服用止痛药' : '服用止痛药'}</h4>
-              <p className="text-[10px] text-slate-500 mt-0.5 font-medium">布洛芬 / 散利痛等单纯止痛药</p>
+            <div className="text-left w-full">
+              <h4 className="text-[14px] font-bold text-slate-900 leading-tight">{isFamily ? '长辈服止痛药' : '服用止痛药'}</h4>
+              <div className="mt-2 flex items-center justify-between w-full">
+                {isTakenToday ? (
+                  <div className="flex items-center gap-1.5">
+                    <div className="text-[10px] font-semibold text-rose-500 bg-rose-50 px-2 py-1 rounded-md">今日已服</div>
+                    <button 
+                      onClick={() => {
+                        recordPainkiller(todayStr);
+                        Toast.show({ content: '已撤销服药记录' });
+                      }}
+                      className="p-1 text-slate-300 hover:text-slate-500 active:bg-slate-100 rounded-full transition-colors"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ) : (
+                  <button 
+                    onClick={() => {
+                      recordPainkiller(todayStr);
+                      Toast.show({ content: '已记录服药', icon: 'success' });
+                    }}
+                    className="w-full py-1.5 bg-slate-900 text-white text-[11px] font-semibold rounded-lg hover:bg-slate-800 transition-colors active:scale-95 shadow-[0_2px_8px_rgba(0,0,0,0.1)]"
+                  >
+                    一键打卡
+                  </button>
+                )}
+              </div>
             </div>
           </div>
-          {isTakenToday ? (
-            <div className="flex items-center gap-2">
-              <div className="text-[12px] font-semibold text-rose-500 bg-rose-50 px-3 py-1.5 rounded-full">
-                今日已服
-              </div>
-              <button 
-                onClick={() => {
-                  recordPainkiller(todayStr);
-                  Toast.show({ content: '已撤销服药记录' });
-                }}
-                className="p-1.5 text-slate-300 hover:text-slate-500 active:bg-slate-100 rounded-full transition-colors"
-              >
-                <RotateCcw className="w-4 h-4" />
-              </button>
-            </div>
-          ) : (
-            <button 
-              onClick={() => {
-                recordPainkiller(todayStr);
-                Toast.show({ content: '已记录服药', icon: 'success' });
-              }}
-              className="px-4 py-2 bg-slate-900 text-white text-xs font-medium rounded-full hover:bg-slate-800 transition-colors active:scale-95 shadow-[0_2px_8px_rgba(0,0,0,0.1)]"
-            >
-              打卡
-            </button>
-          )}
         </div>
       </motion.div>
 
@@ -217,8 +212,8 @@ export default function MigraineManager() {
               <Activity className="w-4 h-4" />
             </div>
             <div>
-              <h4 className="text-sm font-semibold text-slate-900 leading-tight">CGRP 靶向药</h4>
-              <p className="text-[10px] text-slate-500 mt-1 font-medium">特效药申请评估</p>
+              <h4 className="text-sm font-semibold text-slate-900 leading-tight">前沿特效药评估</h4>
+              <p className="text-[10px] text-slate-500 mt-1 font-medium">CGRP 靶向治疗申请</p>
             </div>
           </motion.button>
 

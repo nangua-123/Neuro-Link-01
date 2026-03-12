@@ -16,7 +16,7 @@ export default function DeviceView() {
           onBack={() => navigate(-1)}
           backArrow={<ChevronRight className="rotate-180 w-6 h-6 text-slate-600" />}
         >
-          <span className="font-medium text-slate-800">我的设备</span>
+          <span className="font-medium text-slate-800">智能穿戴管理</span>
         </NavBar>
       </div>
 
@@ -31,7 +31,7 @@ export default function DeviceView() {
               <div className="absolute inset-0 bg-slate-200 rounded-full animate-ping opacity-20" />
               <Watch className="w-12 h-12 text-slate-300" />
             </div>
-            <h2 className="text-xl font-bold text-slate-900 mb-2">暂无绑定设备</h2>
+            <h2 className="text-xl font-bold text-slate-900 mb-2">暂无绑定的智能穿戴设备</h2>
             <p className="text-sm text-slate-500 mb-8 max-w-[240px] leading-relaxed">
               绑定 Neuro-Band 智能穿戴设备，开启全天候健康体征监测。
             </p>
@@ -40,7 +40,7 @@ export default function DeviceView() {
               className="w-48 rounded-full shadow-[0_8px_20px_rgba(37,99,235,0.2)]"
               onClick={() => navigate('/mall')}
             >
-              前往商城选购
+              前往甄选商城
             </Button>
           </motion.div>
         ) : (
@@ -89,7 +89,7 @@ export default function DeviceView() {
               className="w-full rounded-[20px] border-dashed border-2 border-slate-200 text-slate-500 h-14 flex items-center justify-center gap-2 hover:bg-slate-50 transition-colors"
             >
               <Plus className="w-5 h-5" />
-              <span className="font-medium">添加新设备</span>
+              <span className="font-medium">绑定新设备</span>
             </Button>
           </motion.div>
         )}

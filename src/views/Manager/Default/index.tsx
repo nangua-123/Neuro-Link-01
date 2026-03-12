@@ -44,7 +44,6 @@ export default function DefaultManager() {
             <h2 className="text-[18px] font-bold text-slate-900 tracking-tight">
               专病智能核心舱
             </h2>
-            <span className="text-[11px] text-slate-400 font-medium bg-slate-100 px-2 py-0.5 rounded-full">Zone B</span>
           </div>
 
           {/* 破冰引导舱 (Ice-breaker Fallback) */}

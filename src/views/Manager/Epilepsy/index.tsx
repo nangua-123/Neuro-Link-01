@@ -1,7 +1,7 @@
 // File: src/views/Manager/Epilepsy/index.tsx
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Activity, CheckCircle2, Calendar, Phone, Video, ShieldAlert, Plus, Square } from 'lucide-react';
+import { Activity, CheckCircle2, Calendar, Phone, Video, ShieldAlert, Plus, Square, Sparkles } from 'lucide-react';
 import { useRecallStore, DangerLevel, RecallReason } from '../../../store/recall';
 import { Button, Popup, Radio, Space, Toast } from 'antd-mobile';
 import SeizureCalendar from './SeizureCalendar';
@@ -141,7 +141,7 @@ export default function EpilepsyManager() {
       <motion.div variants={itemVariants} className="space-y-3">
         <div className="flex items-center justify-between px-1">
           <h2 className="text-lg font-bold text-slate-900 tracking-tight">
-            {isFamily ? '长辈癫痫护航管家' : '我的癫痫护航管家'}
+            {isFamily ? '长辈癫痫守护' : '我的癫痫守护'}
           </h2>
           <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center">
             <Activity className="w-4 h-4 text-indigo-500" />
@@ -189,9 +189,10 @@ export default function EpilepsyManager() {
           <h3 className="text-base font-bold text-slate-900 tracking-tight">数据洞察</h3>
           <button 
             onClick={() => setIsVisitSummaryVisible(true)}
-            className="text-[11px] font-semibold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-full active:scale-95 transition-transform"
+            className="text-[11px] font-semibold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-full active:scale-95 transition-transform flex items-center gap-1"
           >
-            生成就诊摘要
+            <Sparkles className="w-3 h-3" />
+            AI 智能复诊小结
           </button>
         </div>
         <TrendBarChart 
@@ -215,43 +216,35 @@ export default function EpilepsyManager() {
         </div>
 
         <div className="space-y-3">
-          {/* 记录发作入口 */}
-          <button 
-            onClick={() => setIsDiarySheetVisible(true)}
-            className="w-full bg-indigo-50 hover:bg-indigo-100 transition-colors p-4 rounded-[20px] border border-indigo-100/50 flex items-center justify-between group"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
+          {/* Bento Box: 记录发作 & 近期复诊计划 */}
+          <div className="grid grid-cols-2 gap-3">
+            <button 
+              onClick={() => setIsDiarySheetVisible(true)}
+              className="bg-white p-4 rounded-[20px] shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-slate-100/50 flex flex-col items-start space-y-3 group hover:border-indigo-200 transition-colors text-left"
+            >
+              <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-500 flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
                 <Activity className="w-5 h-5" />
               </div>
-              <div className="text-left">
-                <h4 className="text-[14px] font-bold text-indigo-900">{isFamily ? '记录长辈发作日记' : '记录发作日记'}</h4>
-                <p className="text-[11px] text-indigo-700/70 mt-0.5 font-medium">记录发作类型、时长与诱因</p>
+              <div>
+                <h4 className="text-[14px] font-bold text-slate-900 leading-tight">{isFamily ? '记录长辈发作' : '记录发作日记'}</h4>
+                <p className="text-[10px] text-slate-500 mt-1 font-medium">记录发作类型与诱因</p>
               </div>
-            </div>
-            <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
-              <Plus className="w-4 h-4 text-indigo-500" />
-            </div>
-          </button>
+            </button>
 
-          <MedicationTracker />
-
-          {/* 随访倒计时 */}
-          <div className="bg-white rounded-[20px] p-4 shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-slate-100/50 mt-2 relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="relative z-10 flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-500 flex items-center justify-center flex-shrink-0">
+            <div className="bg-white p-4 rounded-[20px] shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-slate-100/50 flex flex-col items-start space-y-3 relative group text-left">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center">
                 <Calendar className="w-5 h-5" />
               </div>
-              <div className="flex-1">
+              <div className="w-full">
                 <div className="flex items-center justify-between mb-1">
-                  <p className="text-[10px] font-semibold text-indigo-500 uppercase tracking-wider">V1 孕 12 周随访</p>
-                  <span className="text-[10px] font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">还有 5 天</span>
+                  <h4 className="text-[14px] font-bold text-slate-900 leading-tight">近期复诊计划</h4>
                 </div>
-                <p className="text-xs font-medium text-slate-600 leading-relaxed">请准备近期脑电图报告，并完成孕期焦虑自评量表。</p>
+                <p className="text-[10px] text-slate-500 mt-1 font-medium leading-relaxed">距下次复诊还有 5 天，请准备脑电图报告。</p>
               </div>
             </div>
           </div>
+
+          <MedicationTracker />
         </div>
       </motion.div>
 

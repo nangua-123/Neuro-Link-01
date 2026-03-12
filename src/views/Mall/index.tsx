@@ -120,13 +120,13 @@ export default function MallView() {
             </div>
           }
         >
-          <span className="font-medium text-slate-900">服务商城</span>
+          <span className="font-medium text-slate-900">甄选服务</span>
         </NavBar>
       </div>
 
       <div className="p-5 relative z-10">
         <div className="mb-8 text-center mt-2">
-          <h1 className="text-[24px] font-bold text-slate-900 tracking-tight mb-2">专病生命守护服务</h1>
+          <h1 className="text-[24px] font-bold text-slate-900 tracking-tight mb-2">专病守护方案</h1>
           <p className="text-[14px] text-slate-500 font-medium">软硬一体化闭环，全天候医疗级护航</p>
         </div>
 
@@ -150,44 +150,44 @@ export default function MallView() {
                 )}
 
                 {/* Header Section */}
-                <div className={`p-6 relative overflow-hidden ${isBlue ? 'bg-gradient-to-br from-blue-600 to-indigo-700' : 'bg-gradient-to-br from-indigo-600 to-purple-700'}`}>
+                <div className={`p-4 relative overflow-hidden ${isBlue ? 'bg-gradient-to-br from-blue-600 to-indigo-700' : 'bg-gradient-to-br from-indigo-600 to-purple-700'}`}>
                   <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
                   
-                  <div className="relative z-10 text-white">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="p-2.5 bg-white/20 rounded-[16px] backdrop-blur-md border border-white/20 shadow-inner">
-                        <pkg.icon className="w-6 h-6" />
+                  <div className="relative z-10 text-white flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="p-2 bg-white/20 rounded-[12px] backdrop-blur-md border border-white/20 shadow-inner">
+                        <pkg.icon className="w-5 h-5" />
                       </div>
-                      <h2 className="text-[20px] font-semibold tracking-tight">{pkg.title}</h2>
+                      <h2 className="text-[18px] font-semibold tracking-tight">{pkg.title}</h2>
                     </div>
                     
-                    <div className="flex items-baseline gap-1 mb-2">
-                      <span className="text-[16px] opacity-80 font-medium">¥</span>
-                      <span className="text-[40px] font-bold tracking-tight">{pkg.price}</span>
-                      <span className="text-[14px] opacity-80 font-medium">/{pkg.duration}</span>
+                    <div className="flex items-baseline gap-0.5">
+                      <span className="text-[14px] opacity-80 font-medium">¥</span>
+                      <span className="text-[28px] font-bold tracking-tight">{pkg.price}</span>
+                      <span className="text-[12px] opacity-80 font-medium">/{pkg.duration}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Content Section */}
-                <div className="p-6">
-                  <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-[20px] mb-6 border border-slate-100/50">
-                    <div className={`w-10 h-10 rounded-[16px] flex items-center justify-center ${isBlue ? 'bg-blue-100 text-blue-600' : 'bg-indigo-100 text-indigo-600'}`}>
-                      <Watch className="w-5 h-5" />
+                <div className="p-4">
+                  <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-[16px] mb-4 border border-slate-100/50">
+                    <div className={`w-8 h-8 rounded-[12px] flex items-center justify-center ${isBlue ? 'bg-blue-100 text-blue-600' : 'bg-indigo-100 text-indigo-600'}`}>
+                      <Watch className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="text-[11px] text-slate-400 font-medium uppercase tracking-wider mb-0.5">配套硬件</div>
-                      <div className="text-[14px] font-semibold text-slate-900">{pkg.hardware}</div>
+                      <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider mb-0.5">专属智能硬件</div>
+                      <div className="text-[13px] font-semibold text-slate-900">{pkg.hardware}</div>
                     </div>
                   </div>
 
-                  <div className="space-y-4 mb-8">
+                  <div className="space-y-2 mb-5">
                     {pkg.features.map((feature, i) => (
-                      <div key={i} className="flex items-start gap-3">
-                        <div className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${isBlue ? 'bg-blue-50 text-blue-500' : 'bg-indigo-50 text-indigo-500'}`}>
-                          <Check className="w-3 h-3" strokeWidth={3} />
+                      <div key={i} className="flex items-start gap-2">
+                        <div className={`mt-0.5 w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${isBlue ? 'bg-blue-50 text-blue-500' : 'bg-indigo-50 text-indigo-500'}`}>
+                          <Check className="w-2.5 h-2.5" strokeWidth={3} />
                         </div>
-                        <span className="text-[14px] text-slate-600 leading-relaxed font-medium">{feature}</span>
+                        <span className="text-[13px] text-slate-600 leading-relaxed font-medium">{feature}</span>
                       </div>
                     ))}
                   </div>
@@ -195,18 +195,18 @@ export default function MallView() {
                   <button
                     onClick={() => handleSubscribe(pkg.id)}
                     disabled={isSubscribing !== null}
-                    className={`w-full py-4 rounded-[24px] font-medium text-[16px] tracking-wide flex items-center justify-center gap-2 transition-transform active:scale-95 ${
+                    className={`w-full py-3 rounded-[20px] font-medium text-[15px] tracking-wide flex items-center justify-center gap-2 transition-transform active:scale-95 ${
                       isBlue 
                         ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_8px_24px_rgba(79,70,229,0.25)]' 
                         : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-[0_8px_24px_rgba(124,58,237,0.25)]'
                     }`}
                   >
                     {isSubscribing === pkg.id ? (
-                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
                       <>
-                        <Shield className="w-5 h-5" />
-                        立即订阅
+                        <Shield className="w-4 h-4" />
+                        开启专属守护
                       </>
                     )}
                   </button>

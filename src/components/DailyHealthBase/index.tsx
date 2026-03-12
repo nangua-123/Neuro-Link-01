@@ -10,8 +10,7 @@ export function DailyHealthBase() {
   return (
     <div className="space-y-4">
       <div className="px-1 flex items-center justify-between">
-        <h3 className="text-[17px] font-bold text-slate-900 tracking-tight">日常健康基座</h3>
-        <span className="text-[11px] text-slate-400 font-medium bg-slate-100 px-2 py-0.5 rounded-full">Zone A</span>
+        <h3 className="text-[17px] font-bold text-slate-900 tracking-tight">实时体征监测</h3>
       </div>
       
       <IoTStatusCard />
