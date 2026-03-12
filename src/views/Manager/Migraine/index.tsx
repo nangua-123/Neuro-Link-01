@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { useAppStore } from '../../../store';
-import { Zap, AlertTriangle, Plus, Pill, Calendar, Activity, ShieldAlert, ArrowRight } from 'lucide-react';
+import { Zap, AlertTriangle, Plus, Pill, Calendar, Activity, ShieldAlert, ArrowRight, RotateCcw } from 'lucide-react';
 import { TrendBarChart } from '../../../components/Charts/TrendBarChart';
 import { DailyHealthBase } from '../../../components/DailyHealthBase';
 import { MigraineDiarySheet } from '../../../components/MigraineDiarySheet';
 import { MedicalToolbox } from '../../../components/MedicalToolbox';
 import { VisitSummaryModal } from '../../../components/VisitSummaryModal';
+import MigraineCalendar from './MigraineCalendar';
 import { useNavigate } from 'react-router-dom';
 import { Toast } from 'antd-mobile';
 import { UserIdentity } from '../../../interfaces/user';
@@ -15,11 +16,12 @@ import { showComingSoon } from '../../../utils/ui';
 import { ManagerSkeleton } from '../../../components/ManagerSkeleton';
 
 export default function MigraineManager() {
-  const { painkillerDays, recordPainkiller, identity, vitals, migraineFrequencyData, recordMigraineAttack, isDeviceBound } = useAppStore();
+  const { painkillerDates, recordPainkiller, identity, vitals, migraineFrequencyData, recordMigraineAttack, isDeviceBound } = useAppStore();
   const navigate = useNavigate();
   const isFamily = identity === UserIdentity.FAMILY;
   const [isDiarySheetVisible, setIsDiarySheetVisible] = useState(false);
   const [isVisitSummaryVisible, setIsVisitSummaryVisible] = useState(false);
+  const [isCalendarVisible, setIsCalendarVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -27,8 +29,16 @@ export default function MigraineManager() {
     return () => clearTimeout(timer);
   }, []);
   
+  // Count painkillers taken in the current month
+  const today = new Date();
+  const currentMonthPrefix = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+  const currentMonthPainkillerDays = painkillerDates.filter(d => d.startsWith(currentMonthPrefix)).length;
+  
   // MOH 熔断机制：每月止痛药服用天数 >= 15 天为红线
-  const isMOHRisk = painkillerDays >= 15;
+  const isMOHRisk = currentMonthPainkillerDays >= 15;
+
+  const todayStr = today.toISOString().split('T')[0];
+  const isTakenToday = painkillerDates.includes(todayStr);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -76,7 +86,7 @@ export default function MigraineManager() {
           
           <div className="relative z-10">
             <div className="flex items-baseline space-x-2 mb-3">
-              <span className="text-4xl font-bold tracking-tighter">{painkillerDays}</span>
+              <span className="text-4xl font-bold tracking-tighter">{currentMonthPainkillerDays}</span>
               <span className="text-xs font-medium opacity-80">天 / 本月止痛药</span>
             </div>
             
@@ -90,7 +100,7 @@ export default function MigraineManager() {
                 </div>
               ) : (
                 <p className="text-xs opacity-90 leading-relaxed font-medium">
-                  距离 MOH 风险红线还有 <span className="font-bold text-sm">{15 - painkillerDays}</span> 天。{isFamily ? '请提醒长辈谨慎使用单纯止痛药，记录诱因更重要。' : '请谨慎使用单纯止痛药，记录诱因更重要。'}
+                  距离 MOH 风险红线还有 <span className="font-bold text-sm">{15 - currentMonthPainkillerDays}</span> 天。{isFamily ? '请提醒长辈谨慎使用单纯止痛药，记录诱因更重要。' : '请谨慎使用单纯止痛药，记录诱因更重要。'}
                 </p>
               )}
             </div>
@@ -162,15 +172,32 @@ export default function MigraineManager() {
               <p className="text-[10px] text-slate-500 mt-0.5 font-medium">布洛芬 / 散利痛等单纯止痛药</p>
             </div>
           </div>
-          <button 
-            onClick={() => {
-              recordPainkiller();
-              Toast.show({ content: '已记录服药', icon: 'success' });
-            }}
-            className="px-4 py-2 bg-slate-900 text-white text-xs font-medium rounded-full hover:bg-slate-800 transition-colors active:scale-95 shadow-[0_2px_8px_rgba(0,0,0,0.1)]"
-          >
-            打卡
-          </button>
+          {isTakenToday ? (
+            <div className="flex items-center gap-2">
+              <div className="text-[12px] font-semibold text-rose-500 bg-rose-50 px-3 py-1.5 rounded-full">
+                今日已服
+              </div>
+              <button 
+                onClick={() => {
+                  recordPainkiller(todayStr);
+                  Toast.show({ content: '已撤销服药记录' });
+                }}
+                className="p-1.5 text-slate-300 hover:text-slate-500 active:bg-slate-100 rounded-full transition-colors"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <button 
+              onClick={() => {
+                recordPainkiller(todayStr);
+                Toast.show({ content: '已记录服药', icon: 'success' });
+              }}
+              className="px-4 py-2 bg-slate-900 text-white text-xs font-medium rounded-full hover:bg-slate-800 transition-colors active:scale-95 shadow-[0_2px_8px_rgba(0,0,0,0.1)]"
+            >
+              打卡
+            </button>
+          )}
         </div>
       </motion.div>
 
@@ -197,7 +224,7 @@ export default function MigraineManager() {
 
           <motion.button 
             whileTap={{ scale: 0.96 }}
-            onClick={() => showComingSoon('历史日历升级中', '更直观的头痛发作趋势与诱因分析视图即将上线。')}
+            onClick={() => setIsCalendarVisible(true)}
             className="bg-white p-4 rounded-[20px] shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-slate-100/50 flex flex-col items-start space-y-2 text-left group hover:border-blue-200 transition-colors"
           >
             <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500 group-hover:bg-blue-100 transition-colors">
@@ -205,7 +232,7 @@ export default function MigraineManager() {
             </div>
             <div>
               <h4 className="text-sm font-semibold text-slate-900 leading-tight">历史日历</h4>
-              <p className="text-[10px] text-slate-500 mt-1 font-medium">头痛趋势回顾</p>
+              <p className="text-[10px] text-slate-500 mt-1 font-medium">头痛与用药回顾</p>
             </div>
           </motion.button>
         </div>
@@ -216,6 +243,9 @@ export default function MigraineManager() {
       </motion.div>
 
       <MigraineDiarySheet visible={isDiarySheetVisible} onClose={() => setIsDiarySheetVisible(false)} />
+
+      {/* 头痛与服药日历弹窗 */}
+      <MigraineCalendar visible={isCalendarVisible} onClose={() => setIsCalendarVisible(false)} />
 
       {/* 就诊摘要弹窗 */}
       <VisitSummaryModal visible={isVisitSummaryVisible} onClose={() => setIsVisitSummaryVisible(false)} diseaseTag={DiseaseTag.MIGRAINE} />

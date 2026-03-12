@@ -1,9 +1,9 @@
 // File: src/views/Manager/Epilepsy/index.tsx
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Activity, CheckCircle2, Calendar, Phone, Video, ShieldAlert, Plus } from 'lucide-react';
+import { Activity, CheckCircle2, Calendar, Phone, Video, ShieldAlert, Plus, Square } from 'lucide-react';
 import { useRecallStore, DangerLevel, RecallReason } from '../../../store/recall';
-import { Button, Popup, Radio, Space } from 'antd-mobile';
+import { Button, Popup, Radio, Space, Toast } from 'antd-mobile';
 import SeizureCalendar from './SeizureCalendar';
 import { TrendBarChart } from '../../../components/Charts/TrendBarChart';
 import { DailyHealthBase } from '../../../components/DailyHealthBase';
@@ -18,8 +18,9 @@ import { showComingSoon } from '../../../utils/ui';
 import { ManagerSkeleton } from '../../../components/ManagerSkeleton';
 
 export default function EpilepsyManager() {
-  const [isRecording, setIsRecording] = useState(false);
+  const [recordingPhase, setRecordingPhase] = useState<'idle' | 'countdown' | 'recording'>('idle');
   const [countdown, setCountdown] = useState(3);
+  const [recordSeconds, setRecordSeconds] = useState(0);
   const [showQuestion, setShowQuestion] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [isDiarySheetVisible, setIsDiarySheetVisible] = useState(false);
@@ -36,20 +37,40 @@ export default function EpilepsyManager() {
   }, []);
 
   const startRecording = () => {
-    setIsRecording(true);
+    setRecordingPhase('countdown');
     setCountdown(3);
+    setRecordSeconds(0);
+  };
+
+  const stopRecording = () => {
+    setRecordingPhase('idle');
+    Toast.show({ content: '录像已保存至系统相册', icon: 'success' });
+    setShowQuestion(true);
   };
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
-    if (isRecording && countdown > 0) {
+    if (recordingPhase === 'countdown' && countdown > 0) {
       timer = setTimeout(() => setCountdown(c => c - 1), 1000);
-    } else if (isRecording && countdown === 0) {
-      setIsRecording(false);
-      setShowQuestion(true);
+    } else if (recordingPhase === 'countdown' && countdown === 0) {
+      setRecordingPhase('recording');
     }
     return () => clearTimeout(timer);
-  }, [isRecording, countdown]);
+  }, [recordingPhase, countdown]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (recordingPhase === 'recording') {
+      timer = setInterval(() => setRecordSeconds(s => s + 1), 1000);
+    }
+    return () => clearInterval(timer);
+  }, [recordingPhase]);
+
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  };
 
   const handleSubmit = () => {
     setShowQuestion(false);
@@ -61,7 +82,15 @@ export default function EpilepsyManager() {
         patientId: 'current_user',
         timestamp: Date.now()
       });
+    } else if (duration) {
+      setIsDiarySheetVisible(true);
     }
+    setDuration('');
+  };
+
+  const handleSkip = () => {
+    setShowQuestion(false);
+    setDuration('');
   };
 
   const daysWithoutSeizure = 142;
@@ -272,45 +301,77 @@ export default function EpilepsyManager() {
       </div>
 
       {/* 模拟录像全屏遮罩 */}
-      {isRecording && (
+      {recordingPhase !== 'idle' && (
         <div className="fixed inset-0 max-w-md mx-auto right-0 left-0 z-[9000] bg-black flex flex-col items-center justify-center" style={{ touchAction: 'none' }}>
-          <div className="absolute top-12 right-6 flex items-center gap-2 bg-rose-600/20 px-3 py-1 rounded-full">
-            <div className="w-3 h-3 bg-rose-500 rounded-full animate-pulse"></div>
-            <span className="text-rose-500 font-mono text-lg font-bold">00:0{3 - countdown}</span>
-          </div>
-          <div className="w-24 h-24 border-2 border-white/20 rounded-full mb-6 flex items-center justify-center">
-            <Video className="w-8 h-8 text-white/50" />
-          </div>
-          <span className="text-white text-2xl font-bold">正在录像...</span>
+          {recordingPhase === 'countdown' ? (
+            <div className="flex flex-col items-center">
+              <div className="w-24 h-24 border-2 border-white/20 rounded-full mb-6 flex items-center justify-center">
+                <Video className="w-8 h-8 text-white/50" />
+              </div>
+              <span className="text-white text-4xl font-bold animate-pulse">{countdown}</span>
+              <span className="text-white/50 text-sm mt-4">准备录像...</span>
+            </div>
+          ) : (
+            <>
+              <div className="absolute top-12 right-6 flex items-center gap-2 bg-rose-600/20 px-3 py-1 rounded-full">
+                <div className="w-3 h-3 bg-rose-500 rounded-full animate-pulse"></div>
+                <span className="text-rose-500 font-mono text-lg font-bold">{formatTime(recordSeconds)}</span>
+              </div>
+              <div className="w-24 h-24 border-2 border-rose-500/50 rounded-full mb-6 flex items-center justify-center animate-pulse">
+                <Video className="w-8 h-8 text-rose-500" />
+              </div>
+              <span className="text-white text-2xl font-bold mb-12">正在录像...</span>
+              
+              <button 
+                onClick={stopRecording}
+                className="absolute bottom-24 flex items-center justify-center w-20 h-20 bg-white/10 border-2 border-white/20 rounded-full active:scale-95 transition-transform"
+              >
+                <div className="w-8 h-8 bg-rose-500 rounded-sm" />
+              </button>
+            </>
+          )}
         </div>
       )}
 
       {/* 录像结束后的必选项卡片 */}
       <Popup visible={showQuestion} maskStyle={{ backgroundColor: 'rgba(0,0,0,0.8)' }} closeOnMaskClick={false}>
         <div className="p-6 sm:p-8 bg-white rounded-t-[32px]">
-          <div className="flex items-center justify-center gap-2 mb-6">
+          <div className="flex items-center justify-center gap-2 mb-2">
             <ShieldAlert className="w-6 h-6 text-slate-900" />
             <h3 className="text-lg font-bold text-slate-900">发作了多久？</h3>
           </div>
+          <p className="text-center text-[13px] text-slate-500 mb-6 font-medium">
+            录像已保存。是否立即记录本次发作详情？
+          </p>
           <Radio.Group value={duration} onChange={val => setDuration(val as string)}>
             <Space direction="vertical" block className="gap-3">
               <Radio value="UNDER_1_MIN" className="w-full bg-slate-50/80 p-4 sm:p-5 rounded-[24px] font-medium text-sm border-none">1分钟内</Radio>
               <Radio value="UNDER_5_MIN" className="w-full bg-slate-50/80 p-4 sm:p-5 rounded-[24px] font-medium text-sm border-none">不到5分钟</Radio>
               <Radio value="OVER_5_MIN" className="w-full bg-rose-50/80 p-4 sm:p-5 rounded-[24px] font-medium text-sm text-rose-600 border-none">
-                超过5分钟了！
+                超过5分钟了！(将触发紧急预警)
               </Radio>
             </Space>
           </Radio.Group>
-          <Button 
-            block 
-            color="primary" 
-            size="large" 
-            className="mt-6 rounded-full font-medium text-sm h-12 bg-gradient-to-r from-blue-500 to-indigo-500 border-none text-white shadow-[0_8px_20px_rgba(59,130,246,0.25)]" 
-            disabled={!duration}
-            onClick={handleSubmit}
-          >
-            保存记录
-          </Button>
+          <div className="flex gap-3 mt-6">
+            <Button 
+              block 
+              size="large" 
+              className="flex-1 rounded-full font-medium text-sm h-12 bg-slate-100 border-none text-slate-600" 
+              onClick={handleSkip}
+            >
+              稍后记录
+            </Button>
+            <Button 
+              block 
+              color="primary" 
+              size="large" 
+              className="flex-1 rounded-full font-medium text-sm h-12 bg-gradient-to-r from-blue-500 to-indigo-500 border-none text-white shadow-[0_8px_20px_rgba(59,130,246,0.25)]" 
+              disabled={!duration}
+              onClick={handleSubmit}
+            >
+              继续记录
+            </Button>
+          </div>
         </div>
       </Popup>
 

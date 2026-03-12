@@ -17,7 +17,7 @@ export function SeizureDiarySheet({ visible, onClose }: Props) {
   const [triggers, setTriggers] = useState<string[]>([]);
   
   const { triggerRecall } = useRecallStore();
-  const { identity } = useAppStore();
+  const { identity, recordSeizureAttack } = useAppStore();
   const isFamily = identity === UserIdentity.FAMILY;
 
   const durationOptions = [
@@ -54,6 +54,9 @@ export function SeizureDiarySheet({ visible, onClose }: Props) {
     } else {
       Toast.show({ content: '日记已保存', icon: 'success' });
     }
+    
+    // Record the seizure attack
+    recordSeizureAttack();
     
     // Reset state
     setTimeout(() => {

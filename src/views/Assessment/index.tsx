@@ -1,4 +1,3 @@
-// File: src/views/Assessment/index.tsx
 import React, { useState, useCallback, useMemo } from 'react';
 import { NavBar, Result, SafeArea, Toast } from 'antd-mobile';
 import { useNavigate } from 'react-router-dom';

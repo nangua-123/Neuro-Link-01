@@ -10,7 +10,6 @@ export interface ScoringResult {
   }[];
   highRiskSymptoms: string[];
   reportSource: string; // e.g., "基于华西 CDR 认知量表多维数据计算"
-  ctaText: string; // e.g., "开启 24 小时认知护航管家"
 }
 
 export function calculateReport(payload: Record<string, any>, diseaseTag: DiseaseTag, isFamily: boolean = false): ScoringResult {
@@ -122,7 +121,6 @@ function calculateADReport(payload: Record<string, any>, isFamily: boolean): Sco
     dimensions,
     highRiskSymptoms: symptoms,
     reportSource: '基于 AD8、PHQ-9 及华西 CDR 综合解析',
-    ctaText: isFamily ? '开启长辈认知护航管家' : '开启 24 小时认知护航管家',
   };
 }
 
@@ -180,7 +178,6 @@ function calculateEpilepsyReport(payload: Record<string, any>, isFamily: boolean
     dimensions,
     highRiskSymptoms: symptoms,
     reportSource: '基于华西癫痫基线期 (V0) 档案多维解析',
-    ctaText: isFamily ? '开启长辈癫痫护航管家' : '开启癫痫护航管家',
   };
 }
 
@@ -228,6 +225,5 @@ function calculateMigraineReport(payload: Record<string, any>, isFamily: boolean
     dimensions,
     highRiskSymptoms: symptoms,
     reportSource: '基于偏头痛 MIDAS 初筛量表解析',
-    ctaText: isFamily ? '开启长辈偏头痛管家' : '开启偏头痛管家',
   };
 }

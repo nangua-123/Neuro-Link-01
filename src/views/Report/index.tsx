@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { NavBar, SafeArea, Toast } from 'antd-mobile';
 import { motion } from 'motion/react';
 import { calculateReport, ScoringResult } from '../../utils/scoring';
-import { Activity, AlertTriangle, Brain, ChevronRight, ShieldCheck, FileText, MapPin, Navigation, QrCode } from 'lucide-react';
+import { Activity, AlertTriangle, Brain, ChevronRight, ShieldCheck, FileText, MapPin, Navigation, QrCode, ShoppingBag } from 'lucide-react';
 import { DiseaseTag } from '../../configs/constants';
 import { AgreementModal } from '../../components/AgreementModal';
 import { useAppStore } from '../../store';
@@ -31,12 +31,38 @@ export default function ReportView() {
   }, [location.state, isFamily]);
 
   const handleCTAClick = () => {
-    const diseaseTag = location.state?.diseaseTag || DiseaseTag.NONE;
-    setDiseaseTag(diseaseTag);
-    if (hasSignedAgreement) {
-      navigate('/manager');
+    if (!result) return;
+    const isMild = result.riskScore >= 80;
+    
+    if (isMild) {
+      // 轻症留云端：进入居家管家
+      const diseaseTag = location.state?.diseaseTag || DiseaseTag.NONE;
+      setDiseaseTag(diseaseTag);
+      if (hasSignedAgreement) {
+        navigate('/manager');
+      } else {
+        setIsAgreementOpen(true);
+      }
     } else {
-      setIsAgreementOpen(true);
+      // 重症推线下：强制唤起就诊码
+      setIsNeuroPassOpen(true);
+    }
+  };
+
+  const handleSecondaryClick = () => {
+    if (!result) return;
+    const isMild = result.riskScore >= 80;
+    
+    if (isMild) {
+      // 轻症引导去商城
+      Toast.show({
+        content: '健康增值服务商城即将上线，敬请期待',
+        icon: 'success',
+        duration: 2000,
+      });
+    } else {
+      // 重症引导专家解读
+      handleExpertConsultation();
     }
   };
 
@@ -316,15 +342,33 @@ export default function ReportView() {
             onClick={handleCTAClick}
             className={`w-full py-4 rounded-[24px] bg-gradient-to-r ${theme.btnBg} text-white font-semibold text-[16px] tracking-wide ${theme.btnShadow} transform transition active:scale-95 flex items-center justify-center space-x-2`}
           >
-            <ShieldCheck className="w-5 h-5" />
-            <span>{result.ctaText}</span>
+            {riskLevel === 'low' ? (
+              <>
+                <ShieldCheck className="w-5 h-5" />
+                <span>{isFamily ? '开启长辈居家管家' : '开启居家管家'}</span>
+              </>
+            ) : (
+              <>
+                <QrCode className="w-5 h-5" />
+                <span>获取 Neuro-Pass 就诊码</span>
+              </>
+            )}
           </button>
           <button 
-            onClick={handleExpertConsultation}
+            onClick={handleSecondaryClick}
             className="w-full py-4 rounded-[24px] bg-white text-slate-700 font-semibold text-[16px] tracking-wide border border-slate-200 shadow-[0_4px_12px_rgba(0,0,0,0.05)] transform transition active:scale-95 flex items-center justify-center space-x-2"
           >
-            <FileText className="w-5 h-5 text-slate-400" />
-            <span>预约华西神经内科专家解读</span>
+            {riskLevel === 'low' ? (
+              <>
+                <ShoppingBag className="w-5 h-5 text-slate-400" />
+                <span>探索健康增值服务商城</span>
+              </>
+            ) : (
+              <>
+                <FileText className="w-5 h-5 text-slate-400" />
+                <span>预约华西神经内科专家解读</span>
+              </>
+            )}
           </button>
         </div>
         <SafeArea position="bottom" />

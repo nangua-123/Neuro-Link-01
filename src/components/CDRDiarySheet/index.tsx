@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Popup, Button, Toast } from 'antd-mobile';
 import { Brain, AlertTriangle, HeartHandshake } from 'lucide-react';
+import { useAppStore } from '../../store';
 
 interface Props {
   visible: boolean;
@@ -10,6 +11,7 @@ interface Props {
 export function CDRDiarySheet({ visible, onClose }: Props) {
   const [bpsd, setBpsd] = useState<string[]>([]);
   const [severity, setSeverity] = useState<'mild' | 'moderate' | 'severe' | null>(null);
+  const { recordCdrDiary } = useAppStore();
 
   const bpsdOptions = [
     '幻觉/妄想', '激越/攻击', '抑郁/焦虑', '情感淡漠', '脱抑制', '易激惹', '异常运动', '睡眠障碍', '饮食改变'
@@ -24,6 +26,8 @@ export function CDRDiarySheet({ visible, onClose }: Props) {
       Toast.show('请选择症状严重程度');
       return;
     }
+    
+    recordCdrDiary();
     Toast.show({ content: '照护日记已保存', icon: 'success' });
     onClose();
     setTimeout(() => {
