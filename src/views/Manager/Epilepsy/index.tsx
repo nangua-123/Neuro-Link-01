@@ -100,19 +100,21 @@ export default function EpilepsyManager() {
   const isSafe = daysWithoutSeizure > 30;
   
   const statusClasses = isSafe ? {
-    bg: 'bg-emerald-50/80 border border-emerald-100/50',
-    iconBg: 'bg-emerald-100 text-emerald-600',
-    textColor: 'text-emerald-800',
-    textLight: 'text-emerald-600/80',
+    bg: 'bg-gradient-to-br from-emerald-50 to-white border-none shadow-[0_8px_24px_rgba(16,185,129,0.08)]',
+    iconBg: 'bg-emerald-100/80 text-emerald-600 shadow-inner',
+    textColor: 'text-emerald-900',
+    textLight: 'text-emerald-700/80',
     statusText: '状态极佳',
-    descText: `已持续 ${daysWithoutSeizure} 天无发作，请继续保持`
+    descText: `已持续 ${daysWithoutSeizure} 天无发作，请继续保持`,
+    aura: 'bg-emerald-200/20'
   } : {
-    bg: 'bg-orange-50/80 border border-orange-100/50',
-    iconBg: 'bg-orange-100 text-orange-600',
-    textColor: 'text-orange-800',
-    textLight: 'text-orange-600/80',
+    bg: 'bg-gradient-to-br from-orange-50 to-white border-none shadow-[0_8px_24px_rgba(249,115,22,0.08)]',
+    iconBg: 'bg-orange-100/80 text-orange-600 shadow-inner',
+    textColor: 'text-orange-900',
+    textLight: 'text-orange-700/80',
     statusText: '需多加留意',
-    descText: `近期有发作记录，请按时服药并避免诱因`
+    descText: `近期有发作记录，请按时服药并避免诱因`,
+    aura: 'bg-orange-200/20'
   };
 
   const containerVariants = {
@@ -152,16 +154,20 @@ export default function EpilepsyManager() {
 
         <div className="grid grid-cols-1 gap-2.5">
           {/* Seizure Status Capsule */}
-          <div className={`rounded-[16px] p-3 flex items-center justify-between shadow-sm ${statusClasses.bg}`}>
-            <div className="flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-[12px] flex items-center justify-center ${statusClasses.iconBg}`}>
+          <div 
+            onClick={() => showComingSoon('发作状态分析', '主人，多维度发作频次与诱因分析报告即将上线。')}
+            className={`rounded-[20px] p-3.5 flex items-center justify-between cursor-pointer active:scale-95 transition-all group relative overflow-hidden ${statusClasses.bg}`}
+          >
+            <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-2xl -mr-10 -mt-10 transition-colors ${statusClasses.aura}`} />
+            <div className="flex items-center gap-3 relative z-10">
+              <div className={`w-11 h-11 rounded-[14px] flex items-center justify-center ${statusClasses.iconBg}`}>
                 <Activity className="w-5 h-5" />
               </div>
               <div>
-                <h3 className={`text-[13px] font-bold tracking-tight mb-0.5 ${statusClasses.textColor}`}>
+                <h3 className={`text-[14px] font-bold tracking-tight mb-0.5 ${statusClasses.textColor}`}>
                   {statusClasses.statusText}
                 </h3>
-                <p className={`text-[10px] font-medium ${statusClasses.textLight}`}>
+                <p className={`text-[11px] font-medium ${statusClasses.textLight}`}>
                   {statusClasses.descText}
                 </p>
               </div>
@@ -169,16 +175,20 @@ export default function EpilepsyManager() {
           </div>
 
           {/* Adherence Status Capsule */}
-          <div className="bg-blue-50/80 border border-blue-100/50 rounded-[16px] p-3 flex items-center justify-between shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-[12px] bg-blue-100 text-blue-600 flex items-center justify-center">
+          <div 
+            onClick={() => showComingSoon('用药依从率', '主人，详细的用药依从性分析报告即将上线。')}
+            className="bg-gradient-to-br from-blue-50 to-white border-none rounded-[20px] p-3.5 flex items-center justify-between shadow-[0_8px_24px_rgba(59,130,246,0.08)] cursor-pointer active:scale-95 transition-all group relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-200/20 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-blue-200/30 transition-colors" />
+            <div className="flex items-center gap-3 relative z-10">
+              <div className="w-11 h-11 rounded-[14px] bg-blue-100/80 text-blue-600 flex items-center justify-center shadow-inner">
                 <CheckCircle2 className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-[13px] font-bold text-blue-900 tracking-tight mb-0.5">
-                  用药依从率 <span className="text-[14px] ml-1">{adherenceRate}%</span>
+                <h3 className="text-[14px] font-bold text-blue-900 tracking-tight mb-0.5">
+                  用药依从率 <span className="text-[15px] ml-1">{adherenceRate}%</span>
                 </h3>
-                <p className="text-[10px] text-blue-700/80 font-medium">
+                <p className="text-[11px] text-blue-700/80 font-medium">
                   保持规律服药是控制发作的关键
                 </p>
               </div>
@@ -190,7 +200,7 @@ export default function EpilepsyManager() {
       {/* 2. 健康趋势洞察 (Data Insights) */}
       <motion.div variants={itemVariants} className="space-y-2.5">
         <div className="flex items-center justify-between px-1">
-          <h3 className="text-[14px] font-bold text-slate-900 tracking-tight">数据洞察</h3>
+          <h3 className="text-[14px] font-bold text-slate-900 tracking-tight">健康趋势解析</h3>
           <button 
             onClick={() => setIsVisitSummaryVisible(true)}
             className="text-[10px] font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full active:scale-95 transition-transform flex items-center gap-1"
@@ -235,7 +245,10 @@ export default function EpilepsyManager() {
               </div>
             </button>
 
-            <div className="bg-white p-2.5 rounded-[12px] shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-slate-100/50 flex flex-col items-start space-y-1.5 relative group text-left">
+            <button 
+              onClick={() => showComingSoon('复诊计划', '主人，正在打通华西医院 HIS 系统日程，即将上线。')}
+              className="bg-white p-2.5 rounded-[12px] shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-slate-100/50 flex flex-col items-start space-y-1.5 relative group text-left hover:border-blue-200 transition-colors cursor-pointer active:scale-95"
+            >
               <div className="w-6 h-6 rounded-[10px] bg-blue-50 text-blue-500 flex items-center justify-center">
                 <Calendar className="w-3 h-3" />
               </div>
@@ -245,7 +258,7 @@ export default function EpilepsyManager() {
                 </div>
                 <p className="text-[8px] text-slate-500 mt-0.5 font-medium leading-relaxed">距下次复诊还有 5 天，请准备脑电图报告。</p>
               </div>
-            </div>
+            </button>
           </div>
 
           <MedicationTracker />
@@ -261,7 +274,7 @@ export default function EpilepsyManager() {
           <motion.div 
             whileTap={{ scale: 0.96 }}
             className="bg-white rounded-[12px] p-2.5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-slate-100/50 cursor-pointer group hover:border-blue-200 transition-colors"
-            onClick={() => showComingSoon('专家复诊通道建设中', '华西癫痫专病团队的在线复诊通道正在进行最后的合规测试。')}
+            onClick={() => showComingSoon('专家复诊通道建设中', '主人，华西癫痫专病团队的在线复诊通道正在进行最后的合规测试。')}
           >
             <div className="w-6 h-6 rounded-[10px] bg-blue-50 text-blue-500 flex items-center justify-center mb-1.5 group-hover:bg-blue-100 transition-colors">
               <Phone className="w-3 h-3" />

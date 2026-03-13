@@ -78,29 +78,30 @@ export default function MigraineManager() {
         <div className="grid grid-cols-1 gap-2.5">
           {/* MOH Compact Banner */}
           <div 
-            className={`flex items-center justify-between p-3 rounded-[16px] transition-all duration-500 shadow-sm ${
+            className={`flex items-center justify-between p-3.5 rounded-[20px] transition-all duration-500 relative overflow-hidden group ${
               isMOHRisk 
-                ? 'bg-rose-50/80 border border-rose-100/50' 
-                : 'bg-violet-50/80 border border-violet-100/50'
+                ? 'bg-gradient-to-br from-rose-50 to-white border-none shadow-[0_8px_24px_rgba(225,29,72,0.08)]' 
+                : 'bg-gradient-to-br from-violet-50 to-white border-none shadow-[0_8px_24px_rgba(139,92,246,0.08)]'
             }`}
           >
-            <div className="flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-[12px] flex items-center justify-center shrink-0 ${isMOHRisk ? 'bg-rose-100 text-rose-600' : 'bg-violet-100 text-violet-600'}`}>
+            <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-2xl -mr-10 -mt-10 transition-colors ${isMOHRisk ? 'bg-rose-200/20' : 'bg-violet-200/20'}`} />
+            <div className="flex items-center gap-3 relative z-10">
+              <div className={`w-11 h-11 rounded-[14px] flex items-center justify-center shrink-0 shadow-inner ${isMOHRisk ? 'bg-rose-100/80 text-rose-600' : 'bg-violet-100/80 text-violet-600'}`}>
                 {isMOHRisk ? <AlertTriangle className="w-5 h-5" /> : <ShieldAlert className="w-5 h-5" />}
               </div>
               <div>
-                <h3 className={`text-[13px] font-bold tracking-tight mb-0.5 ${isMOHRisk ? 'text-rose-800' : 'text-violet-900'}`}>
+                <h3 className={`text-[14px] font-bold tracking-tight mb-0.5 ${isMOHRisk ? 'text-rose-900' : 'text-violet-900'}`}>
                   {isMOHRisk ? 'MOH 风险预警' : '状态平稳'}
                 </h3>
-                <p className={`text-[10px] font-medium ${isMOHRisk ? 'text-rose-600/80' : 'text-violet-700/80'}`}>
+                <p className={`text-[11px] font-medium ${isMOHRisk ? 'text-rose-700/80' : 'text-violet-700/80'}`}>
                   {isMOHRisk ? `服药已达 ${currentMonthPainkillerDays} 天，请立即就医` : `本月已服药 ${currentMonthPainkillerDays} 天，未超标`}
                 </p>
               </div>
             </div>
             <button 
               onClick={() => setIsCalendarVisible(true)}
-              className={`text-[10px] font-semibold px-2.5 py-1.5 rounded-full active:scale-95 transition-transform ${
-                isMOHRisk ? 'bg-rose-600 text-white' : 'bg-violet-600 text-white'
+              className={`text-[11px] font-semibold px-3 py-1.5 rounded-full active:scale-95 transition-transform relative z-10 shadow-sm ${
+                isMOHRisk ? 'bg-gradient-to-r from-rose-500 to-rose-600 text-white' : 'bg-gradient-to-r from-violet-500 to-violet-600 text-white'
               }`}
             >
               查看日历
@@ -108,16 +109,20 @@ export default function MigraineManager() {
           </div>
 
           {/* Headache Frequency Capsule */}
-          <div className="bg-blue-50/80 border border-blue-100/50 rounded-[16px] p-3 flex items-center justify-between shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-[12px] bg-blue-100 text-blue-600 flex items-center justify-center">
+          <div 
+            onClick={() => showComingSoon('发作频次分析', '主人，多维度发作频次与诱因分析报告即将上线。')}
+            className="bg-gradient-to-br from-blue-50 to-white border-none rounded-[20px] p-3.5 flex items-center justify-between shadow-[0_8px_24px_rgba(59,130,246,0.08)] cursor-pointer active:scale-95 transition-all group relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-200/20 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-blue-200/30 transition-colors" />
+            <div className="flex items-center gap-3 relative z-10">
+              <div className="w-11 h-11 rounded-[14px] bg-blue-100/80 text-blue-600 flex items-center justify-center shadow-inner">
                 <Activity className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-[13px] font-bold text-blue-900 tracking-tight mb-0.5">
-                  本月发作频次 <span className="text-[14px] ml-1">{migraineFrequencyData.reduce((acc, curr) => acc + curr.value, 0)} 次</span>
+                <h3 className="text-[14px] font-bold text-blue-900 tracking-tight mb-0.5">
+                  本月发作频次 <span className="text-[15px] ml-1">{migraineFrequencyData.reduce((acc, curr) => acc + curr.value, 0)} 次</span>
                 </h3>
-                <p className="text-[10px] text-blue-700/80 font-medium">
+                <p className="text-[11px] text-blue-700/80 font-medium">
                   较上月减少 2 次，控制良好
                 </p>
               </div>
@@ -129,7 +134,7 @@ export default function MigraineManager() {
       {/* 模块二：健康趋势洞察 (Data Insights) */}
       <motion.div variants={itemVariants} className="space-y-3">
         <div className="flex items-center justify-between px-1">
-          <h3 className="text-base font-bold text-slate-900 tracking-tight">数据洞察</h3>
+          <h3 className="text-base font-bold text-slate-900 tracking-tight">健康趋势解析</h3>
           <button 
             onClick={() => setIsVisitSummaryVisible(true)}
             className="text-[11px] font-semibold text-violet-600 bg-violet-50 px-3 py-1.5 rounded-full active:scale-95 transition-transform flex items-center gap-1"

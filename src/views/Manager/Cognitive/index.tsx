@@ -77,17 +77,21 @@ function StatusOverview({ isFamily }: { isFamily: boolean }) {
 
       <div className="grid grid-cols-1 gap-2.5">
         {/* LBS Security Fence Banner */}
-        <div className="bg-emerald-50/80 border border-emerald-100/50 rounded-[16px] p-3 flex items-center justify-between shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-[12px] bg-emerald-100 text-emerald-600 flex items-center justify-center relative">
+        <div 
+          onClick={() => showComingSoon('LBS 安全围栏', '主人，正在与 IoT 设备进行位置服务联调，即将上线。')}
+          className="bg-gradient-to-br from-emerald-50 to-white border-none rounded-[20px] p-3.5 flex items-center justify-between shadow-[0_8px_24px_rgba(16,185,129,0.08)] cursor-pointer active:scale-95 transition-all group relative overflow-hidden"
+        >
+          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-200/20 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-emerald-200/30 transition-colors" />
+          <div className="flex items-center gap-3 relative z-10">
+            <div className="w-11 h-11 rounded-[14px] bg-emerald-100/80 text-emerald-600 flex items-center justify-center relative shadow-inner">
               <MapPin className="w-5 h-5 relative z-10" />
-              <div className="absolute inset-0 bg-emerald-200 rounded-[12px] animate-ping opacity-30" />
+              <div className="absolute inset-0 bg-emerald-300 rounded-[14px] animate-ping opacity-20" />
             </div>
             <div>
-              <h3 className="text-[13px] font-bold text-emerald-900 tracking-tight mb-0.5">
+              <h3 className="text-[14px] font-bold text-emerald-900 tracking-tight mb-0.5">
                 LBS 安全围栏
               </h3>
-              <p className="text-[10px] text-emerald-700/80 font-medium">
+              <p className="text-[11px] text-emerald-700/80 font-medium">
                 当前位于安全活动区
               </p>
             </div>
@@ -95,16 +99,20 @@ function StatusOverview({ isFamily }: { isFamily: boolean }) {
         </div>
 
         {/* Training Status Capsule */}
-        <div className="bg-blue-50/80 border border-blue-100/50 rounded-[16px] p-3 flex items-center justify-between shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-[12px] bg-blue-100 text-blue-600 flex items-center justify-center">
+        <div 
+          onClick={() => showComingSoon('脑力训练', '主人，个性化认知训练计划生成中，敬请期待。')}
+          className="bg-gradient-to-br from-blue-50 to-white border-none rounded-[20px] p-3.5 flex items-center justify-between shadow-[0_8px_24px_rgba(59,130,246,0.08)] cursor-pointer active:scale-95 transition-all group relative overflow-hidden"
+        >
+          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-200/20 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-blue-200/30 transition-colors" />
+          <div className="flex items-center gap-3 relative z-10">
+            <div className="w-11 h-11 rounded-[14px] bg-blue-100/80 text-blue-600 flex items-center justify-center shadow-inner">
               <Brain className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-[13px] font-bold text-blue-900 tracking-tight mb-0.5">
-                脑力训练 <span className="text-[14px] ml-1">2/5 天</span>
+              <h3 className="text-[14px] font-bold text-blue-900 tracking-tight mb-0.5">
+                脑力训练 <span className="text-[15px] ml-1">2/5 天</span>
               </h3>
-              <p className="text-[10px] text-blue-700/80 font-medium">
+              <p className="text-[11px] text-blue-700/80 font-medium">
                 本周还需完成 3 天训练
               </p>
             </div>
@@ -121,7 +129,7 @@ function DataInsights({ isFamily, onOpenVisitSummary }: { isFamily: boolean, onO
   return (
     <div className="space-y-2.5">
       <div className="flex items-center justify-between px-1">
-        <h3 className="text-[14px] font-bold text-slate-900 tracking-tight">数据洞察</h3>
+        <h3 className="text-[14px] font-bold text-slate-900 tracking-tight">健康趋势解析</h3>
         <button 
           onClick={onOpenVisitSummary}
           className="text-[10px] font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full active:scale-95 transition-transform flex items-center gap-1"
@@ -248,7 +256,7 @@ function MedicalServices({ isFamily }: { isFamily: boolean }) {
             title="照护者心理支持"
             desc="家属减负与专业心理疏导"
             color="indigo"
-            onClick={() => showComingSoon('心理咨询室筹备中', '专业的心理疏导团队正在入驻，敬请期待。')}
+            onClick={() => showComingSoon('心理咨询室筹备中', '主人，专业的心理疏导团队正在入驻，敬请期待。')}
           />
         )}
       </div>
