@@ -2,9 +2,6 @@ import { create } from 'zustand';
 import { UserIdentity, DeviceStatus } from '../interfaces/device';
 
 interface DeviceState {
-  currentView: 'home' | 'device';
-  setCurrentView: (view: 'home' | 'device') => void;
-
   identity: UserIdentity;
   setIdentity: (identity: UserIdentity) => void;
   
@@ -22,9 +19,6 @@ interface DeviceState {
 }
 
 export const useDeviceStore = create<DeviceState>((set, get) => ({
-  currentView: 'device',
-  setCurrentView: (view) => set({ currentView: view }),
-
   identity: UserIdentity.SELF,
   setIdentity: (identity) => set({ identity }),
   

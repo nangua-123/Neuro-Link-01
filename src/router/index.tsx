@@ -8,7 +8,7 @@ import ManagerView from '../views/Manager';
 import MallView from '../views/Mall';
 import ProfileView from '../views/Profile';
 import EHRTimelineView from '../views/Profile/EHRTimeline';
-import DeviceView from '../views/Device';
+import { DeviceManagement } from '../views/DeviceManagement';
 import DeviceConnectView from '../views/Profile/DeviceConnect';
 import DeviceAuthView from '../views/Profile/DeviceAuth';
 import LoginView from '../views/Login';
@@ -92,7 +92,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/device',
-        element: <RequireAuth><RequireAgreement><DeviceView /></RequireAgreement></RequireAuth>,
+        element: <RequireAuth><RequireAgreement><DeviceManagement /></RequireAgreement></RequireAuth>,
       },
       {
         path: '/device-connect',

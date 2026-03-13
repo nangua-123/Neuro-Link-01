@@ -6,10 +6,12 @@ import { DashboardGrid } from './components/DashboardGrid';
 import { useDeviceStore } from '../../store/useDeviceStore';
 import { CapsuleButton } from '../../components/common/CapsuleButton';
 import { DeviceStatus } from '../../interfaces/device';
+import { useNavigate } from 'react-router-dom';
 
 export const DeviceManagement: React.FC = () => {
-  const { showAuthModal, setShowAuthModal, setHasSignedAgreement, deviceStatus, setDeviceStatus, setCurrentView } = useDeviceStore();
+  const { showAuthModal, setShowAuthModal, setHasSignedAgreement, deviceStatus, setDeviceStatus } = useDeviceStore();
   const [toastMsg, setToastMsg] = React.useState('');
+  const navigate = useNavigate();
 
   const handleSignAgreement = () => {
     setHasSignedAgreement(true);
@@ -24,7 +26,7 @@ export const DeviceManagement: React.FC = () => {
       {/* 顶部导航 */}
       <header className="relative z-50 flex items-center justify-between px-5 pt-12 pb-4">
         <button 
-          onClick={() => setCurrentView('home')}
+          onClick={() => navigate(-1)}
           className="relative z-50 w-10 h-10 flex items-center justify-center -ml-2 text-slate-700 active:bg-slate-200/50 rounded-full transition-colors cursor-pointer"
         >
           <ChevronLeft size={24} className="pointer-events-none" />
