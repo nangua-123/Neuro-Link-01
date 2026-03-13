@@ -11,6 +11,8 @@ interface PackageInfo {
   id: string;
   title: string;
   price: number;
+  rentPrice: number;
+  rentFirstMonth: number;
   duration: string;
   hardware: string;
   features: string[];
@@ -24,6 +26,8 @@ const PACKAGES: PackageInfo[] = [
     id: 'pkg_epilepsy',
     title: '癫痫生命守护包',
     price: 599,
+    rentPrice: 199,
+    rentFirstMonth: 1,
     duration: '年',
     hardware: 'Neuro-Band Pro (长虹医疗定制版)',
     features: [
@@ -40,6 +44,8 @@ const PACKAGES: PackageInfo[] = [
     id: 'pkg_ad',
     title: '大脑 4S 店护航包',
     price: 365,
+    rentPrice: 99,
+    rentFirstMonth: 1,
     duration: '年',
     hardware: 'BCI 脑机接口训练头环',
     features: [
@@ -60,6 +66,7 @@ export default function MallView() {
   const [isSubscribing, setIsSubscribing] = useState<string | null>(null);
   const [showBindModal, setShowBindModal] = useState(false);
   const [isBinding, setIsBinding] = useState(false);
+  const [purchaseMode, setPurchaseMode] = useState<'rent' | 'buy'>('rent');
 
   // Sort packages to put the matching one first
   const sortedPackages = useMemo(() => {
@@ -127,7 +134,26 @@ export default function MallView() {
       <div className="p-5 relative z-10">
         <div className="mb-8 text-center mt-2">
           <h1 className="text-[24px] font-bold text-slate-900 tracking-tight mb-2">专病守护方案</h1>
-          <p className="text-[14px] text-slate-500 font-medium">软硬一体化闭环，全天候医疗级护航</p>
+          <p className="text-[14px] text-slate-500 font-medium mb-6">软硬一体化闭环，全天候医疗级护航</p>
+
+          {/* Mode Toggle */}
+          <div className="bg-slate-100/80 p-1 rounded-full inline-flex relative">
+            <div 
+              className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white rounded-full shadow-sm transition-all duration-300 ease-out ${purchaseMode === 'rent' ? 'left-1' : 'left-[calc(50%+2px)]'}`}
+            />
+            <button 
+              onClick={() => setPurchaseMode('rent')}
+              className={`relative z-10 px-6 py-2 text-[14px] font-bold rounded-full transition-colors ${purchaseMode === 'rent' ? 'text-slate-900' : 'text-slate-500'}`}
+            >
+              按月租赁
+            </button>
+            <button 
+              onClick={() => setPurchaseMode('buy')}
+              className={`relative z-10 px-6 py-2 text-[14px] font-bold rounded-full transition-colors ${purchaseMode === 'buy' ? 'text-slate-900' : 'text-slate-500'}`}
+            >
+              买断硬件
+            </button>
+          </div>
         </div>
 
         <div className="space-y-6">
@@ -161,10 +187,19 @@ export default function MallView() {
                       <h2 className="text-[18px] font-semibold tracking-tight">{pkg.title}</h2>
                     </div>
                     
-                    <div className="flex items-baseline gap-0.5">
-                      <span className="text-[14px] opacity-80 font-medium">¥</span>
-                      <span className="text-[28px] font-bold tracking-tight">{pkg.price}</span>
-                      <span className="text-[12px] opacity-80 font-medium">/{pkg.duration}</span>
+                    <div className="flex flex-col items-end">
+                      <div className="flex items-baseline gap-0.5">
+                        <span className="text-[14px] opacity-80 font-medium">¥</span>
+                        <span className="text-[28px] font-bold tracking-tight">
+                          {purchaseMode === 'rent' ? pkg.rentFirstMonth : pkg.price}
+                        </span>
+                        <span className="text-[12px] opacity-80 font-medium">
+                          {purchaseMode === 'rent' ? '/首月' : `/${pkg.duration}`}
+                        </span>
+                      </div>
+                      {purchaseMode === 'rent' && (
+                        <div className="text-[10px] opacity-70 mt-0.5">次月恢复 ¥{pkg.rentPrice}/月</div>
+                      )}
                     </div>
                   </div>
                 </div>

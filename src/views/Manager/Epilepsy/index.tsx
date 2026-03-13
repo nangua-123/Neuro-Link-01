@@ -100,17 +100,19 @@ export default function EpilepsyManager() {
   const isSafe = daysWithoutSeizure > 30;
   
   const statusClasses = isSafe ? {
-    bg: 'bg-gradient-to-br from-emerald-500 to-teal-600 shadow-emerald-500/20',
-    iconBg: 'bg-white/20',
-    iconColor: 'text-white',
-    textColor: 'text-white',
-    textLight: 'text-emerald-50'
+    bg: 'bg-emerald-50/80 border border-emerald-100/50',
+    iconBg: 'bg-emerald-100 text-emerald-600',
+    textColor: 'text-emerald-800',
+    textLight: 'text-emerald-600/80',
+    statusText: '状态极佳',
+    descText: `已持续 ${daysWithoutSeizure} 天无发作，请继续保持`
   } : {
-    bg: 'bg-gradient-to-br from-orange-500 to-red-600 shadow-orange-500/20',
-    iconBg: 'bg-white/20',
-    iconColor: 'text-white',
-    textColor: 'text-white',
-    textLight: 'text-orange-50'
+    bg: 'bg-orange-50/80 border border-orange-100/50',
+    iconBg: 'bg-orange-100 text-orange-600',
+    textColor: 'text-orange-800',
+    textLight: 'text-orange-600/80',
+    statusText: '需多加留意',
+    descText: `近期有发作记录，请按时服药并避免诱因`
   };
 
   const containerVariants = {
@@ -135,48 +137,50 @@ export default function EpilepsyManager() {
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="space-y-6 pb-10"
+      className="space-y-4 pb-8"
     >
       {/* 1. 专属核心舱 (Status Overview) */}
-      <motion.div variants={itemVariants} className="space-y-3">
+      <motion.div variants={itemVariants} className="space-y-2.5">
         <div className="flex items-center justify-between px-1">
-          <h2 className="text-lg font-bold text-slate-900 tracking-tight">
+          <h2 className="text-[16px] font-bold text-slate-900 tracking-tight">
             {isFamily ? '长辈癫痫守护' : '我的癫痫守护'}
           </h2>
-          <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center">
-            <Activity className="w-4 h-4 text-indigo-500" />
+          <div className="w-7 h-7 rounded-full bg-indigo-50 flex items-center justify-center">
+            <Activity className="w-3.5 h-3.5 text-indigo-500" />
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <div className={`relative overflow-hidden rounded-[20px] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.04)] ${statusClasses.bg}`}>
-            <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full blur-2xl -mr-8 -mt-8 pointer-events-none" />
-            <div className="relative z-10 flex flex-col h-full justify-between">
-              <div className="flex items-center gap-1.5 mb-3">
-                <div className={`p-1.5 rounded-xl backdrop-blur-md ${statusClasses.iconBg}`}>
-                  <Activity className={`w-3 h-3 ${statusClasses.iconColor}`} />
-                </div>
-                <span className={`text-[10px] font-semibold uppercase tracking-wider ${statusClasses.textColor}`}>持续无发作</span>
+        <div className="grid grid-cols-1 gap-2.5">
+          {/* Seizure Status Capsule */}
+          <div className={`rounded-[16px] p-3 flex items-center justify-between shadow-sm ${statusClasses.bg}`}>
+            <div className="flex items-center gap-3">
+              <div className={`w-10 h-10 rounded-[12px] flex items-center justify-center ${statusClasses.iconBg}`}>
+                <Activity className="w-5 h-5" />
               </div>
-              <div className="flex items-baseline gap-1">
-                <span className={`text-3xl font-bold tracking-tighter ${statusClasses.textColor}`}>{daysWithoutSeizure}</span>
-                <span className={`text-xs font-medium ${statusClasses.textLight}`}>天</span>
+              <div>
+                <h3 className={`text-[13px] font-bold tracking-tight mb-0.5 ${statusClasses.textColor}`}>
+                  {statusClasses.statusText}
+                </h3>
+                <p className={`text-[10px] font-medium ${statusClasses.textLight}`}>
+                  {statusClasses.descText}
+                </p>
               </div>
             </div>
           </div>
 
-          <div className="relative overflow-hidden bg-gradient-to-br from-blue-500 to-indigo-600 rounded-[20px] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.04)] shadow-blue-500/20">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full blur-2xl -mr-8 -mt-8 pointer-events-none" />
-            <div className="relative z-10 flex flex-col h-full justify-between">
-              <div className="flex items-center gap-1.5 mb-3">
-                <div className="p-1.5 bg-white/20 rounded-xl backdrop-blur-md">
-                  <CheckCircle2 className="w-3 h-3 text-white" />
-                </div>
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-white">用药依从率</span>
+          {/* Adherence Status Capsule */}
+          <div className="bg-blue-50/80 border border-blue-100/50 rounded-[16px] p-3 flex items-center justify-between shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-[12px] bg-blue-100 text-blue-600 flex items-center justify-center">
+                <CheckCircle2 className="w-5 h-5" />
               </div>
-              <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-bold tracking-tighter text-white">{adherenceRate}</span>
-                <span className="text-xs font-medium text-blue-50">%</span>
+              <div>
+                <h3 className="text-[13px] font-bold text-blue-900 tracking-tight mb-0.5">
+                  用药依从率 <span className="text-[14px] ml-1">{adherenceRate}%</span>
+                </h3>
+                <p className="text-[10px] text-blue-700/80 font-medium">
+                  保持规律服药是控制发作的关键
+                </p>
               </div>
             </div>
           </div>
@@ -184,14 +188,14 @@ export default function EpilepsyManager() {
       </motion.div>
 
       {/* 2. 健康趋势洞察 (Data Insights) */}
-      <motion.div variants={itemVariants} className="space-y-3">
+      <motion.div variants={itemVariants} className="space-y-2.5">
         <div className="flex items-center justify-between px-1">
-          <h3 className="text-base font-bold text-slate-900 tracking-tight">数据洞察</h3>
+          <h3 className="text-[14px] font-bold text-slate-900 tracking-tight">数据洞察</h3>
           <button 
             onClick={() => setIsVisitSummaryVisible(true)}
-            className="text-[11px] font-semibold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-full active:scale-95 transition-transform flex items-center gap-1"
+            className="text-[10px] font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full active:scale-95 transition-transform flex items-center gap-1"
           >
-            <Sparkles className="w-3 h-3" />
+            <Sparkles className="w-2.5 h-2.5" />
             AI 智能复诊小结
           </button>
         </div>
@@ -210,36 +214,36 @@ export default function EpilepsyManager() {
       </motion.div>
 
       {/* 4. 日常干预 (Daily Actions) */}
-      <motion.div variants={itemVariants} className="space-y-3">
+      <motion.div variants={itemVariants} className="space-y-2.5">
         <div className="px-1 flex items-center justify-between">
-          <h3 className="text-base font-bold text-slate-900 tracking-tight">日常干预</h3>
+          <h3 className="text-[14px] font-bold text-slate-900 tracking-tight">日常干预</h3>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           {/* Bento Box: 记录发作 & 近期复诊计划 */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2">
             <button 
               onClick={() => setIsDiarySheetVisible(true)}
-              className="bg-white p-4 rounded-[20px] shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-slate-100/50 flex flex-col items-start space-y-3 group hover:border-indigo-200 transition-colors text-left"
+              className="bg-white p-2.5 rounded-[12px] shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-slate-100/50 flex flex-col items-start space-y-1.5 group hover:border-indigo-200 transition-colors text-left"
             >
-              <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-500 flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
-                <Activity className="w-5 h-5" />
+              <div className="w-6 h-6 rounded-[10px] bg-indigo-50 text-indigo-500 flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
+                <Activity className="w-3 h-3" />
               </div>
               <div>
-                <h4 className="text-[14px] font-bold text-slate-900 leading-tight">{isFamily ? '记录长辈发作' : '记录发作日记'}</h4>
-                <p className="text-[10px] text-slate-500 mt-1 font-medium">记录发作类型与诱因</p>
+                <h4 className="text-[11px] font-bold text-slate-900 leading-tight">{isFamily ? '记录长辈发作' : '记录发作日记'}</h4>
+                <p className="text-[8px] text-slate-500 mt-0.5 font-medium">记录发作类型与诱因</p>
               </div>
             </button>
 
-            <div className="bg-white p-4 rounded-[20px] shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-slate-100/50 flex flex-col items-start space-y-3 relative group text-left">
-              <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center">
-                <Calendar className="w-5 h-5" />
+            <div className="bg-white p-2.5 rounded-[12px] shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-slate-100/50 flex flex-col items-start space-y-1.5 relative group text-left">
+              <div className="w-6 h-6 rounded-[10px] bg-blue-50 text-blue-500 flex items-center justify-center">
+                <Calendar className="w-3 h-3" />
               </div>
               <div className="w-full">
-                <div className="flex items-center justify-between mb-1">
-                  <h4 className="text-[14px] font-bold text-slate-900 leading-tight">近期复诊计划</h4>
+                <div className="flex items-center justify-between mb-0.5">
+                  <h4 className="text-[11px] font-bold text-slate-900 leading-tight">近期复诊计划</h4>
                 </div>
-                <p className="text-[10px] text-slate-500 mt-1 font-medium leading-relaxed">距下次复诊还有 5 天，请准备脑电图报告。</p>
+                <p className="text-[8px] text-slate-500 mt-0.5 font-medium leading-relaxed">距下次复诊还有 5 天，请准备脑电图报告。</p>
               </div>
             </div>
           </div>
@@ -249,32 +253,32 @@ export default function EpilepsyManager() {
       </motion.div>
 
       {/* 5. 医患连接与服务 (Medical Services) */}
-      <motion.div variants={itemVariants} className="space-y-3">
+      <motion.div variants={itemVariants} className="space-y-2.5">
         <div className="px-1">
-          <h3 className="text-base font-bold text-slate-900 tracking-tight">深度服务</h3>
+          <h3 className="text-[14px] font-bold text-slate-900 tracking-tight">深度服务</h3>
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-2">
           <motion.div 
             whileTap={{ scale: 0.96 }}
-            className="bg-white rounded-[20px] p-4 shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-slate-100/50 cursor-pointer group hover:border-blue-200 transition-colors"
+            className="bg-white rounded-[12px] p-2.5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-slate-100/50 cursor-pointer group hover:border-blue-200 transition-colors"
             onClick={() => showComingSoon('专家复诊通道建设中', '华西癫痫专病团队的在线复诊通道正在进行最后的合规测试。')}
           >
-            <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center mb-2 group-hover:bg-blue-100 transition-colors">
-              <Phone className="w-4 h-4" />
+            <div className="w-6 h-6 rounded-[10px] bg-blue-50 text-blue-500 flex items-center justify-center mb-1.5 group-hover:bg-blue-100 transition-colors">
+              <Phone className="w-3 h-3" />
             </div>
-            <h3 className="text-sm font-semibold text-slate-900 mb-0.5">专家在线复诊</h3>
-            <p className="text-[10px] text-slate-500 font-medium">华西专病团队</p>
+            <h3 className="text-[11px] font-semibold text-slate-900 mb-0.5">专家在线复诊</h3>
+            <p className="text-[8px] text-slate-500 font-medium">华西专病团队</p>
           </motion.div>
           <motion.div 
             whileTap={{ scale: 0.96 }}
-            className="bg-white rounded-[20px] p-4 shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-slate-100/50 cursor-pointer group hover:border-purple-200 transition-colors"
+            className="bg-white rounded-[12px] p-2.5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-slate-100/50 cursor-pointer group hover:border-purple-200 transition-colors"
             onClick={() => setShowCalendar(true)}
           >
-            <div className="w-8 h-8 rounded-xl bg-purple-50 text-purple-500 flex items-center justify-center mb-2 group-hover:bg-purple-100 transition-colors">
-              <Activity className="w-4 h-4" />
+            <div className="w-6 h-6 rounded-[10px] bg-purple-50 text-purple-500 flex items-center justify-center mb-1.5 group-hover:bg-purple-100 transition-colors">
+              <Activity className="w-3 h-3" />
             </div>
-            <h3 className="text-sm font-semibold text-slate-900 mb-0.5">发作日记</h3>
-            <p className="text-[10px] text-slate-500 font-medium">趋势与回顾</p>
+            <h3 className="text-[11px] font-semibold text-slate-900 mb-0.5">发作日记</h3>
+            <p className="text-[8px] text-slate-500 font-medium">趋势与回顾</p>
           </motion.div>
         </div>
       </motion.div>
@@ -287,9 +291,9 @@ export default function EpilepsyManager() {
       <div className="fixed inset-0 max-w-md mx-auto right-0 left-0 pointer-events-none z-40">
         <button 
           onClick={startRecording}
-          className="absolute bottom-24 right-6 pointer-events-auto flex items-center justify-center w-14 h-14 bg-gradient-to-tr from-rose-400 to-red-500 text-white rounded-full shadow-[0_8px_24px_rgba(225,29,72,0.3)] active:scale-95 transition-transform"
+          className="absolute bottom-20 right-5 pointer-events-auto flex items-center justify-center w-12 h-12 bg-gradient-to-tr from-rose-400 to-red-500 text-white rounded-full shadow-[0_4px_16px_rgba(225,29,72,0.3)] active:scale-95 transition-transform"
         >
-          <Video className="w-6 h-6" />
+          <Video className="w-5 h-5" />
         </button>
       </div>
 

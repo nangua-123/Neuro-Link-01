@@ -90,6 +90,18 @@
   - 增加“我的订单”入口占位。
 
 ## Phase 10: Final Polish & Delivery (Current)
+- **Batch 4: 核心状态舱 UI/UX 极致降噪与升温 (Status Overview Refactor)**：
+  - **IoT 穿戴设备卡片 (`IoTStatusCard`)**：彻底废弃深色渐变（B端大屏感），改用纯白底色配合极淡的科技蓝弥散光晕。移除占面积较大的微图表，压缩为高度极简的横向胶囊卡片。将文案从冷冰冰的技术描述（如“未连接穿戴设备”）升级为有温度的管家视角（如“守护升级：绑定 Neuro-Band，开启 24h 异常预警”）。
+  - **专病核心状态舱 (`StatusOverview`)**：全面抛弃高饱和色块，替换为极淡的浅色背景（如 `bg-emerald-50/80`）配合柔和的发光阴影。将上下堆叠的排版改为更紧凑的左右图文混排，大幅降低卡片高度。增加管家视角的解读文案（如“状态极佳：已持续 142 天无发作，请继续保持”）。
+  - **默认健康管家舱 (`DefaultManager`)**：将原本体积庞大、色彩浓重的“专病智能核心舱”重构为浅色呼吸感设计的“专属健康管家”。精简了冗长的引导文案，并将巨大的上下堆叠按钮改为紧凑的并排胶囊按钮，大幅释放了首屏空间。
+  - **消除全局冗余横幅**：彻底移除了 `ManagerView` 首页顶部冗余的“连接智能设备”全局横幅，将设备连接引导统一收敛至 `IoTStatusCard`，释放首屏空间，提升核心医疗状态的视觉优先级。
+  - **设备管理页重构 (`DeviceView`)**：参考蚂蚁阿福的设计语言，彻底重构了 `/device` 页面。未连接时，隐藏所有空数据卡片，展示居中的高精美“引导连接舱”；已连接时，引入 `CountUp` 数字滚动动效与心跳呼吸灯，模拟真实数据流转。所有体征数据（心率、步数等）均接入全局 Zustand Store，消除硬编码。
+  - **设备连接路由优化 (Routing Polish)**：修复了未绑定设备时，首页点击“守护升级”会进入空状态过渡页的冗余层级问题。现在未绑定状态下点击将**直达设备选择列表 (`/device-connect`)**，而 `/device` 的空状态仅作为用户主动断开连接后的平滑降级（Fallback）展示，极致缩短转化链路。
+- **Batch 3: UI/UX 极致信息密度优化 (High-Density UI Polish)**：
+  - **通用组件优化**：全面重构 `DTxCard`、`MedicationTracker`、`IoTStatusCard`、`VisitSummaryModal` 等核心组件，大幅缩减内边距 (padding)、外边距 (margin) 与圆角大小 (border-radius)，将字号进一步精简至 `text-[10px]` 到 `text-[14px]` 区间，显著提升单屏信息密度。
+  - **专病表单优化**：深度打磨 `SeizureDiarySheet`（癫痫日记）、`MigraineDiarySheet`（偏头痛日记）、`CDRDiarySheet`（照护日记），优化表单项间距与按钮尺寸，使复杂医疗表单在移动端呈现出更紧凑、专业的视觉体验。
+  - **日历视图优化**：重构 `MigraineCalendar` 与 `SeizureCalendar`，缩小日期网格尺寸与图表高度，优化图例排版，在有限的屏幕空间内展示更长周期的健康趋势。
+  - **管家视图重构**：同步更新 `CognitiveManager` 与 `EpilepsyManager` 视图的整体布局间距，配合上述组件的优化，打造出极具现代感、高信息密度且不失呼吸感的 C 端数字医疗管家体验。
 - **Batch 2: 动态医学量表渲染引擎 (Assessment Engine)**：
   - 升级 `AssessmentEngine` 动态表单渲染引擎，新增对 `SLIDER`（滑动条）题型的支持，采用 C 端柔和视觉规范。
   - 引入真实的医学量表数据配置：新增 `src/configs/scales/ad8.ts` (AD8 早期认知筛查) 与 `src/configs/scales/phq9.ts` (PHQ-9 抑郁筛查)。

@@ -1,14 +1,32 @@
-import React from 'react';
-import { NavBar, SafeArea } from 'antd-mobile';
+import React, { useState } from 'react';
+import { NavBar, SafeArea, Popup } from 'antd-mobile';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'motion/react';
-import { ChevronLeft, Smartphone, Watch, Activity, Heart, ShoppingBag } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { ChevronLeft, Smartphone, Watch, Activity, Heart, ShoppingBag, Bluetooth, ShieldCheck, FileText } from 'lucide-react';
 import { useAppStore } from '../../store';
 import { DiseaseTag } from '../../configs/constants';
 
 export default function DeviceConnectView() {
   const navigate = useNavigate();
-  const { selectedDiseaseTag } = useAppStore();
+  const { selectedDiseaseTag, bindDevice } = useAppStore();
+  
+  const [pairingDevice, setPairingDevice] = useState<any>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  const handleDeviceClick = (device: any) => {
+    setPairingDevice(device);
+    // 模拟蓝牙搜索 2 秒后弹出授权协议
+    setTimeout(() => {
+      setShowAuthModal(true);
+    }, 2000);
+  };
+
+  const handleAgreeAndBind = () => {
+    bindDevice();
+    setShowAuthModal(false);
+    setPairingDevice(null);
+    navigate('/device');
+  };
 
   const healthApps = [
     { id: 'apple', name: 'Apple Health', icon: Heart, color: 'text-rose-500', bgColor: 'bg-rose-50' },
@@ -114,6 +132,7 @@ export default function DeviceConnectView() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 + index * 0.05 }}
+                onClick={() => handleDeviceClick(device)}
                 className="bg-white rounded-[24px] p-4 flex items-center justify-between shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-slate-100/80 active:scale-[0.98] transition-transform cursor-pointer"
               >
                 <div className="flex items-center gap-4">
@@ -149,6 +168,100 @@ export default function DeviceConnectView() {
         </div>
         <SafeArea position="bottom" />
       </div>
+
+      {/* 蓝牙配对与 JIT 授权拦截 Modal */}
+      <Popup
+        visible={!!pairingDevice}
+        onMaskClick={() => {
+          if (!showAuthModal) setPairingDevice(null);
+        }}
+        bodyStyle={{
+          borderTopLeftRadius: '32px',
+          borderTopRightRadius: '32px',
+          minHeight: '50vh',
+          backgroundColor: '#ffffff',
+        }}
+      >
+        <div className="p-8 flex flex-col items-center relative overflow-hidden min-h-[50vh]">
+          <div className="w-12 h-1.5 bg-slate-200 rounded-full mb-10" />
+          
+          <AnimatePresence mode="wait">
+            {!showAuthModal ? (
+              <motion.div 
+                key="searching"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="flex flex-col items-center justify-center w-full flex-1"
+              >
+                {/* 蓝牙波纹搜索动效 */}
+                <div className="relative mb-10 flex items-center justify-center">
+                  <motion.div 
+                    animate={{ scale: [1, 2, 2.5], opacity: [0.8, 0.3, 0] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
+                    className="absolute w-20 h-20 bg-blue-500 rounded-full"
+                  />
+                  <motion.div 
+                    animate={{ scale: [1, 1.8, 2.2], opacity: [0.8, 0.3, 0] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeOut", delay: 0.5 }}
+                    className="absolute w-20 h-20 bg-blue-400 rounded-full"
+                  />
+                  <div className="relative w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full shadow-[0_8px_30px_rgba(59,130,246,0.3)] flex items-center justify-center z-10">
+                    <Bluetooth className="w-10 h-10 text-white" />
+                  </div>
+                </div>
+                <h3 className="text-[20px] font-bold text-slate-900 mb-2 tracking-tight">正在寻找设备...</h3>
+                <p className="text-[14px] text-slate-500 font-medium">请将 {pairingDevice?.name} 靠近手机</p>
+              </motion.div>
+            ) : (
+              <motion.div 
+                key="auth"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex flex-col w-full"
+              >
+                <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-6 mx-auto">
+                  <ShieldCheck className="w-8 h-8 text-blue-600" />
+                </div>
+                <h2 className="text-[22px] font-bold text-slate-900 mb-3 text-center tracking-tight">三方电子联合数据授权</h2>
+                <p className="text-[14px] text-slate-500 mb-6 text-center leading-relaxed">
+                  为提供精准的 AI 预警与专病分析服务，我们需要获取您的设备体征数据（包含心率、血氧、脑电波等）。
+                </p>
+                
+                <div className="bg-slate-50 rounded-[16px] p-4 mb-8 border border-slate-100">
+                  <div className="flex items-center gap-3 mb-3">
+                    <FileText className="w-5 h-5 text-slate-400" />
+                    <span className="text-[13px] font-medium text-slate-700">授权内容包含：</span>
+                  </div>
+                  <ul className="text-[12px] text-slate-500 space-y-2 pl-8 list-disc">
+                    <li>24小时连续体征数据采集</li>
+                    <li>AI 算法云端分析与建模</li>
+                    <li>紧急情况下的医疗联动共享</li>
+                  </ul>
+                </div>
+
+                <div className="space-y-3 mt-auto">
+                  <button
+                    onClick={handleAgreeAndBind}
+                    className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-[24px] font-medium text-[16px] shadow-[0_8px_24px_rgba(79,70,229,0.25)] active:scale-95 transition-transform"
+                  >
+                    同意授权并绑定
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowAuthModal(false);
+                      setPairingDevice(null);
+                    }}
+                    className="w-full py-4 bg-white text-slate-500 rounded-[24px] font-medium text-[15px] active:bg-slate-50 transition-colors"
+                  >
+                    暂不授权
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </Popup>
     </div>
   );
 }

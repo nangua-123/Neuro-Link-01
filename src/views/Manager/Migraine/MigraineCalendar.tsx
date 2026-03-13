@@ -51,35 +51,35 @@ export default function MigraineCalendar({ visible, onClose }: Props) {
         borderTopLeftRadius: '24px', 
         borderTopRightRadius: '24px', 
         minHeight: '75vh', 
-        padding: '24px', 
+        padding: '20px', 
         backgroundColor: '#FAFAFA' 
       }}
     >
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="text-[18px] font-bold text-slate-900">头痛与服药日历</h3>
-        <div onClick={onClose} className="p-2 bg-slate-100 rounded-full active:scale-95 cursor-pointer">
-          <X className="w-5 h-5 text-slate-500" />
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-[16px] font-bold text-slate-900">头痛与服药日历</h3>
+        <div onClick={onClose} className="p-1.5 bg-slate-100 rounded-full active:scale-95 cursor-pointer">
+          <X className="w-4 h-4 text-slate-500" />
         </div>
       </div>
 
       {/* MOH Status Card */}
-      <div className={`mb-6 p-4 rounded-[20px] transition-colors duration-300 ${
+      <div className={`mb-3 p-2.5 rounded-[12px] transition-colors duration-300 ${
         isMOHRisk ? 'bg-rose-50 border border-rose-100' : 'bg-violet-50 border border-violet-100'
       }`}>
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            {isMOHRisk ? <ShieldAlert className="w-5 h-5 text-rose-500" /> : <Pill className="w-5 h-5 text-violet-500" />}
-            <span className={`text-[14px] font-bold ${isMOHRisk ? 'text-rose-700' : 'text-violet-700'}`}>
+        <div className="flex items-center justify-between mb-1">
+          <div className="flex items-center gap-1">
+            {isMOHRisk ? <ShieldAlert className="w-3.5 h-3.5 text-rose-500" /> : <Pill className="w-3.5 h-3.5 text-violet-500" />}
+            <span className={`text-[12px] font-bold ${isMOHRisk ? 'text-rose-700' : 'text-violet-700'}`}>
               本月止痛药: {currentMonthPainkillerDays} 天
             </span>
           </div>
-          <span className={`text-[12px] font-semibold px-2 py-0.5 rounded-full ${
+          <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full ${
             isMOHRisk ? 'bg-rose-100 text-rose-600' : 'bg-violet-100 text-violet-600'
           }`}>
             {isMOHRisk ? 'MOH 高风险' : '安全范围'}
           </span>
         </div>
-        <p className={`text-[11px] font-medium leading-relaxed ${isMOHRisk ? 'text-rose-600/80' : 'text-violet-600/80'}`}>
+        <p className={`text-[9px] font-medium leading-relaxed ${isMOHRisk ? 'text-rose-600/80' : 'text-violet-600/80'}`}>
           {isMOHRisk 
             ? '警告：本月止痛药使用已达 15 天红线，极易诱发药物过度使用性头痛 (MOH)。请立即联系医生调整治疗方案。' 
             : `距离 MOH 风险红线 (15天) 还有 ${15 - currentMonthPainkillerDays} 天，请谨慎使用单纯止痛药。`}
@@ -87,30 +87,30 @@ export default function MigraineCalendar({ visible, onClose }: Props) {
       </div>
 
       {/* Calendar Header */}
-      <div className="flex items-center justify-between mb-4 px-2">
-        <button onClick={prevMonth} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
-          <ChevronLeft className="w-5 h-5 text-slate-600" />
+      <div className="flex items-center justify-between mb-2 px-1">
+        <button onClick={prevMonth} className="p-1 hover:bg-slate-100 rounded-full transition-colors">
+          <ChevronLeft className="w-4 h-4 text-slate-600" />
         </button>
-        <h4 className="text-[16px] font-bold text-slate-800">
+        <h4 className="text-[13px] font-bold text-slate-800">
           {year}年 {month + 1}月
         </h4>
-        <button onClick={nextMonth} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
-          <ChevronRight className="w-5 h-5 text-slate-600" />
+        <button onClick={nextMonth} className="p-1 hover:bg-slate-100 rounded-full transition-colors">
+          <ChevronRight className="w-4 h-4 text-slate-600" />
         </button>
       </div>
 
       {/* Calendar Grid */}
-      <div className="bg-white rounded-[24px] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-slate-100/50">
-        <div className="grid grid-cols-7 gap-y-4 mb-2">
+      <div className="bg-white rounded-[16px] p-2.5 shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-slate-100/50">
+        <div className="grid grid-cols-7 gap-y-2 mb-1.5">
           {['日', '一', '二', '三', '四', '五', '六'].map(day => (
-            <div key={day} className="text-center text-[11px] font-semibold text-slate-400">
+            <div key={day} className="text-center text-[9px] font-semibold text-slate-400">
               {day}
             </div>
           ))}
         </div>
-        <div className="grid grid-cols-7 gap-y-2">
+        <div className="grid grid-cols-7 gap-y-1">
           {Array.from({ length: firstDay }).map((_, i) => (
-            <div key={`empty-${i}`} className="h-10" />
+            <div key={`empty-${i}`} className="h-7" />
           ))}
           {Array.from({ length: daysInMonth }).map((_, i) => {
             const day = i + 1;
@@ -122,7 +122,7 @@ export default function MigraineCalendar({ visible, onClose }: Props) {
               <div key={day} className="flex justify-center">
                 <button
                   onClick={() => handleDayClick(day)}
-                  className={`relative w-9 h-9 flex items-center justify-center rounded-full text-[13px] font-medium transition-all duration-300 ${
+                  className={`relative w-7 h-7 flex items-center justify-center rounded-full text-[11px] font-medium transition-all duration-300 ${
                     isTaken 
                       ? 'bg-rose-500 text-white shadow-[0_2px_8px_rgba(244,63,94,0.3)]' 
                       : isToday 
@@ -132,8 +132,8 @@ export default function MigraineCalendar({ visible, onClose }: Props) {
                 >
                   {day}
                   {isTaken && (
-                    <div className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-white rounded-full flex items-center justify-center shadow-sm">
-                      <Pill className="w-2.5 h-2.5 text-rose-500" />
+                    <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-white rounded-full flex items-center justify-center shadow-sm">
+                      <Pill className="w-[8px] h-[8px] text-rose-500" />
                     </div>
                   )}
                 </button>
@@ -143,13 +143,13 @@ export default function MigraineCalendar({ visible, onClose }: Props) {
         </div>
       </div>
       
-      <div className="mt-6 flex items-center justify-center gap-4 text-[11px] text-slate-500 font-medium">
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded-full bg-rose-500" />
+      <div className="mt-3 flex items-center justify-center gap-3 text-[9px] text-slate-500 font-medium">
+        <div className="flex items-center gap-1">
+          <div className="w-2.5 h-2.5 rounded-full bg-rose-500" />
           <span>已服止痛药</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded-full bg-slate-100" />
+        <div className="flex items-center gap-1">
+          <div className="w-2.5 h-2.5 rounded-full bg-slate-100" />
           <span>今日</span>
         </div>
       </div>

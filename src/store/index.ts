@@ -21,6 +21,8 @@ interface Vitals {
   deepSleepRatio: number;
   eegStability: number;
   lastSyncTime: string;
+  steps: number;
+  heartRate: number;
 }
 
 interface AppState {
@@ -74,7 +76,9 @@ const initialVitals: Vitals = {
   hrv: 42,
   deepSleepRatio: 28,
   eegStability: 95,
-  lastSyncTime: '刚刚'
+  lastSyncTime: '刚刚',
+  steps: 6240,
+  heartRate: 72
 };
 
 const initialCognitiveData: ChartDataPoint[] = [

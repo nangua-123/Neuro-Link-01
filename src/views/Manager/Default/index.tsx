@@ -39,47 +39,44 @@ export default function DefaultManager() {
       className="space-y-6 pb-10"
     >
       <motion.div variants={itemVariants}>
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           <div className="flex items-center justify-between px-1">
-            <h2 className="text-[18px] font-bold text-slate-900 tracking-tight">
-              专病智能核心舱
+            <h2 className="text-[16px] font-bold text-slate-900 tracking-tight">
+              专属健康管家
             </h2>
           </div>
 
           {/* 破冰引导舱 (Ice-breaker Fallback) */}
-          <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[24px] p-6 shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
-            <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-400/20 rounded-full blur-2xl -ml-10 -mb-10 pointer-events-none" />
+          <div className="bg-blue-50/80 border border-blue-100/50 rounded-[16px] p-4 shadow-sm relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/40 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
             
-            <div className="relative z-10 text-white">
-              <div className="flex items-center gap-3 mb-5">
-                <div className="p-2.5 bg-white/20 rounded-[16px] backdrop-blur-md border border-white/20 shadow-inner">
-                  <Sparkles className="w-6 h-6" />
+            <div className="relative z-10">
+              <div className="flex items-start gap-3 mb-3">
+                <div className="w-10 h-10 rounded-[12px] bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+                  <Sparkles className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-[18px] font-bold tracking-tight">开启深度测评</h3>
-                  <p className="text-[12px] text-blue-100 mt-0.5 font-medium">获取您的专属疾病管家</p>
+                  <h3 className="text-[14px] font-bold text-blue-900 tracking-tight mb-0.5">定制您的专属方案</h3>
+                  <p className="text-[11px] text-blue-700/80 font-medium leading-relaxed">
+                    完成 AI 预问诊或专业量表，解锁个性化健康守护。
+                  </p>
                 </div>
               </div>
 
-              <p className="text-[13px] text-blue-50/90 leading-relaxed font-medium mb-6">
-                您目前尚未绑定任何专病标签。通过华西标准的 AI 预问诊或深度量表测评，我们将为您生成个性化的健康管理方案。
-              </p>
-
-              <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-2.5 mt-4">
                 <button
                   onClick={() => navigate('/')}
-                  className="w-full py-3.5 bg-white text-blue-600 rounded-[16px] font-semibold text-[14px] shadow-[0_4px_12px_rgba(0,0,0,0.1)] active:scale-95 transition-transform flex items-center justify-center gap-2"
+                  className="py-2.5 bg-blue-600 text-white rounded-[12px] font-semibold text-[12px] shadow-[0_2px_8px_rgba(37,99,235,0.2)] active:scale-95 transition-transform flex items-center justify-center gap-1.5"
                 >
-                  <Brain className="w-4 h-4" />
-                  进入 AI 预问诊
+                  <Brain className="w-3.5 h-3.5" />
+                  AI 智能问诊
                 </button>
                 <button
                   onClick={() => navigate('/assessment')}
-                  className="w-full py-3.5 bg-blue-500/20 text-white border border-blue-400/30 rounded-[16px] font-medium text-[14px] active:scale-95 transition-transform flex items-center justify-center gap-2"
+                  className="py-2.5 bg-white text-blue-600 border border-blue-100 rounded-[12px] font-semibold text-[12px] shadow-sm active:scale-95 transition-transform flex items-center justify-center gap-1.5"
                 >
-                  <FileText className="w-4 h-4" />
-                  直接选择量表
+                  <FileText className="w-3.5 h-3.5" />
+                  专业量表测评
                 </button>
               </div>
             </div>

@@ -66,28 +66,28 @@ export function MigraineDiarySheet({ visible, onClose }: Props) {
   };
 
   return (
-    <Popup visible={visible} onMaskClick={onClose} bodyStyle={{ borderTopLeftRadius: '24px', borderTopRightRadius: '24px', padding: '20px', backgroundColor: '#FAFAFA', maxHeight: '85vh', overflowY: 'auto' }}>
-      <div className="space-y-6 pb-6">
+    <Popup visible={visible} onMaskClick={onClose} bodyStyle={{ borderTopLeftRadius: '24px', borderTopRightRadius: '24px', padding: '16px', backgroundColor: '#FAFAFA', maxHeight: '85vh', overflowY: 'auto' }}>
+      <div className="space-y-5 pb-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-[18px] font-bold text-slate-900 flex items-center gap-2">
-            <Zap className="w-5 h-5 text-violet-500" />
+          <h3 className="text-[16px] font-bold text-slate-900 flex items-center gap-1.5">
+            <Zap className="w-4 h-4 text-violet-500" />
             记录头痛发作
           </h3>
-          <div className="text-[12px] text-slate-400 font-medium bg-slate-100 px-2.5 py-1 rounded-full">
+          <div className="text-[10px] text-slate-400 font-medium bg-slate-100 px-2 py-0.5 rounded-full">
             今日
           </div>
         </div>
 
         {/* VAS 疼痛评分 */}
-        <div className="space-y-4 bg-white p-5 rounded-[20px] border border-slate-100 shadow-sm">
+        <div className="space-y-2 bg-white p-3 rounded-[16px] border border-slate-100 shadow-sm">
           <div className="flex items-center justify-between">
-            <label className="text-[14px] font-bold text-slate-900">疼痛程度 (VAS)</label>
-            <div className="flex items-center gap-2">
-              <span className="text-[24px]">{getVasEmoji(vas)}</span>
-              <span className="text-[20px] font-black" style={{ color: getVasColor(vas) }}>{vas} <span className="text-[12px] text-slate-400 font-medium">分</span></span>
+            <label className="text-[12px] font-bold text-slate-900">疼痛程度 (VAS)</label>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[16px]">{getVasEmoji(vas)}</span>
+              <span className="text-[16px] font-black" style={{ color: getVasColor(vas) }}>{vas} <span className="text-[9px] text-slate-400 font-medium">分</span></span>
             </div>
           </div>
-          <div className="px-2 pt-2 pb-4">
+          <div className="px-1 pt-1 pb-1">
             <Slider 
               min={0} 
               max={10} 
@@ -95,7 +95,7 @@ export function MigraineDiarySheet({ visible, onClose }: Props) {
               onChange={(v) => typeof v === 'number' && setVas(v)} 
               style={{ '--fill-color': getVasColor(vas) }}
             />
-            <div className="flex justify-between text-[10px] text-slate-400 mt-2 font-medium">
+            <div className="flex justify-between text-[8px] text-slate-400 mt-1 font-medium">
               <span>0 无痛</span>
               <span>10 剧痛</span>
             </div>
@@ -103,14 +103,14 @@ export function MigraineDiarySheet({ visible, onClose }: Props) {
         </div>
 
         {/* 伴随症状 */}
-        <div className="space-y-3">
-          <label className="text-[13px] font-semibold text-slate-700">伴随症状与先兆 (多选)</label>
-          <div className="flex flex-wrap gap-2">
+        <div className="space-y-1.5">
+          <label className="text-[11px] font-semibold text-slate-700">伴随症状与先兆 (多选)</label>
+          <div className="flex flex-wrap gap-1.5">
             {symptomOptions.map(s => (
               <button
                 key={s}
                 onClick={() => toggleSymptom(s)}
-                className={`px-3 py-1.5 rounded-[10px] text-[12px] font-medium transition-all ${
+                className={`px-2.5 py-1 rounded-[8px] text-[10px] font-medium transition-all ${
                   symptoms.includes(s) ? 'bg-violet-100 text-violet-700 border border-violet-200' : 'bg-white text-slate-600 border border-slate-200'
                 }`}
               >
@@ -121,24 +121,24 @@ export function MigraineDiarySheet({ visible, onClose }: Props) {
         </div>
 
         {/* 用药情况 */}
-        <div className="space-y-3">
-          <label className="text-[13px] font-semibold text-slate-700">本次发作用药</label>
-          <div className="grid grid-cols-1 gap-2">
+        <div className="space-y-1.5">
+          <label className="text-[11px] font-semibold text-slate-700">本次发作用药</label>
+          <div className="grid grid-cols-1 gap-1.5">
             {medOptions.map(m => (
               <div 
                 key={m.value}
                 onClick={() => toggleMed(m.value)}
-                className={`p-3 rounded-[16px] border flex items-center justify-between transition-all ${
+                className={`p-2 rounded-[12px] border flex items-center justify-between transition-all ${
                   meds.includes(m.value) 
                     ? (m.danger ? 'bg-rose-50 border-rose-200' : 'bg-violet-50 border-violet-200') 
                     : 'bg-white border-slate-200'
                 }`}
               >
-                <div className="flex items-center gap-2">
-                  <Pill className={`w-4 h-4 ${meds.includes(m.value) ? (m.danger ? 'text-rose-500' : 'text-violet-500') : 'text-slate-400'}`} />
-                  <span className={`text-[13px] font-semibold ${meds.includes(m.value) ? 'text-slate-900' : 'text-slate-600'}`}>{m.label}</span>
+                <div className="flex items-center gap-1.5">
+                  <Pill className={`w-3 h-3 ${meds.includes(m.value) ? (m.danger ? 'text-rose-500' : 'text-violet-500') : 'text-slate-400'}`} />
+                  <span className={`text-[11px] font-semibold ${meds.includes(m.value) ? 'text-slate-900' : 'text-slate-600'}`}>{m.label}</span>
                 </div>
-                <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                <div className={`w-3 h-3 rounded-full border-2 flex items-center justify-center ${
                   meds.includes(m.value) 
                     ? (m.danger ? 'border-rose-500 bg-rose-500' : 'border-violet-500 bg-violet-500') 
                     : 'border-slate-300'
@@ -149,9 +149,9 @@ export function MigraineDiarySheet({ visible, onClose }: Props) {
             ))}
           </div>
           {meds.includes('acute') && (
-            <div className="flex items-start gap-2 mt-2 bg-rose-50 p-2.5 rounded-[12px]">
-              <AlertCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
-              <span className="text-[11px] text-rose-600 font-medium leading-relaxed">
+            <div className="flex items-start gap-1.5 mt-1.5 bg-rose-50 p-2 rounded-[10px]">
+              <AlertCircle className="w-3 h-3 text-rose-500 shrink-0 mt-0.5" />
+              <span className="text-[9px] text-rose-600 font-medium leading-relaxed">
                 已选择急性止痛药，系统将自动计入本月 MOH 防火墙统计。请注意控制频率！
               </span>
             </div>
@@ -160,7 +160,7 @@ export function MigraineDiarySheet({ visible, onClose }: Props) {
 
         <Button 
           block 
-          className="bg-slate-900 text-white border-none rounded-[16px] h-12 font-bold text-[15px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]"
+          className="bg-slate-900 text-white border-none rounded-[12px] h-10 font-bold text-[13px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]"
           onClick={handleSubmit}
         >
           保存日记

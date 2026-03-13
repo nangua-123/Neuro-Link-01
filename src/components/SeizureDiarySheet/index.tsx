@@ -68,61 +68,61 @@ export function SeizureDiarySheet({ visible, onClose }: Props) {
   };
 
   return (
-    <Popup visible={visible} onMaskClick={onClose} bodyStyle={{ borderTopLeftRadius: '24px', borderTopRightRadius: '24px', padding: '20px', backgroundColor: '#FAFAFA', maxHeight: '85vh', overflowY: 'auto' }}>
-      <div className="space-y-6 pb-6">
+    <Popup visible={visible} onMaskClick={onClose} bodyStyle={{ borderTopLeftRadius: '20px', borderTopRightRadius: '20px', padding: '16px', backgroundColor: '#FAFAFA', maxHeight: '85vh', overflowY: 'auto' }}>
+      <div className="space-y-4 pb-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-[18px] font-bold text-slate-900 flex items-center gap-2">
-            <Activity className="w-5 h-5 text-indigo-500" />
+          <h3 className="text-[16px] font-bold text-slate-900 flex items-center gap-1.5">
+            <Activity className="w-4 h-4 text-indigo-500" />
             记录发作日记
           </h3>
-          <div className="text-[12px] text-slate-400 font-medium bg-slate-100 px-2.5 py-1 rounded-full">
+          <div className="text-[11px] text-slate-400 font-medium bg-slate-100 px-2 py-0.5 rounded-full">
             今日 {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
           </div>
         </div>
 
         {/* 发作类型 */}
-        <div className="space-y-3">
-          <label className="text-[13px] font-semibold text-slate-700">发作类型 <span className="text-rose-500">*</span></label>
-          <div className="grid grid-cols-1 gap-2">
+        <div className="space-y-1.5">
+          <label className="text-[11px] font-semibold text-slate-700">发作类型 <span className="text-rose-500">*</span></label>
+          <div className="grid grid-cols-2 gap-2">
             <div 
               onClick={() => setType('generalized')}
-              className={`p-4 sm:p-5 rounded-[24px] transition-all ${type === 'generalized' ? 'bg-indigo-50 shadow-[0_0_0_1px_rgba(99,102,241,1)]' : 'bg-slate-50/80 hover:bg-slate-100'}`}
+              className={`p-2.5 rounded-[12px] transition-all cursor-pointer ${type === 'generalized' ? 'bg-indigo-50 shadow-[0_0_0_1px_rgba(99,102,241,1)]' : 'bg-slate-50/80 hover:bg-slate-100'}`}
             >
-              <div className="text-[14px] font-bold text-slate-900">全面强直阵挛</div>
-              <div className="text-[11px] text-slate-500 mt-0.5">全身僵硬、大抽搐、意识丧失</div>
+              <div className="text-[12px] font-bold text-slate-900 mb-0.5">全面强直阵挛</div>
+              <div className="text-[8px] text-slate-500 leading-tight">全身僵硬、大抽搐、意识丧失</div>
             </div>
             <div 
               onClick={() => setType('focal')}
-              className={`p-4 sm:p-5 rounded-[24px] transition-all ${type === 'focal' ? 'bg-indigo-50 shadow-[0_0_0_1px_rgba(99,102,241,1)]' : 'bg-slate-50/80 hover:bg-slate-100'}`}
+              className={`p-2.5 rounded-[12px] transition-all cursor-pointer ${type === 'focal' ? 'bg-indigo-50 shadow-[0_0_0_1px_rgba(99,102,241,1)]' : 'bg-slate-50/80 hover:bg-slate-100'}`}
             >
-              <div className="text-[14px] font-bold text-slate-900">局灶性发作</div>
-              <div className="text-[11px] text-slate-500 mt-0.5">局部抽搐、发呆走神、感觉异常</div>
+              <div className="text-[12px] font-bold text-slate-900 mb-0.5">局灶性发作</div>
+              <div className="text-[8px] text-slate-500 leading-tight">局部抽搐、发呆走神、感觉异常</div>
             </div>
           </div>
         </div>
 
         {/* 意识障碍联动 */}
         {type === 'focal' && (
-          <div className="flex items-center justify-between bg-slate-50/80 p-4 sm:p-5 rounded-[24px] shadow-sm">
+          <div className="flex items-center justify-between bg-slate-50/80 p-2.5 rounded-[12px] shadow-sm">
             <div>
-              <div className="text-[14px] font-bold text-slate-900">是否伴有意识障碍？</div>
-              <div className="text-[11px] text-slate-500 mt-0.5">呼之不应、事后遗忘</div>
+              <div className="text-[12px] font-bold text-slate-900">是否伴有意识障碍？</div>
+              <div className="text-[9px] text-slate-500 mt-0.5">呼之不应、事后遗忘</div>
             </div>
-            <Switch checked={impaired} onChange={setImpaired} style={{ '--checked-color': '#6366f1' }} />
+            <Switch checked={impaired} onChange={setImpaired} style={{ '--checked-color': '#6366f1', '--width': '36px', '--height': '20px' }} />
           </div>
         )}
 
         {/* 持续时间 */}
-        <div className="space-y-3">
-          <label className="text-[13px] font-semibold text-slate-700">持续时间 <span className="text-rose-500">*</span></label>
-          <div className="flex flex-wrap gap-2">
+        <div className="space-y-1.5">
+          <label className="text-[11px] font-semibold text-slate-700">持续时间 <span className="text-rose-500">*</span></label>
+          <div className="flex flex-wrap gap-1.5">
             {durationOptions.map(opt => (
               <button
                 key={opt.value}
                 onClick={() => setDuration(opt.value)}
-                className={`px-4 py-2 rounded-full text-[12px] font-semibold transition-all ${
+                className={`px-2.5 py-1 rounded-full text-[10px] font-semibold transition-all ${
                   duration === opt.value 
-                    ? (opt.danger ? 'bg-rose-500 text-white shadow-md' : 'bg-indigo-600 text-white shadow-md')
+                    ? (opt.danger ? 'bg-rose-500 text-white shadow-sm' : 'bg-indigo-600 text-white shadow-sm')
                     : 'bg-slate-50/80 text-slate-600 hover:bg-slate-100'
                 }`}
               >
@@ -131,9 +131,9 @@ export function SeizureDiarySheet({ visible, onClose }: Props) {
             ))}
           </div>
           {duration && durationOptions.find(o => o.value === duration)?.danger && (
-            <div className="flex items-start gap-2 mt-2 bg-rose-50 p-3 rounded-[16px]">
-              <AlertTriangle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
-              <span className="text-[11px] text-rose-600 font-medium leading-relaxed">
+            <div className="flex items-start gap-1.5 mt-1.5 bg-rose-50 p-2 rounded-[10px]">
+              <AlertTriangle className="w-3 h-3 text-rose-500 shrink-0 mt-0.5" />
+              <span className="text-[9px] text-rose-600 font-medium leading-relaxed">
                 发作超过5分钟属于医疗紧急情况，保存后系统将立即启动紧急熔断预警！
               </span>
             </div>
@@ -141,14 +141,14 @@ export function SeizureDiarySheet({ visible, onClose }: Props) {
         </div>
 
         {/* 诱因追踪 */}
-        <div className="space-y-3">
-          <label className="text-[13px] font-semibold text-slate-700">发作诱因 (多选)</label>
-          <div className="flex flex-wrap gap-2">
+        <div className="space-y-1.5">
+          <label className="text-[11px] font-semibold text-slate-700">发作诱因 (多选)</label>
+          <div className="flex flex-wrap gap-1.5">
             {triggerOptions.map(t => (
               <button
                 key={t}
                 onClick={() => toggleTrigger(t)}
-                className={`px-4 py-2 rounded-full text-[11px] font-medium transition-all ${
+                className={`px-2.5 py-1 rounded-full text-[9px] font-medium transition-all ${
                   triggers.includes(t) ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-50/80 text-slate-500 hover:bg-slate-100'
                 }`}
               >
@@ -160,7 +160,7 @@ export function SeizureDiarySheet({ visible, onClose }: Props) {
 
         <Button 
           block 
-          className="bg-slate-900 text-white border-none rounded-full h-12 font-bold text-[15px] shadow-[0_8px_20px_rgba(15,23,42,0.15)] mt-4"
+          className="bg-slate-900 text-white border-none rounded-full h-10 font-bold text-[14px] shadow-[0_4px_12px_rgba(15,23,42,0.1)] mt-2"
           onClick={handleSubmit}
         >
           保存日记

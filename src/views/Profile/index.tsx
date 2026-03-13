@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../../store';
 import { Switch, List, Toast, Modal, ActionSheet, Dialog } from 'antd-mobile';
-import { Shield, User, QrCode, FileText, ChevronRight, LogOut, HeartPulse, Settings, Users, Plus } from 'lucide-react';
+import { Shield, User, QrCode, FileText, ChevronRight, LogOut, HeartPulse, Settings, Users, Plus, Activity, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import NeuroPassModal from '../../components/NeuroPassModal';
@@ -109,7 +109,7 @@ export default function ProfileView() {
         className="p-5 relative z-10 pt-12"
       >
         {/* Module A: Header */}
-        <motion.div variants={itemVariants} className="bg-white rounded-[32px] p-6 mb-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100/50 flex items-center justify-between relative overflow-hidden">
+        <motion.div variants={itemVariants} className="bg-white rounded-[32px] p-6 mb-4 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100/50 flex items-center justify-between relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
           
           <div className="flex items-center gap-5 relative z-10">
@@ -141,6 +141,46 @@ export default function ProfileView() {
             </div>
           </div>
           <ChevronRight className="w-5 h-5 text-slate-300 relative z-10" />
+        </motion.div>
+
+        {/* Quick Actions Grid - High Density */}
+        <motion.div variants={itemVariants} className="grid grid-cols-4 gap-2 mb-5">
+          <button 
+            onClick={() => setIsNeuroPassOpen(true)}
+            className="bg-white rounded-[16px] p-2.5 flex flex-col items-center justify-center gap-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-slate-100/50 active:scale-95 transition-transform"
+          >
+            <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center">
+              <QrCode className="w-4 h-4 text-blue-600" />
+            </div>
+            <span className="text-[10px] font-semibold text-slate-700">就诊码</span>
+          </button>
+          <button 
+            onClick={() => navigate('/ehr-timeline')}
+            className="bg-white rounded-[16px] p-2.5 flex flex-col items-center justify-center gap-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-slate-100/50 active:scale-95 transition-transform"
+          >
+            <div className="w-9 h-9 rounded-full bg-indigo-50 flex items-center justify-center">
+              <FileText className="w-4 h-4 text-indigo-600" />
+            </div>
+            <span className="text-[10px] font-semibold text-slate-700">健康档案</span>
+          </button>
+          <button 
+            onClick={() => navigate('/device')}
+            className="bg-white rounded-[16px] p-2.5 flex flex-col items-center justify-center gap-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-slate-100/50 active:scale-95 transition-transform"
+          >
+            <div className="w-9 h-9 rounded-full bg-rose-50 flex items-center justify-center">
+              <HeartPulse className="w-4 h-4 text-rose-500" />
+            </div>
+            <span className="text-[10px] font-semibold text-slate-700">智能穿戴</span>
+          </button>
+          <button 
+            onClick={() => showComingSoon('体检报告', '历史体检报告与 AI 深度解读即将上线。')}
+            className="bg-white rounded-[16px] p-2.5 flex flex-col items-center justify-center gap-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-slate-100/50 active:scale-95 transition-transform"
+          >
+            <div className="w-9 h-9 rounded-full bg-emerald-50 flex items-center justify-center">
+              <Activity className="w-4 h-4 text-emerald-600" />
+            </div>
+            <span className="text-[10px] font-semibold text-slate-700">体检报告</span>
+          </button>
         </motion.div>
 
         {/* Module A.1: Family Management (Only visible if identity is FAMILY) */}
@@ -182,57 +222,9 @@ export default function ProfileView() {
           </motion.div>
         )}
 
-        {/* Module B & C: Asset List & Privacy */}
+        {/* Module C: Privacy & Settings */}
         <motion.div variants={itemVariants} className="bg-white rounded-[28px] p-2 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100/50 overflow-hidden mb-6">
           <List className="border-none" style={{ '--border-inner': 'none', '--border-top': 'none', '--border-bottom': 'none' }}>
-            <List.Item 
-              prefix={
-                <div className="w-10 h-10 rounded-[16px] bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center border border-blue-100/50 shadow-sm">
-                  <QrCode className="w-5 h-5 text-blue-600" />
-                </div>
-              }
-              onClick={() => setIsNeuroPassOpen(true)}
-              arrow={<ChevronRight className="w-5 h-5 text-slate-300" />}
-              className="active:bg-slate-50 transition-colors"
-            >
-              <div className="py-1.5">
-                <div className="font-semibold text-slate-900 text-[15px] tracking-tight">Neuro-Pass 专属就诊码</div>
-                <div className="text-[12px] text-slate-400 mt-0.5 font-medium">线下就诊扫码，免除口述病史</div>
-              </div>
-            </List.Item>
-            <div className="h-[1px] bg-slate-100/50 mx-4" />
-            <List.Item 
-              prefix={
-                <div className="w-10 h-10 rounded-[16px] bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center border border-indigo-100/50 shadow-sm">
-                  <FileText className="w-5 h-5 text-indigo-600" />
-                </div>
-              }
-              onClick={() => navigate('/ehr-timeline')}
-              arrow={<ChevronRight className="w-5 h-5 text-slate-300" />}
-              className="active:bg-slate-50 transition-colors"
-            >
-              <div className="py-1.5">
-                <div className="font-semibold text-slate-900 text-[15px] tracking-tight">全病程健康档案 (EHR)</div>
-                <div className="text-[12px] text-slate-400 mt-0.5 font-medium">查看历史测评与打卡记录</div>
-              </div>
-            </List.Item>
-            <div className="h-[1px] bg-slate-100/50 mx-4" />
-            <List.Item 
-              prefix={
-                <div className="w-10 h-10 rounded-[16px] bg-gradient-to-br from-rose-50 to-orange-50 flex items-center justify-center border border-rose-100/50 shadow-sm">
-                  <HeartPulse className="w-5 h-5 text-rose-500" />
-                </div>
-              }
-              onClick={() => navigate('/device')}
-              arrow={<ChevronRight className="w-5 h-5 text-slate-300" />}
-              className="active:bg-slate-50 transition-colors"
-            >
-              <div className="py-1.5">
-                <div className="font-semibold text-slate-900 text-[15px] tracking-tight">智能穿戴管理</div>
-                <div className="text-[12px] text-slate-400 mt-0.5 font-medium">管理 Neuro-Band 等智能穿戴设备</div>
-              </div>
-            </List.Item>
-            <div className="h-[1px] bg-slate-100/50 mx-4" />
             <List.Item 
               prefix={
                 <div className="w-10 h-10 rounded-[16px] bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center border border-emerald-100/50 shadow-sm">

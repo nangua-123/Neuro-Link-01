@@ -44,37 +44,37 @@ export default function SeizureCalendar() {
   };
 
   return (
-    <div className="bg-white rounded-3xl p-5 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100/80">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-          <Activity className="w-5 h-5 text-purple-500" />
+    <div className="bg-white rounded-[20px] p-3 shadow-[0_2px_12px_rgb(0,0,0,0.02)] border border-slate-100/80">
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-[14px] font-semibold text-slate-900 flex items-center gap-1.5">
+          <Activity className="w-3.5 h-3.5 text-purple-500" />
           发作日历与趋势
         </h2>
-        <div className="flex items-center gap-2 bg-slate-50 rounded-full p-1">
-          <button onClick={prevMonth} className="p-1.5 rounded-full hover:bg-white hover:shadow-sm transition-all text-slate-600">
-            <ChevronLeft className="w-4 h-4" />
+        <div className="flex items-center gap-1 bg-slate-50 rounded-full p-0.5">
+          <button onClick={prevMonth} className="p-1 rounded-full hover:bg-white hover:shadow-sm transition-all text-slate-600">
+            <ChevronLeft className="w-3.5 h-3.5" />
           </button>
-          <span className="text-sm font-medium text-slate-700 min-w-[4rem] text-center">
+          <span className="text-[11px] font-medium text-slate-700 min-w-[3.5rem] text-center">
             {format(currentDate, 'yyyy年M月', { locale: zhCN })}
           </span>
-          <button onClick={nextMonth} className="p-1.5 rounded-full hover:bg-white hover:shadow-sm transition-all text-slate-600">
-            <ChevronRight className="w-4 h-4" />
+          <button onClick={nextMonth} className="p-1 rounded-full hover:bg-white hover:shadow-sm transition-all text-slate-600">
+            <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
 
       {/* Calendar Grid */}
-      <div className="mb-8">
-        <div className="grid grid-cols-7 gap-1 mb-2">
+      <div className="mb-4">
+        <div className="grid grid-cols-7 gap-1 mb-1">
           {['日', '一', '二', '三', '四', '五', '六'].map(day => (
-            <div key={day} className="text-center text-xs font-medium text-slate-400 py-1">
+            <div key={day} className="text-center text-[9px] font-medium text-slate-400 py-0.5">
               {day}
             </div>
           ))}
         </div>
         <div className="grid grid-cols-7 gap-1">
           {prefixDays.map(i => (
-            <div key={`prefix-${i}`} className="aspect-square rounded-xl flex items-center justify-center text-slate-300 text-sm">
+            <div key={`prefix-${i}`} className="aspect-square rounded-[8px] flex items-center justify-center text-slate-300 text-[10px]">
               {/* Empty */}
             </div>
           ))}
@@ -87,43 +87,43 @@ export default function SeizureCalendar() {
             return (
               <div 
                 key={day.toString()} 
-                className={`aspect-square rounded-xl flex flex-col items-center justify-center relative ${
+                className={`aspect-square rounded-[8px] flex flex-col items-center justify-center relative ${
                   isToday ? 'bg-purple-50 border border-purple-200' : 'hover:bg-slate-50'
                 }`}
               >
-                <span className={`text-sm font-medium ${isToday ? 'text-purple-700' : 'text-slate-700'}`}>
+                <span className={`text-[11px] font-medium ${isToday ? 'text-purple-700' : 'text-slate-700'}`}>
                   {format(day, 'd')}
                 </span>
-                <div className="flex gap-0.5 mt-1 absolute bottom-1.5">
-                  {hasMajor && <div className="w-1.5 h-1.5 rounded-full bg-red-500"></div>}
-                  {hasMinor && !hasMajor && <div className="w-1.5 h-1.5 rounded-full bg-orange-400"></div>}
+                <div className="flex gap-0.5 mt-0.5 absolute bottom-1">
+                  {hasMajor && <div className="w-1 h-1 rounded-full bg-red-500"></div>}
+                  {hasMinor && !hasMajor && <div className="w-1 h-1 rounded-full bg-orange-400"></div>}
                 </div>
               </div>
             );
           })}
         </div>
-        <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-slate-100">
-          <div className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full bg-red-500"></div>
-            <span className="text-xs text-slate-500">大发作</span>
+        <div className="flex items-center justify-center gap-2 mt-2 pt-2 border-t border-slate-100">
+          <div className="flex items-center gap-1">
+            <div className="w-1.5 h-1.5 rounded-full bg-red-500"></div>
+            <span className="text-[9px] text-slate-500">大发作</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full bg-orange-400"></div>
-            <span className="text-xs text-slate-500">小发作</span>
+          <div className="flex items-center gap-1">
+            <div className="w-1.5 h-1.5 rounded-full bg-orange-400"></div>
+            <span className="text-[9px] text-slate-500">小发作</span>
           </div>
         </div>
       </div>
 
       {/* Trend Chart */}
       <div>
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-slate-800">近半年发作趋势</h3>
-          <div className="flex items-center gap-1 text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
-            <TrendingDown className="w-3 h-3" />
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-[12px] font-semibold text-slate-800">近半年发作趋势</h3>
+          <div className="flex items-center gap-1 text-[9px] font-medium text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">
+            <TrendingDown className="w-2.5 h-2.5" />
             <span>下降 50%</span>
           </div>
         </div>
-        <div className="h-40 w-full">
+        <div className="h-28 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={mockTrendData} margin={{ top: 5, right: 0, left: -20, bottom: 0 }}>
               <defs>
@@ -137,27 +137,27 @@ export default function SeizureCalendar() {
                 dataKey="month" 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{ fontSize: 10, fill: '#94a3b8' }} 
-                dy={10}
+                tick={{ fontSize: 8, fill: '#94a3b8' }} 
+                dy={6}
               />
               <YAxis 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{ fontSize: 10, fill: '#94a3b8' }} 
+                tick={{ fontSize: 8, fill: '#94a3b8' }} 
               />
               <Tooltip 
-                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}
-                itemStyle={{ color: '#8b5cf6', fontWeight: 500 }}
-                labelStyle={{ color: '#64748b', marginBottom: '4px' }}
+                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', padding: '6px' }}
+                itemStyle={{ color: '#8b5cf6', fontWeight: 500, fontSize: '11px' }}
+                labelStyle={{ color: '#64748b', marginBottom: '2px', fontSize: '9px' }}
               />
               <Area 
                 type="monotone" 
                 dataKey="count" 
                 stroke="#8b5cf6" 
-                strokeWidth={3}
+                strokeWidth={2}
                 fillOpacity={1} 
                 fill="url(#colorCount)" 
-                activeDot={{ r: 6, fill: '#8b5cf6', stroke: '#fff', strokeWidth: 2 }}
+                activeDot={{ r: 3, fill: '#8b5cf6', stroke: '#fff', strokeWidth: 2 }}
               />
             </AreaChart>
           </ResponsiveContainer>
