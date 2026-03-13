@@ -1,11 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAppStore } from '../../store';
 import { IoTStatusCard } from '../IoTStatusCard';
-import { VitalsGrid } from '../Charts/VitalsGrid';
 import { Activity, Smartphone, Footprints, Moon, Flame, Droplets } from 'lucide-react';
 
 export function DailyHealthBase() {
-  const { isDeviceBound, vitals } = useAppStore();
+  const { vitals, connectedDevices, updateVitals } = useAppStore();
+  
+  // 模拟数据流：当连接设备后，实时更新体征数据
+  useEffect(() => {
+    if (connectedDevices.length === 0) return;
+
+    const interval = setInterval(() => {
+      updateVitals({
+        steps: vitals.steps + Math.floor(Math.random() * 5),
+        calories: vitals.calories + Math.floor(Math.random() * 2),
+        heartRate: 70 + Math.floor(Math.random() * 10),
+      });
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [connectedDevices.length, vitals.steps, vitals.calories, updateVitals]);
   
   return (
     <div className="space-y-4">
@@ -14,27 +28,6 @@ export function DailyHealthBase() {
       </div>
       
       <IoTStatusCard />
-      
-      {isDeviceBound && (
-        <div className="space-y-4">
-          <VitalsGrid vitals={vitals} />
-          
-          {/* 异常体征微干预 (Micro-intervention) */}
-          {vitals.deepSleepRatio < 20 && (
-            <div className="bg-indigo-50/80 border border-indigo-100/50 rounded-[16px] p-3 flex items-start gap-2.5">
-              <div className="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
-                <Moon className="w-3.5 h-3.5 text-indigo-600" />
-              </div>
-              <div>
-                <h4 className="text-[12px] font-semibold text-indigo-900">昨夜睡眠欠佳</h4>
-                <p className="text-[10px] text-indigo-700/80 mt-0.5 leading-relaxed">
-                  检测到深度睡眠比例偏低，建议今晚睡前尝试「正念呼吸」或聆听助眠白噪音。
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
 
       {/* 泛健康体能打卡 (General Health Tracking) - High Density Grid */}
       <div className="grid grid-cols-2 gap-2.5">
@@ -51,11 +44,11 @@ export function DailyHealthBase() {
           </div>
           <div>
             <div className="flex items-baseline gap-1">
-              <span className="text-[16px] font-bold text-slate-900 tracking-tight">6,240</span>
+              <span className="text-[16px] font-bold text-slate-900 tracking-tight">{vitals.steps.toLocaleString()}</span>
               <span className="text-[9px] text-slate-400 font-medium">/ 8000</span>
             </div>
             <div className="w-full h-1 bg-slate-100 rounded-full mt-1.5 overflow-hidden">
-              <div className="h-full bg-emerald-400 rounded-full" style={{ width: '78%' }} />
+              <div className="h-full bg-emerald-400 rounded-full transition-all duration-1000" style={{ width: `${Math.min(100, (vitals.steps / 8000) * 100)}%` }} />
             </div>
           </div>
         </div>
@@ -73,11 +66,11 @@ export function DailyHealthBase() {
           </div>
           <div>
             <div className="flex items-baseline gap-1">
-              <span className="text-[16px] font-bold text-slate-900 tracking-tight">4.2</span>
+              <span className="text-[16px] font-bold text-slate-900 tracking-tight">{vitals.screenTime}</span>
               <span className="text-[9px] text-slate-400 font-medium">/ 6h</span>
             </div>
             <div className="w-full h-1 bg-slate-100 rounded-full mt-1.5 overflow-hidden">
-              <div className="h-full bg-blue-400 rounded-full" style={{ width: '70%' }} />
+              <div className="h-full bg-blue-400 rounded-full transition-all duration-1000" style={{ width: `${Math.min(100, (vitals.screenTime / 6) * 100)}%` }} />
             </div>
           </div>
         </div>
@@ -95,11 +88,11 @@ export function DailyHealthBase() {
           </div>
           <div>
             <div className="flex items-baseline gap-1">
-              <span className="text-[16px] font-bold text-slate-900 tracking-tight">320</span>
+              <span className="text-[16px] font-bold text-slate-900 tracking-tight">{vitals.calories}</span>
               <span className="text-[9px] text-slate-400 font-medium">kcal</span>
             </div>
             <div className="w-full h-1 bg-slate-100 rounded-full mt-1.5 overflow-hidden">
-              <div className="h-full bg-orange-400 rounded-full" style={{ width: '45%' }} />
+              <div className="h-full bg-orange-400 rounded-full transition-all duration-1000" style={{ width: `${Math.min(100, (vitals.calories / 500) * 100)}%` }} />
             </div>
           </div>
         </div>
@@ -117,11 +110,11 @@ export function DailyHealthBase() {
           </div>
           <div>
             <div className="flex items-baseline gap-1">
-              <span className="text-[16px] font-bold text-slate-900 tracking-tight">1.2</span>
+              <span className="text-[16px] font-bold text-slate-900 tracking-tight">{vitals.water}</span>
               <span className="text-[9px] text-slate-400 font-medium">/ 2.0L</span>
             </div>
             <div className="w-full h-1 bg-slate-100 rounded-full mt-1.5 overflow-hidden">
-              <div className="h-full bg-cyan-400 rounded-full" style={{ width: '60%' }} />
+              <div className="h-full bg-cyan-400 rounded-full transition-all duration-1000" style={{ width: `${Math.min(100, (vitals.water / 2.0) * 100)}%` }} />
             </div>
           </div>
         </div>

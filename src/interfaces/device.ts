@@ -17,7 +17,8 @@ export enum NeuroMetricType {
   SLEEP_EEG = 'SLEEP_EEG', // 睡眠与脑电
   HRV = 'HRV',             // 心率变异性
   GAIT = 'GAIT',           // 步态与活动
-  VITALS = 'VITALS'        // 基础体征(血压/血氧)
+  VITALS = 'VITALS',       // 基础体征(血压/血氧)
+  EEG_ABNORMALITY = 'EEG_ABNORMALITY' // 异常脑电
 }
 
 export interface MetricData {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { MetricData } from '../../../interfaces/device';
-import { Moon, Heart, Activity, Footprints } from 'lucide-react';
+import { Moon, Heart, Activity, Footprints, Zap } from 'lucide-react';
 import { WaveChart } from '../../../components/common/charts/WaveChart';
 import { BarChart } from '../../../components/common/charts/BarChart';
 import { cn } from '../../../utils/cn';
@@ -14,6 +14,7 @@ const iconMap = {
   VITALS: Heart,
   HRV: Activity,
   GAIT: Footprints,
+  EEG_ABNORMALITY: Zap,
 };
 
 const themeMap = {
@@ -48,7 +49,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({ data }) => {
   const theme = themeMap[data.colorTheme];
 
   // 决定使用哪种图表
-  const isWave = data.type === 'VITALS' || data.type === 'HRV';
+  const isWave = data.type === 'VITALS' || data.type === 'HRV' || data.type === 'EEG_ABNORMALITY';
 
   return (
     <div className="relative overflow-hidden bg-white/80 backdrop-blur-xl rounded-[28px] p-5 shadow-[0_8px_30px_rgb(0,0,0,0.03)] border border-white/60 flex flex-col h-56 transition-transform duration-300 hover:-translate-y-1">

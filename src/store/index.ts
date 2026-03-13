@@ -23,6 +23,18 @@ interface Vitals {
   lastSyncTime: string;
   steps: number;
   heartRate: number;
+  calories: number;
+  screenTime: number;
+  water: number;
+}
+
+export interface ConnectedDevice {
+  id: string;
+  name: string;
+  type: 'app' | 'hardware';
+  status: string;
+  syncTime: string;
+  battery?: number;
 }
 
 interface AppState {
@@ -35,7 +47,7 @@ interface AppState {
   hasSignedAgreement: boolean;
   selectedDiseaseTag: DiseaseTag;
   painkillerDates: string[]; // 本月已服止痛药的日期列表 (MOH 防火墙)
-  isDeviceBound: boolean;
+  connectedDevices: ConnectedDevice[];
   vitals: Vitals;
   
   // 用药管家状态
@@ -61,8 +73,9 @@ interface AppState {
   recordMigraineAttack: (severity: string, trigger: string) => void;
   recordSeizureAttack: () => void;
   recordCdrDiary: () => void;
-  bindDevice: () => void;
-  unbindDevice: () => void;
+  connectDevice: (device: ConnectedDevice) => void;
+  disconnectDevice: (id: string) => void;
+  updateVitals: (vitals: Partial<Vitals>) => void;
   
   // 用药管家 Actions
   addMedicationPlan: (plan: Omit<MedicationPlan, 'id'>) => void;
@@ -78,7 +91,10 @@ const initialVitals: Vitals = {
   eegStability: 95,
   lastSyncTime: '刚刚',
   steps: 6240,
-  heartRate: 72
+  heartRate: 72,
+  calories: 320,
+  screenTime: 4.2,
+  water: 1.2
 };
 
 const initialCognitiveData: ChartDataPoint[] = [
@@ -139,7 +155,7 @@ export const useAppStore = create<AppState>()(
       hasSignedAgreement: false,
       selectedDiseaseTag: DiseaseTag.NONE,
       painkillerDates: ['2023-10-01', '2023-10-05', '2023-10-10', '2023-10-12', '2023-10-15', '2023-10-18', '2023-10-20', '2023-10-22', '2023-10-24', '2023-10-25', '2023-10-26', '2023-10-27', '2023-10-28', '2023-10-29'], // Mock: 14 days
-      isDeviceBound: false,
+      connectedDevices: [],
       vitals: initialVitals,
       
       medicationPlans: defaultMedications,
@@ -193,7 +209,7 @@ export const useAppStore = create<AppState>()(
         hasSignedAgreement: false,
         selectedDiseaseTag: DiseaseTag.NONE,
         painkillerDates: [],
-        isDeviceBound: false,
+        connectedDevices: [],
         vitals: initialVitals,
         medicationPlans: defaultMedications,
         todayTakenIds: [],
@@ -246,8 +262,15 @@ export const useAppStore = create<AppState>()(
 
       recordCdrDiary: () => set({ todayCdrRecorded: true }),
       
-      bindDevice: () => set({ isDeviceBound: true }),
-      unbindDevice: () => set({ isDeviceBound: false }),
+      connectDevice: (device) => set((state) => ({ 
+        connectedDevices: [...state.connectedDevices.filter(d => d.id !== device.id), device] 
+      })),
+      disconnectDevice: (id) => set((state) => ({ 
+        connectedDevices: state.connectedDevices.filter(d => d.id !== id) 
+      })),
+      updateVitals: (newVitals) => set((state) => ({
+        vitals: { ...state.vitals, ...newVitals }
+      })),
       
       addMedicationPlan: (plan) => set((state) => ({
         medicationPlans: [...state.medicationPlans, { ...plan, id: Math.random().toString(36).substring(2, 9) }]

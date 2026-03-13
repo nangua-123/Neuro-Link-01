@@ -46,36 +46,44 @@ export default function DefaultManager() {
             </h2>
           </div>
 
-          {/* 破冰引导舱 (Ice-breaker Fallback) */}
-          <div className="bg-blue-50/80 border border-blue-100/50 rounded-[16px] p-4 shadow-sm relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/40 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+          {/* 破冰引导舱 (Ice-breaker Fallback) - AI 管家范式重构 */}
+          <div className="relative rounded-[24px] p-5 overflow-hidden shadow-[0_8px_30px_rgba(22,119,255,0.06)] group border border-blue-50/50">
+            {/* 极淡的蓝紫弥散渐变背景 (Glassmorphism & Aura) */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#f8faff] via-[#eff6ff] to-[#f5f3ff] opacity-90" />
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-blue-400/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-indigo-400/10 rounded-full blur-3xl pointer-events-none" />
             
             <div className="relative z-10">
-              <div className="flex items-start gap-3 mb-3">
-                <div className="w-10 h-10 rounded-[12px] bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
-                  <Sparkles className="w-5 h-5" />
+              <div className="flex items-center gap-3 mb-5">
+                <div className="relative">
+                  {/* 呼吸动效 (Breathing Animation) */}
+                  <div className="absolute inset-0 bg-blue-200 rounded-full animate-ping opacity-30" />
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center shadow-[0_2px_10px_rgba(37,99,235,0.1)] relative z-10">
+                    <Sparkles className="w-5 h-5 text-blue-500" />
+                  </div>
                 </div>
                 <div>
-                  <h3 className="text-[14px] font-bold text-blue-900 tracking-tight mb-0.5">定制您的专属方案</h3>
-                  <p className="text-[11px] text-blue-700/80 font-medium leading-relaxed">
+                  <h3 className="text-[15px] font-bold text-slate-800 tracking-tight mb-0.5">定制您的专属方案</h3>
+                  <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
                     完成 AI 预问诊或专业量表，解锁个性化健康守护。
                   </p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2.5 mt-4">
+              <div className="grid grid-cols-2 gap-3">
+                {/* 大圆角胶囊状 (Capsule) 按钮，柔和微渐变，科技蓝文字，发光阴影 */}
                 <button
                   onClick={() => navigate('/')}
-                  className="py-2.5 bg-blue-600 text-white rounded-[12px] font-semibold text-[12px] shadow-[0_2px_8px_rgba(37,99,235,0.2)] active:scale-95 transition-transform flex items-center justify-center gap-1.5"
+                  className="py-3 bg-gradient-to-r from-[#eff6ff] to-[#e0e7ff] text-blue-600 rounded-full font-bold text-[13px] shadow-[0_4px_12px_rgba(37,99,235,0.1)] active:scale-95 transition-transform flex items-center justify-center gap-1.5 border border-white/60"
                 >
-                  <Brain className="w-3.5 h-3.5" />
+                  <Brain className="w-4 h-4" />
                   AI 智能问诊
                 </button>
                 <button
                   onClick={() => navigate('/assessment')}
-                  className="py-2.5 bg-white text-blue-600 border border-blue-100 rounded-[12px] font-semibold text-[12px] shadow-sm active:scale-95 transition-transform flex items-center justify-center gap-1.5"
+                  className="py-3 bg-white text-slate-600 rounded-full font-bold text-[13px] shadow-[0_2px_8px_rgba(0,0,0,0.04)] active:scale-95 transition-transform flex items-center justify-center gap-1.5 border border-slate-100/80"
                 >
-                  <FileText className="w-3.5 h-3.5" />
+                  <FileText className="w-4 h-4" />
                   专业量表测评
                 </button>
               </div>

@@ -8,7 +8,7 @@ import { DiseaseTag } from '../../configs/constants';
 
 export default function DeviceConnectView() {
   const navigate = useNavigate();
-  const { selectedDiseaseTag, bindDevice } = useAppStore();
+  const { selectedDiseaseTag, connectDevice } = useAppStore();
   
   const [pairingDevice, setPairingDevice] = useState<any>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -22,10 +22,19 @@ export default function DeviceConnectView() {
   };
 
   const handleAgreeAndBind = () => {
-    bindDevice();
+    if (pairingDevice) {
+      connectDevice({
+        id: pairingDevice.id,
+        name: pairingDevice.name,
+        type: 'hardware',
+        status: '已连接 · 信号极佳',
+        syncTime: '刚刚同步',
+        battery: 85
+      });
+    }
     setShowAuthModal(false);
     setPairingDevice(null);
-    navigate('/device');
+    navigate('/device', { replace: true });
   };
 
   const healthApps = [
@@ -72,7 +81,7 @@ export default function DeviceConnectView() {
     : medicalDevices;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col relative">
+    <div className="max-w-md mx-auto h-screen overflow-y-auto bg-[#F8FAFC] shadow-2xl relative flex flex-col">
       <div className="bg-white/80 backdrop-blur-xl sticky top-0 z-20 border-b border-slate-100/50">
         <NavBar 
           onBack={() => navigate(-1)}
@@ -99,12 +108,13 @@ export default function DeviceConnectView() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
                 onClick={() => navigate(`/device-auth/${app.id}`)}
-                className="bg-white rounded-[20px] p-4 flex items-center gap-3 shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-slate-100/80 active:scale-95 transition-transform cursor-pointer"
+                className="bg-white rounded-3xl p-4 flex items-center gap-3 shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-slate-100/80 active:scale-95 transition-transform cursor-pointer relative overflow-hidden group"
               >
-                <div className={`w-10 h-10 rounded-full ${app.bgColor} flex items-center justify-center shrink-0`}>
+                <div className="absolute inset-0 bg-gradient-to-br from-white to-slate-50/50 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className={`w-10 h-10 rounded-full ${app.bgColor} flex items-center justify-center shrink-0 relative z-10`}>
                   <app.icon className={`w-5 h-5 ${app.color}`} />
                 </div>
-                <span className="text-[14px] font-semibold text-slate-800">{app.name}</span>
+                <span className="text-[14px] font-semibold text-slate-800 relative z-10">{app.name}</span>
               </motion.div>
             ))}
           </div>
@@ -133,10 +143,11 @@ export default function DeviceConnectView() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 + index * 0.05 }}
                 onClick={() => handleDeviceClick(device)}
-                className="bg-white rounded-[24px] p-4 flex items-center justify-between shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-slate-100/80 active:scale-[0.98] transition-transform cursor-pointer"
+                className="bg-white rounded-3xl p-4 flex items-center justify-between shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-slate-100/80 active:scale-[0.98] transition-transform cursor-pointer relative overflow-hidden group"
               >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-[16px] bg-slate-50 flex items-center justify-center border border-slate-100 shrink-0">
+                <div className="absolute inset-0 bg-gradient-to-r from-white to-blue-50/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="flex items-center gap-4 relative z-10">
+                  <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center border border-slate-100 shrink-0">
                     <device.icon className="w-6 h-6 text-slate-600" />
                   </div>
                   <div>
@@ -144,7 +155,7 @@ export default function DeviceConnectView() {
                     <p className="text-[12px] text-slate-500 line-clamp-1">{device.desc}</p>
                   </div>
                 </div>
-                <ChevronLeft className="w-5 h-5 text-slate-300 rotate-180 shrink-0" />
+                <ChevronLeft className="w-5 h-5 text-slate-300 rotate-180 shrink-0 relative z-10" />
               </motion.div>
             ))}
           </div>
@@ -152,9 +163,10 @@ export default function DeviceConnectView() {
       </div>
 
       {/* 底部引导舱 */}
-      <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto p-5 bg-gradient-to-t from-[#F8FAFC] via-[#F8FAFC] to-transparent z-10">
-        <div className="bg-white rounded-[24px] p-4 shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-blue-100/50 flex items-center justify-between">
-          <div>
+      <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-[#F8FAFC] via-[#F8FAFC] to-transparent z-10">
+        <div className="bg-white rounded-3xl p-4 shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-blue-100/50 flex items-center justify-between relative overflow-hidden">
+          <div className="absolute -right-4 -top-4 w-24 h-24 bg-blue-50 rounded-full blur-2xl pointer-events-none" />
+          <div className="relative z-10">
             <h4 className="text-[14px] font-bold text-slate-900 mb-0.5">暂无专属设备？</h4>
             <p className="text-[11px] text-slate-500 font-medium">华西定制专病硬件，支持按月租赁</p>
           </div>

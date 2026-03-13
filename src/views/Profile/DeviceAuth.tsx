@@ -4,9 +4,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ChevronLeft, CheckCircle2, ShieldCheck, Lock } from 'lucide-react';
 
+import { useAppStore } from '../../store';
+
 export default function DeviceAuthView() {
   const navigate = useNavigate();
   const { appId } = useParams();
+  const { connectDevice } = useAppStore();
   const [isAuthorizing, setIsAuthorizing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -24,19 +27,27 @@ export default function DeviceAuthView() {
     setTimeout(() => {
       setIsAuthorizing(false);
       setIsSuccess(true);
+      connectDevice({
+        id: appId || 'unknown_app',
+        name: appName,
+        type: 'app',
+        status: '已授权 · 实时同步',
+        syncTime: '刚刚同步'
+      });
       Toast.show({ icon: 'success', content: '授权成功' });
       setTimeout(() => {
-        navigate('/device');
+        navigate('/device', { replace: true });
       }, 1500);
     }, 2000);
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="max-w-md mx-auto h-screen overflow-y-auto bg-white shadow-2xl flex flex-col relative">
+      <div className="absolute inset-0 bg-gradient-to-b from-blue-50/50 to-transparent pointer-events-none" />
       <NavBar 
         onBack={() => navigate(-1)}
         backArrow={<ChevronLeft className="w-6 h-6 text-slate-700" />}
-        className="border-b border-slate-50"
+        className="border-b border-slate-50 relative z-10 bg-white/80 backdrop-blur-md"
       >
         <span className="font-medium text-slate-900">应用授权</span>
       </NavBar>
@@ -97,19 +108,19 @@ export default function DeviceAuthView() {
           </div>
         </div>
 
-        <div className="w-full mt-auto">
+        <div className="w-full mt-auto relative z-10 pb-6">
           <Button
             block
             color="primary"
             loading={isAuthorizing}
             onClick={handleAuthorize}
-            className="h-14 rounded-[28px] text-[16px] font-bold shadow-lg shadow-blue-200"
+            className="h-14 rounded-full text-[16px] font-bold shadow-[0_8px_30px_rgba(37,99,235,0.2)] bg-blue-600 border-none"
           >
             {isSuccess ? '授权成功' : '同意并授权'}
           </Button>
           <button 
             onClick={() => navigate(-1)}
-            className="w-full py-4 text-slate-400 text-[14px] font-medium active:text-slate-600 transition-colors"
+            className="w-full py-4 text-slate-400 text-[14px] font-medium active:text-slate-600 transition-colors mt-2"
           >
             拒绝授权
           </button>

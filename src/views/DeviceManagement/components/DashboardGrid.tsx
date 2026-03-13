@@ -42,12 +42,12 @@ const mockMetrics: MetricData[] = [
   },
   {
     id: '4',
-    type: NeuroMetricType.GAIT,
-    title: '日常步数',
-    value: 4280,
-    unit: '步',
-    trend: '目标达成 42%',
-    trendDirection: 'neutral',
+    type: NeuroMetricType.EEG_ABNORMALITY,
+    title: '异常脑电',
+    value: 2,
+    unit: '次',
+    trend: '较昨日 -1次',
+    trendDirection: 'down',
     colorTheme: 'amber',
     chartData: generateBarData(),
   }

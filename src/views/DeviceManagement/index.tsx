@@ -4,12 +4,14 @@ import { IdentitySwitcher } from './components/IdentitySwitcher';
 import { DeviceBanner } from './components/DeviceBanner';
 import { DashboardGrid } from './components/DashboardGrid';
 import { useDeviceStore } from '../../store/useDeviceStore';
+import { useAppStore } from '../../store';
 import { CapsuleButton } from '../../components/common/CapsuleButton';
 import { DeviceStatus } from '../../interfaces/device';
 import { useNavigate } from 'react-router-dom';
 
 export const DeviceManagement: React.FC = () => {
-  const { showAuthModal, setShowAuthModal, setHasSignedAgreement, deviceStatus, setDeviceStatus } = useDeviceStore();
+  const { showAuthModal, setShowAuthModal, setHasSignedAgreement } = useDeviceStore();
+  const { connectedDevices, disconnectDevice } = useAppStore();
   const [toastMsg, setToastMsg] = React.useState('');
   const navigate = useNavigate();
 
@@ -19,29 +21,29 @@ export const DeviceManagement: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans relative overflow-hidden">
+    <div className="max-w-md mx-auto h-screen overflow-y-auto bg-slate-50 font-sans relative shadow-2xl">
       {/* 柔和的全局背景渐变 */}
       <div className="absolute inset-0 bg-gradient-to-b from-indigo-50/80 via-slate-50/50 to-slate-50 pointer-events-none"></div>
       
       {/* 顶部导航 */}
       <header className="relative z-50 flex items-center justify-between px-5 pt-12 pb-4">
         <button 
-          onClick={() => navigate(-1)}
+          onClick={() => navigate('/')}
           className="relative z-50 w-10 h-10 flex items-center justify-center -ml-2 text-slate-700 active:bg-slate-200/50 rounded-full transition-colors cursor-pointer"
         >
           <ChevronLeft size={24} className="pointer-events-none" />
         </button>
         <h1 className="text-lg font-semibold text-slate-800 tracking-tight">智能设备管理</h1>
-        {deviceStatus === DeviceStatus.CONNECTED || deviceStatus === DeviceStatus.SYNCING ? (
+        {connectedDevices.length > 0 ? (
           <button 
             onClick={() => {
-              setDeviceStatus(DeviceStatus.DISCONNECTED);
+              connectedDevices.forEach(d => disconnectDevice(d.id));
               setToastMsg('设备已断开');
               setTimeout(() => setToastMsg(''), 2000);
             }}
             className="relative z-50 text-sm font-medium text-slate-400 hover:text-slate-600 transition-colors cursor-pointer px-2 py-1"
           >
-            断开
+            断开全部
           </button>
         ) : (
           <div className="w-10"></div>
@@ -55,10 +57,23 @@ export const DeviceManagement: React.FC = () => {
         </div>
 
         {/* 设备状态横幅 */}
-        <DeviceBanner />
+        {connectedDevices.map(device => (
+          <DeviceBanner key={device.id} device={device} />
+        ))}
 
         {/* 脑健康仪表盘网格 */}
-        <DashboardGrid />
+        {connectedDevices.length > 0 && <DashboardGrid />}
+
+        {/* 添加新设备入口 */}
+        <div className="mt-8 mb-4">
+          <button 
+            onClick={() => navigate('/device-connect')}
+            className="w-full py-4 rounded-3xl bg-white border border-dashed border-slate-300 text-slate-500 font-medium flex items-center justify-center gap-2 active:bg-slate-50 transition-colors"
+          >
+            <span className="text-xl leading-none">+</span>
+            连接新设备
+          </button>
+        </div>
       </main>
 
       {/* JIT 授权拦截弹窗 (简易实现) */}

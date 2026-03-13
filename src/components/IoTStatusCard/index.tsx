@@ -1,14 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bluetooth, Watch, ChevronRight, Zap, Activity } from 'lucide-react';
+import { Bluetooth, Watch, ChevronRight, Zap, Activity, Smartphone } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useAppStore } from '../../store';
 
 export const IoTStatusCard: React.FC = () => {
   const navigate = useNavigate();
-  const { isDeviceBound } = useAppStore();
+  const { connectedDevices, vitals } = useAppStore();
 
-  if (!isDeviceBound) {
+  if (connectedDevices.length === 0) {
     return (
       <motion.div 
         whileTap={{ scale: 0.98 }}
@@ -39,6 +39,17 @@ export const IoTStatusCard: React.FC = () => {
     );
   }
 
+  const firstDevice = connectedDevices[0];
+  const isApp = firstDevice.type === 'app';
+
+  // 提炼核心指标
+  let coreMetric = '';
+  if (isApp) {
+    coreMetric = `步数同步中 | 消耗 ${vitals.calories} kcal`;
+  } else {
+    coreMetric = `实时心率 ${vitals.heartRate} bpm | 睡眠质量 优`;
+  }
+
   return (
     <motion.div 
       whileTap={{ scale: 0.98 }}
@@ -50,16 +61,18 @@ export const IoTStatusCard: React.FC = () => {
         <div className="relative">
           <div className="absolute inset-0 bg-emerald-100 rounded-full animate-ping opacity-40" />
           <div className="w-9 h-9 rounded-[12px] bg-emerald-50 flex items-center justify-center border border-emerald-100/50 relative z-10">
-            <Bluetooth className="w-4 h-4 text-emerald-500" />
+            {isApp ? <Smartphone className="w-4 h-4 text-emerald-500" /> : <Bluetooth className="w-4 h-4 text-emerald-500" />}
           </div>
         </div>
         <div>
           <div className="flex items-center gap-1.5 mb-0.5">
-            <h3 className="text-[13px] font-bold text-slate-800 tracking-tight">Neuro-Band 守护中</h3>
+            <h3 className="text-[13px] font-bold text-slate-800 tracking-tight">
+              {connectedDevices.length > 1 ? `已连接 ${connectedDevices.length} 个设备` : `${firstDevice.name} 守护中`}
+            </h3>
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_6px_rgba(52,211,153,0.6)]" />
           </div>
           <p className="text-[10px] text-slate-500 font-medium flex items-center gap-1">
-            电量 86% <span className="text-slate-300">|</span> 体征平稳
+            {firstDevice.battery !== undefined ? `电量 ${firstDevice.battery}% | ` : ''}{coreMetric}
           </p>
         </div>
       </div>
