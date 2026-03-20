@@ -17,8 +17,8 @@ export const CapsuleButton: React.FC<CapsuleButtonProps> = ({
   const baseStyles = "inline-flex items-center justify-center rounded-full font-medium transition-all duration-200 active:scale-95";
   
   const variants = {
-    primary: "bg-indigo-600 text-white shadow-[0_4px_14px_0_rgba(79,70,229,0.39)] hover:bg-indigo-700 hover:shadow-[0_6px_20px_rgba(79,70,229,0.23)]",
-    secondary: "bg-indigo-50 text-indigo-600 hover:bg-indigo-100",
+    primary: "bg-blue-600 text-white shadow-[0_4px_14px_0_rgba(37,99,235,0.39)] hover:bg-blue-700 hover:shadow-[0_6px_20px_rgba(37,99,235,0.23)]",
+    secondary: "bg-blue-50 text-blue-600 hover:bg-blue-100",
     outline: "border border-slate-200 bg-transparent text-slate-700 hover:bg-slate-50",
     ghost: "bg-transparent text-slate-600 hover:bg-slate-100"
   };

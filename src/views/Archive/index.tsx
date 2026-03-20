@@ -2,6 +2,7 @@ import React from 'react';
 import { useAppStore } from '../../store';
 import { Switch, List, Toast } from 'antd-mobile';
 import { Shield, User, QrCode, FileText, ChevronRight } from 'lucide-react';
+import { showComingSoon } from '../../utils/ui';
 
 export default function ArchiveView() {
   const { hasSignedAgreement, signAgreement, revokeAgreement } = useAppStore();
@@ -64,7 +65,7 @@ export default function ArchiveView() {
                 <QrCode className="w-5 h-5 text-blue-600" />
               </div>
             }
-            onClick={() => Toast.show('建设中...')}
+            onClick={() => showComingSoon('我的 Neuro-Pass 专属码', '专属码功能即将上线。')}
             arrow={<ChevronRight className="w-5 h-5 text-slate-300" />}
             className="active:bg-slate-50 transition-colors"
           >
@@ -76,11 +77,11 @@ export default function ArchiveView() {
           <div className="h-[1px] bg-slate-100/50 mx-4" />
           <List.Item 
             prefix={
-              <div className="w-10 h-10 rounded-[16px] bg-indigo-50 flex items-center justify-center">
-                <FileText className="w-5 h-5 text-indigo-600" />
+              <div className="w-10 h-10 rounded-[16px] bg-blue-50 flex items-center justify-center">
+                <FileText className="w-5 h-5 text-blue-600" />
               </div>
             }
-            onClick={() => Toast.show('建设中...')}
+            onClick={() => showComingSoon('我的完整健康档案 (EHR)', '健康档案功能即将上线。')}
             arrow={<ChevronRight className="w-5 h-5 text-slate-300" />}
             className="active:bg-slate-50 transition-colors"
           >

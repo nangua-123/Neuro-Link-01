@@ -38,9 +38,11 @@
 - `src/views/Home/components/SymptomCard.tsx`: 初步症状提取图谱卡片与 1 元转化钩子。
 - `src/views/Assessment/index.tsx`: 深度医学测评页（含前置动态补录与动态量表引擎）。
 - `src/views/Manager/index.tsx`: 居家管家 Tab 占位（根据疾病标签动态渲染）。
-- `src/views/Manager/Epilepsy/index.tsx`: [重构] 癫痫【护航管家】视图（高密度排版、趋势图表、IoT 接入）。
-- `src/views/Manager/Migraine/index.tsx`: [重构] 偏头痛【头痛管家】视图（高密度排版、趋势图表、IoT 接入）。
-- `src/views/Manager/Cognitive/index.tsx`: [重构] 认知【护航管家】视图（高密度排版、趋势图表、IoT 接入）。
+- `src/views/Manager/Epilepsy/index.tsx`: [重构] 癫痫【护航管家】视图（统一使用 ServicesAndTools）。
+- `src/views/Manager/Migraine/index.tsx`: [重构] 偏头痛【头痛管家】视图（统一使用 ServicesAndTools）。
+- `src/views/Manager/Cognitive/index.tsx`: [重构] 认知【护航管家】视图（统一使用 ServicesAndTools）。
+- `src/views/Manager/Default/index.tsx`: [重构] 默认【健康管家】视图（统一使用 ServicesAndTools）。
+- `src/components/ServicesAndTools/index.tsx`: [新增] 统一的医疗服务与工具箱组件，根据 DiseaseTag 动态渲染专属服务。
 - `src/views/Mall/index.tsx`: 商城 Tab 占位。
 - `src/views/Profile/index.tsx`: 档案 Tab 占位。
 - `src/App.tsx`: 挂载 RouterProvider 与 RecallOverlay。
@@ -54,6 +56,224 @@
 - `recharts`: [新增] 数据可视化图表库。
 
 ## Changelog
+### Batch 9: 生产环境准备与性能优化 (Production Ready & Optimization)
+- **Objective:** Improve application performance, bundle size, and resilience in poor network conditions.
+- **Key Changes:**
+  - Implemented **Lazy Loading** and **Code Splitting** for all views in `src/router/index.tsx` using `React.lazy` and `Suspense`.
+  - Added `ProfileSkeleton` and `MallSkeleton` components to improve the perceived loading speed and provide a better UX during data fetching.
+  - Created `OfflineBoundary` component to detect network status (`navigator.onLine`) and display a graceful fallback UI when the user is offline.
+  - Wrapped the entire application with `ErrorBoundary` in `src/main.tsx` to catch unhandled React errors and prevent white screens.
+
+### Batch 19: Device Management Consolidation
+- **Objective:** Refine the device management experience by consolidating functionalities into a modal and removing standalone pages.
+- **Key Changes:**
+  - Deprecated the independent `/device` route and removed `DeviceManagement` and `Device` views.
+  - Integrated `DeviceManagerModal` into `IoTDashboardCard` and `ProfileView`.
+  - Updated navigation flows in `DeviceAuthView`, `DeviceConnectView`, `MallView`, and `IoTStatusCard` to redirect to `/profile` instead of `/device`.
+  - Added a "Settings" button to the `IoTDashboardCard` to open the `DeviceManagerModal`.
+  - Ensured seamless user flow for connecting, viewing status, and disconnecting devices.
+
+### Batch 18: Diary Module Separation (Independent Modules)
+- **Scope**: `src/views/Diary/index.tsx`, `src/components/ServiceMatrix/index.tsx`
+- **Action**: 
+  - Completely removed the tab switcher from the Diary view. 
+  - Split the generic "Diary" entry in the Service Matrix into "Seizure Diary" and "Migraine Diary" to ensure they act as independent modules.
+- **Outcome**: The Seizure Diary and Migraine Diary now function as completely independent modules. Users navigating to either diary will no longer see a tab switcher, providing a more focused and immersive experience that aligns with the user's explicit intent.
+
+### Batch 17: 全局主色调规范化重构 (Tech Blue)
+- **视觉红线对齐**:
+  - 彻底移除了全站泛滥的 `indigo`（靛蓝）、`violet`（紫罗兰）、`purple`（紫色）及 `#5470FF` 等偏紫色调。
+  - 将全局主色调严格统一为极具信任感的科技蓝（Tech Blue，近似 `blue-600` / `#2563eb` / `#1677FF`）。
+  - 批量重构了所有浅色弥散背景（`bg-blue-50`）、发光阴影（`rgba(37,99,235,...)`）以及渐变色（`from-blue-500 to-blue-600`），确保 UI/UX 规范的一致性与医疗级产品的专业感。
+
+### Batch 16: 全局核心操作按钮视觉风格极致统一 (UI/UX Consistency)
+- **视觉风格统一**:
+  - `MedicationsView` & `MedicationSetupModal`: 响应设计规范，将“添加用药计划”与“确定”按钮的样式统一重构为高质感的纯色悬浮风格（`bg-[#5470FF]`）。
+  - 统一采用大圆角（`rounded-[20px]`）、精致的同色系弥散阴影（`shadow-[0_8px_24px_rgba(84,112,255,0.25)]`）以及一致的底部安全区留白（`pb-[calc(env(safe-area-inset-bottom)+24px)]`）。
+  - 彻底消除了不同页面间按钮的视觉割裂感，提升了 C 端产品的品牌一致性与现代高级感。
+
+### Batch 14: 用药管家 UI/UX 深度优化与状态一致性 (Completed)
+- **UI/UX 视觉升级**:
+  - `MedicationsView`: 为“今日用药”进度卡片添加了柔和的弥散光晕背景，并优化了进度条的圆角与渐变效果。
+  - **任务列表重构**: 优化了用药任务列表的禁用态（已服药状态透明度降低至 70%），移除了已服药按钮的边框与阴影，并调整了未服药按钮的阴影透明度，使其更符合 C 端柔和、现代的设计风格。
+  - **极致间距压缩**: 进一步压缩了 `DailyTaskManager` 和 `UniversalToolbox` 内部的 padding（减至 `p-3.5`）和 `space-y` 间距，提升了首页信息密度，消除了大面积无意义留白。
+- **功能增强与状态一致性**:
+  - `MedicationPlan` 接口扩展：新增 `reminderEnabled` 和 `reminderTime` 字段。
+  - `MedicationSetupModal`: 集成用药提醒开关（Switch），支持用户在添加/编辑计划时设置是否开启系统提醒。
+  - **全局提醒引擎 (Global Reminder Engine)**: 新增 `useMedicationReminder` 钩子并在 `App.tsx` 顶层挂载。引擎会每分钟轮询全局状态机，当到达设定的 `reminderTime` 时，自动触发系统级弹窗通知（Dialog），并支持在弹窗内“一键打卡”或“稍后提醒”。引入了 `triggeredReminders` 状态以防止重复打扰。
+  - **状态机强一致性**: 修复了 `removeMedicationPlan` 函数，确保在删除用药计划时，同步清理 `medicationHistory` 中当天的服药记录，保证基于日期的服药记录追踪绝对准确。
+
+### Phase 11: Task-Driven Engine & Zero State (Current)
+- **Batch 12: 用药管理模块深度重构与 UI/UX 升维 (Medication Management Polish)**：
+  - **架构与数据流**:
+    - `MedicationPlan` 接口升级，支持 `reminderEnabled` 和 `reminderTime` 字段。
+    - `Zustand Store` 引入 `medicationHistory` 状态，实现基于日期的历史服药记录追踪。
+    - 重构 `toggleMedication` 和 `removeMedicationPlan`，确保历史记录与当前计划的强一致性。
+  - **UI/UX 升维 (MedicationsView)**:
+    - 引入 `Tabs` 结构，清晰分离“今日服药”与“历史记录”。
+    - **今日服药**: 优化进度卡片（柔和光晕、圆角进度条），重构任务列表（优雅的禁用态、柔和的按钮阴影）。
+    - **历史记录**: 集成 `recharts` 实现 30 天依从性面积图，列表化展示历史每日服药详情。
+  - **配置弹窗重构 (MedicationSetupModal)**:
+    - 新增用药提醒开关与时间选择器。
+    - 彻底抛弃硬边表单，采用无边界底色输入框（`bg-slate-50`）和焦点态柔和过渡。
+    - 优化当前服药清单的展示逻辑，提升信息密度与视觉亲和力。
+- **Batch 11: 居家管家 UI/UX 深度优化 (Manager Dashboard Spacing & Typography)**：
+  - **层级字体优化**: 统一了 `Manager` 视图中的模块标题大小（`text-[17px]`），并优化了 `DailyTaskManager` 和 `UniversalToolbox` 中的子标题字体大小（`text-[12px]`），建立了清晰且一致的视觉层级。
+  - **极致间距压缩**: 针对用户反馈的“部分功能留白太大”问题，大幅缩减了 `DailyTaskManager` 和 `UniversalToolbox` 内部的 padding（从 `p-5` 减至 `p-4`），并压缩了元素间的 `space-y` 间距。
+  - **已完成任务高密度重构**: 针对“已完成部分字体和任务之间间距太大”的专属任务，将间距精确压缩至 `8px`（`space-y-2` 配合 `pt-1`），并将已完成任务卡片的 padding 减小（`py-2.5 px-3.5`），图标缩小至 `w-8 h-8`，使其更像紧凑的列表项而非臃肿的卡片，极大地提升了信息密度。
+  - **全局呼吸感统一**: 确立了模块间 `space-y-4` (16px) 和标题与内容间 `space-y-2.5` (10px) 的统一间距节奏，完美契合 C 端管家“高密度、高亲和力、紧凑且会呼吸”的设计红线。
+- **Batch 10: 健康日记模块深度重构 (Health Diary Sheets Polish)**：
+  - **极致 UI 降噪与 C 端管家范式**: 深度优化了 `SeizureDiarySheet`（癫痫发作日记）、`MigraineDiarySheet`（偏头痛闪记）和 `CDRDiarySheet`（AD 行为日记）。严格遵循 C 端柔和、无边界、高密度的设计规范。移除了生硬的边框，采用浅色弥散背景（如 `bg-slate-50/80`）、大圆角（`rounded-[24px]`）和渐变胶囊按钮，大幅提升了输入体验的亲和力与温度感。
+  - **动态表单与联动逻辑**: 
+    - 癫痫日记：实现了发作类型（全面性/局灶性）与意识障碍开关的动态联动。当持续时间超过 5 分钟时，底部会动态渲染红色的“医疗紧急情况”预警，并与全局 Recall 熔断总线（`triggerRecall`）深度打通。
+    - 偏头痛日记：重构了 VAS 疼痛评分的交互，使用 Emoji 和动态颜色（从绿到红）直观反映疼痛程度。
+    - AD 照护日记：采用多选标签组记录 BPSD（精神行为症状），并强制要求选择严重程度，确保数据维度的完整性。
+  - **状态机持久化**: 将所有日记的提交逻辑与 Zustand Store (`recordSeizureAttack`, `recordMigraineAttack`, `recordCdrDiary`) 完美对接，实现数据的本地持久化，并支持在 `/diary` 历史列表中反向渲染。
+- **Batch 9: IoT Dashboard 深度重构 (IoT Dashboard Polish)**：
+  - **极致 UI 降噪与动效增强**: 彻底重构了 `IoTDashboardCard` 的未绑定状态（紧凑诱饵态），采用极具科技感的蓝紫渐变背景、弥散光晕（Aura）和毛玻璃效果，并加入了 `framer-motion` 的点击缩放动效。
+  - **多设备数据赋能态**: 已绑定状态下，使用 `Swiper` 轮播展示多设备数据。卡片设计严格遵循 C 端管家范式，采用大圆角、柔和阴影和无边界底色，每个核心体征指标（心率、步数、深睡比例等）均配有专属的柔和背景色与图标。
+  - **疾病专属预警联动 (Disease-Specific Warnings)**: 深度打通了 IoT 数据与疾病标签的联动逻辑。例如，当用户标签为“癫痫”且深睡比例低于 30% 时，卡片底部会自动渲染“睡眠剥夺预警”；当标签为“偏头痛”且 HRV 偏低时，会触发“压力水平偏高”预警。
+  - **设备连接模拟流 (Device Connect Flow)**: 完善了 `/device-connect` 视图，实现了从“寻找设备”到“弹出三方数据授权协议”，再到“同意并绑定”的完整模拟闭环。授权弹窗严格遵循 JIT (Just-In-Time) 拦截策略。
+- **Batch 8.3: 居家管家全局架构与功能深度重构 (Manager Dashboard Master Plan)**：
+  - **化繁为简，统一生命周期**: 彻底废弃了按“病种”隔离的管家视图，也废弃了评测前后（NEW vs ACTIVE）完全割裂的页面结构。构建了统一的四大核心舱位：AI 简报、今日任务、体征监测、全量工具箱。
+  - **AI 简报前置**: 将“可视化记录的数据和总结”提升至页面最高优先级（Module 1），评测后直接透出 AI 综合健康简报与核心指标微件。
+  - **行为驱动的工具箱**: 打破病种壁垒，将所有工具按“日常记录”、“测评与报告”、“干预与守护”三大医疗行为重新分类，彻底消除了功能冗余，且评测前后展示完全一致。
+  - **极致 UI 降噪**: 严格执行 C 端管家范式，全页面采用浅色弥散背景、Bento 网格布局、大圆角与柔和阴影，彻底消灭了高饱和色块与大面积留白。
+- **Batch 5: 商业转化闭环与路由联动 (IoT Conversion Loop)**：
+  - **设备接入 UI 统一**: 将 `NewStateView` 中硬编码的设备状态卡片（图一）替换为 `IoTDashboardCard`，统一使用 Swiper 轮播组件展示多设备数据（图二）。
+  - **紧凑型诱饵态**: 重构了 `IoTDashboardCard` 的未绑定状态，移除了大面积渐变卡片和多余按钮，改为紧凑的胶囊状入口，严格遵循“不允许大卡片导致大面积留白”的设计红线。
+  - **滑动添加设备**: 在已绑定的设备轮播列表末尾，保留了“添加更多设备”的卡片（图三），点击可进入设备绑定流程。
+  - 点击“绑定已有设备”精准路由至 `/device-connect`（添加健康数据页），引导用户完成标准化的设备选择与授权流程。
+  - 点击“探索华西定制脑电睡眠仪”精准路由至 `/mall`（健康商城），打通“硬带软”的商业变现最终一公里。
+  - 完美衔接全局 Zustand 状态机，用户在子页面完成绑定后，首页卡片自动无缝切换为数据赋能态。
+- **Batch 4: 居家管家 1+1+N 架构重构 (Manager View Refactor) (已完成)**：
+  - **第一层：专属健康控制台 (My Dashboard)**：根据用户状态（首次/二次登录、测评完成度、IoT 设备绑定情况）动态变形，提供个性化数据概览与今日待办。
+  - **第二层：IoT 硬件转化引擎 (Hardware Hub)**：新增 `IoTDashboardCard` 模块，专门用于推广和销售智能硬件。未绑定状态采用极具科技感的设计，强调“24h 医疗级监测”价值；已绑定状态展示实时的生命体征数据。
+  - **第三层：全量脑健康服务矩阵 (Service Matrix)**：重构 `ServicesAndTools`，采用“Bento Box（便当盒）”网格布局，全量展示所有病种的核心功能。引入“引导态 (Guide)”与“激活态 (Active)”双轨制，未解锁功能通过柔和的视觉引导用户完成前置任务。
+  - **跨病种探索拦截**: 当用户在非当前专病模式下点击某个功能时，弹出柔和的模式切换引导弹窗，鼓励用户完成测评以激活专属管家。
+  - **破冰引导页重构**: 将 `DefaultManager` 重构为纯粹的“破冰引导页”，包含 AI 问诊和专业量表测评的入口，移除冗余的组件调用。
+- **Batch 1: 底层状态机与冷启动破冰 (已完成)**：
+  - **状态机引入**: 在 Zustand 中引入 `userStage` ('NEW' | 'ACTIVE' | 'STABLE')，解决冷启动数据错乱问题。
+  - **Zero State 设计**: 
+    - 认知/癫痫/偏头痛管家新增 `NEW` 状态专属 UI（AI 欢迎语、新手启航任务）。
+    - `TrendBarChart` 新增无数据时的“数据采集中”占位态。
+  - **UI/UX 统一**: 强化 Glassmorphism（毛玻璃）与 Aura（弥散光晕）设计语言，去除生硬边框。
+- **Batch 2: 任务驱动引擎 (已完成)**：
+  - **目标**: 将散落的医疗动作（服药、训练、测评）收拢为统一的、时间感知的“今日任务”流。
+  - **核心组件**: `DailyTaskManager`，支持按时间段（早/中/晚）动态排序与沉浸式打卡微交互。
+  - **数据契约**: 建立统一的 `Task` 模型，通过 Zustand 集中调度。
+  - **视图重构**: 认知、癫痫、偏头痛三大管家视图全面接入 `DailyTaskManager`，替换原有的散落干预入口。
+- **Batch 3: 闭环反馈与工具箱重构 (已完成)**：
+  - **工具箱 Bento 化**: 重构 `MedicalToolbox`，采用现代化的 Bento Box（便当盒）网格布局。通过不同尺寸的卡片建立视觉层级，突出“体检报告与 AI 解读”、“发作日记”等高频核心工具，并优化了动态状态指示器（如“今日已服”、“今日 X 次”）。
+  - **AI 智能洞察 (AI Insights)**: 升级 `TrendBarChart` 组件，新增 `aiInsight` 属性。在认知、癫痫、偏头痛三大管家的健康趋势图表下方，动态渲染基于当前数据与用户身份（患者本人/家属）的专属 AI 洞察建议，形成“数据采集 -> 趋势展示 -> AI 建议”的完整闭环。
+
+- **Batch 5: 服务与工具组件大一统 (Services & Tools Refactor)**：
+  - **组件合并**: 彻底移除了冗余的 `MedicalServices` 与 `MedicalToolbox` 组件，统一合并为 `ServicesAndTools` 组件。
+  - **动态渲染**: `ServicesAndTools` 组件通过接收 `diseaseTag` 属性，动态渲染不同专病的专属服务（如癫痫的“发作日记”、偏头痛的“头痛日历”、认知的“照护日记”等）。
+  - **视图重构**: 认知、癫痫、偏头痛、默认四大管家视图全面接入 `ServicesAndTools`，大幅精简了页面代码，提升了组件复用率与维护性。
+  - **弹窗重构**: 将 `SeizureCalendar` 与 `MigraineCalendar` 重构为标准的 `Popup` 弹窗组件，统一了交互体验。
+  - **类型修复**: 修复了 `DiseaseTag` 枚举值的大小写问题，确保全局类型安全。
+- **Batch 7: 居家管家功能深度重构与分析引擎接入 (Manager View Deep Refactor) (已完成)**：
+  - **废弃低频占位组件**: 彻底删除了底部的 `ServicesAndTools` 组件，移除了“靶向药评估”、“专家在线复诊”等偏 B 端、低频且对患者无直接价值的占位功能，避免页面功能散落成“大杂烩”。
+  - **1+2 核心架构落地**: 将三大专病管家（偏头痛、癫痫、认知）统一重构为“1个核心状态舱 + 2个高内聚业务引擎”的极简架构。
+  - **干预引擎 (Intervention Hub)**: 强化 `DailyTaskManager`，将所有需要用户“动手做”的高频动作（如：头痛闪记、服药打卡、脑力训练、暗室舒缓音频）全部收拢至今日待办中，严格受 `userStage` 状态机控制。
+  - **智能数据与分析中心 (Data & Analysis Hub)**: 升级 `HealthInsightsBento`，深度整合“数据展示”与“AI 分析”。在图表下方新增全宽的渐变发光 CTA 按钮，精准路由至对应的深度分析报告页（`/feature/trigger-analysis` 诱因图谱分析、`/feature/visit-summary` 就诊一页纸报表、`/feature/progression-analysis` 衰退延缓评估报告）。
+  - **UI/UX 极致降噪**: 为 `TrendBarChart` 新增 `className` 透传能力，消除嵌套在 Bento 盒中时的双重内边距与阴影。确保页面无大面积留白，文案全面转向“生活赋能”的管家视角，严格遵循 C 端消费级医疗的柔和、高级视觉规范。
+
+- **Batch 8: 深度分析报告页 (Analysis Reports Implementation) (已完成)**：
+  - **独立路由与视图**: 为三大专病分别构建独立的深度分析报告视图，脱离通用的 `FeatureView`，以承载更复杂的图表与业务逻辑。
+  - **诱因图谱分析 (`/analysis/trigger`)**: 针对偏头痛，通过雷达图或关系图直观展示睡眠、天气、压力等诱因与发作的相关性，并提供 AI 规避建议。
+  - **就诊一页纸报表 (`/analysis/visit-summary`)**: 针对癫痫，设计适合医生快速阅览的卡片式布局，汇总发作频率、最长持续时间、用药依从率等核心指标。
+  - **衰退延缓评估报告 (`/analysis/progression`)**: 针对认知障碍，展示认知评分趋势、脑力训练表现，并进行睡眠与认知的交叉分析。
+  - **UI/UX 规范**: 严格遵循 C 端消费级医疗的柔和、高级视觉规范，避免大面积留白，采用大圆角、柔和阴影与渐变色彩。
+
+- **Batch 9: 脑力训练与 LBS 安全围栏独立视图 (Brain Training & LBS Fence Implementation) (已完成)**：
+  - **独立路由与视图**: 为认知障碍管家的“脑力训练”与“LBS 安全围栏”构建独立的视图，脱离通用的 `FeatureView`。
+  - **脑力训练 (`/feature/brain-training`)**: 提供“记忆力强化”、“注意力聚焦”、“反应力敏捷”等模块，展示今日训练进度与历史训练数据图表。
+  - **LBS 安全围栏 (`/feature/lbs-fence`)**: 提供基于高精度定位的防走失电子围栏设置，支持活动半径调节与报警联动设置（App 弹窗、短信通知、设备端蜂鸣）。
+  - **UI/UX 规范**: 采用极浅弥散渐变背景，结合卡片式布局与毛玻璃效果，提供高级、柔和的 C 端体验。
+
+- **Batch 10: 修复全量脑健康服务矩阵缺失问题 (Service Matrix Bugfix) (已完成)**：
+  - **组件补齐**: 实现了 `ServiceMatrix` 组件，采用“Bento Box（便当盒）”网格布局，全量展示所有病种的核心功能（发作日记、智能用药、脑力训练、安全围栏、照护专区）。
+  - **双轨制状态**: 引入“引导态 (Guide)”与“激活态 (Active)”双轨制。未解锁功能（如未选择专病）呈现柔和的置灰与发光引导态，点击后弹出模式切换引导弹窗，鼓励用户完成专业量表测评。
+  - **视图集成**: 将 `ServiceMatrix` 作为 Layer 3 深度集成至 `ManagerView`，完美填补了“专属健康管家”底部的功能空白，实现了 1+1+N 架构的最终闭环。
+
+- **Batch 11: 开放全量服务体验 (Service Matrix Open Access) (已完成)**：
+  - **移除引导态锁定**: 响应用户需求，移除了 `ServiceMatrix` 中未选择专病时的置灰锁定状态。
+  - **全量开放体验**: 现在，即使用户处于 Default（未测评）状态，也可以自由点击并体验底部的所有核心功能（发作日记、智能用药、脑力训练、安全围栏、照护专区），降低了用户的探索门槛。
+
+- **Batch 12: 发作日记多病种兼容 (Diary View Multi-Disease Support) (已完成)**：
+  - **动态 Tab 切换**: 修复了在未选择专病（Default 态）时，进入“发作日记”只能看到癫痫日记的问题。现在，当用户处于 Default 态时，顶部会渲染一个柔和的毛玻璃 Tab 切换器，允许用户在“癫痫日记”和“偏头痛日记”之间自由切换。
+  - **主题平滑过渡**: 切换日记类型时，页面的背景光晕、图标、主色调（紫色/玫瑰色）以及 AI 洞察提示均会进行平滑的过渡动画（`transition-colors duration-500`），提供极致的 C 端体验。
+  - **Tailwind 动态类名修复**: 修复了原先使用字符串拼接导致 Tailwind 无法正确打包颜色的问题，改用静态类名映射，确保生产环境样式正常渲染。
+
+- **Batch 13: 专病功能区重构与扁平化设计 (Manager View Flattening) (已完成)**：
+  - **移除全局 ServiceMatrix**: 从 `ManagerView` 中移除底部的全量服务矩阵，实现“所见即所得”的扁平化体验。
+  - **EpilepsyManager 增强**: 新增扁平化快捷操作区，包含“记录发作”和“今日服药”的大卡片。新增全屏沉浸式“视频记录发作”功能（带倒计时和录制状态）。
+  - **MigraineManager 增强**: 新增 Bento 风格快捷操作区，包含“头痛闪记”大卡片，以及“吃止痛药”和“头痛日历”小卡片。
+  - **CognitiveManager 增强**: 新增 Bento 风格快捷操作区，包含“开始训练”大卡片，以及“LBS 围栏”和“照护者空间”小卡片。
+  - **DefaultManager 增强**: 新增“核心能力预览”模块，向未测评用户展示三大专病的核心功能，引导其进行测评。
+
+### Phase 14: “居家管家”全局扁平化重构 (Unified Manager Refactoring) (已完成)
+- **核心痛点**: 当前基于病种 Tag 切换不同管家视图的逻辑过于割裂，增加了用户的点击层级，且无法很好地服务共病患者。
+- **重构目标**: 废弃分病种的独立视图，构建一个全局统一的超级看板 (`UnifiedManager`)。
+- **场景一：首次进入 (NEW 态)**:
+  - 顶部强引导：进行详细的专业量表测评，并承诺输出详细测评报告。
+  - 设备引导：引导绑定 IoT 穿戴设备。
+  - 全量工具展示：不分病种隐藏，而是按“癫痫、偏头痛、认知”分专区平铺展示所有工具（含测评工具），让用户直观感受平台价值。
+- **场景二：后续进入 (ACTIVE 态)**:
+  - 模块 1 (顶部)：全局健康洞察（聚合展示发作、用药、训练等所有数据的分析结果与测评报告入口）。
+  - 模块 2：今日任务（跨病种聚合的打卡、训练待办）。
+  - 模块 3：设备监测核心数据（HRV、睡眠、压力等）。
+  - 模块 4 (底部)：分专区的专病工具快捷入口。
+- **架构调整**: 删除 `DefaultManager`, `EpilepsyManager`, `MigraineManager`, `CognitiveManager`，统一在 `ManagerView/index.tsx` 中实现上述响应式布局。
+
+### Phase 15: 全链路数据闭环与高阶商业化转化 (Data Loop & Advanced Monetization) (Current)
+- **Vitals 模块优化 (VitalsGrid)**:
+  - 新增 `VitalsGrid` 组件，替代原有的 `IoTDashboardCard`，提供更直观、高密度的体征数据展示。
+  - **核心指标展示**: 采用 2x2 网格布局，集中展示 HRV 变异性、深睡比例、脑电平稳度、今日活动（步数）等关键健康指标。
+  - **UI/UX 规范**: 严格遵循 C 端管家设计范式，使用大圆角 (`rounded-[20px]`)、柔和弥散光晕背景 (`blur-2xl opacity-60`)、精致的微阴影与无边界设计。
+  - **状态联动**: 顶部新增同步状态栏，根据设备绑定状态（`isBound`）动态切换“实时同步中”与“演示数据”的文案与指示灯，并提供“设备管理”的快捷入口。
+- **核心痛点**: 目前各个模块（评估、日记、IoT、任务）的数据流尚未完全打通，且商业化转化路径（如购买高级服务、硬件）仍有断点。
+- **重构目标**: 
+  1. **数据中台化**: 完善 Zustand Store，将所有零散的 Mock 数据（如任务、体征、日记）统一为全局状态，实现跨页面的实时联动。
+  2. **高阶商业化转化 (Premium Upsell)**: 在深度分析报告（如诱因图谱、衰退延缓评估）中，植入“解锁高级 AI 洞察”或“购买华西定制硬件”的付费墙 (Paywall) 交互。
+  3. **家庭照护者闭环**: 完善 `ProfileView` 中的家庭成员管理，实现患者与家属账号的绑定模拟，并在家属视角下展示专属的“照护者周报”。
+
+- **Batch 13: 核心系统级业务组件落地 (System-Level Components) (Upcoming)**：
+  - **JIT Route Guard (场景化合规路由守卫)**: Implemented `AgreementModal` and `useJITGuard` to intercept core business nodes (payment, device binding) without blocking the initial free experience.
+  - **Identity Switching (身份双轨制状态模型)**: Added `IdentitySwitcher` in Profile and integrated `identity` state across views for dynamic first/third-person perspective rendering.
+  - **Global Recall Bus (全局熔断总线)**: Designed a global event bus to handle critical medical alerts (e.g., prolonged seizures) with full-screen warnings and emergency contacts.
+  - **Dynamic Scale Engine Enhancements (动态量表引擎升级)**: Extended `AssessmentEngine` to support advanced question types including Canvas-based clock drawing and Voice input.
+
+- **Batch 6: 核心服务页面补齐与路由打通 (Service Pages Implementation) (已完成)**：
+  - **智能用药管家 (`/medications`)**: 构建全屏用药管理视图，展示今日服药任务与历史依从性统计，复用 `MedicationSetupModal` 进行药物配置。
+  - **发作日记 (`/diary`)**: 构建偏头痛与癫痫通用的日记主页，采用日历视图展示历史发作记录，通过 FAB 唤起 `MigraineDiarySheet` 或 `SeizureDiarySheet`。
+  - **认知与记忆专区 (`/cdr`)**: 构建 AD 专属照护看板，集成 `CDRDiarySheet` 用于日常 BPSD 记录，并提供入口跳转至动态量表测评引擎。
+  - **动态功能页 (`/feature/:id`)**: 新增 `FeatureView`，通过 `featureConfig` 动态渲染不同功能的详情页（如睡眠日志、健康报告、发作频次、依从性报告、LBS 围栏、脑力训练等），支持图表、列表、状态等多种展示形式。
+  - **管家视图深度联动**: 更新三大专病管家视图（认知、癫痫、偏头痛），将原本的“敬请期待”占位符替换为真实的路由跳转，直达对应的 `FeatureView`。
+  - **个人中心与商城联动**: 更新 `ProfileView` 中的“体检报告”入口，直达 `/feature/health-report`。优化 `MallView` 与 `DeviceView` 的设备绑定与连接流程，实现无缝闭环。
+
+- **Batch 7: 家庭照护者闭环 (Family Caregiver Loop) (已完成)**：
+  - **照护对象管理**: 增强 `ProfileView`，在家属视角下展示绑定的照护对象列表，支持多患者无缝切换（联动 Zustand `currentPatientId` 与 `selectedDiseaseTag`）。
+  - **模拟绑定流程**: 完善 `FamilyBindingModal`，支持输入专属码或扫码模拟绑定长辈账号，绑定成功后自动切换至家属视角。
+  - **家属周报 (`/caregiver-report`)**: 新增专属的“家属周报”视图，聚合展示患者本周的综合健康指数、异常预警次数、活动量趋势以及专病管理概况（用药依从性、日记记录等），并提供 PDF 报告下载入口。
+  - **双向确认机制**: 在患者视角的 `ProfileView` 中新增“我的照护者”模块，展示已绑定的家属信息，并提供邀请家属的入口，形成完整的双向照护闭环。
+
+- [x] **Batch 8: 全局走查与体验打磨 (Global Walkthrough & UX Polish) (已完成)**：
+  - **图表组件颜色修复**: 修正了 `TrendBarChart` 和 `WaveChart` 中 Recharts 对 Tailwind 颜色类名不兼容的问题，统一替换为标准 Hex 色值，确保生产环境渲染正确。
+  - **全局 UI/UX 规范校验**: 走查了所有核心视图（Home, Manager, Profile, Mall, Report 等），确保布局紧凑、无大面积留白。严格执行了 C 端管家范式 UI 规范（毛玻璃效果、弥散渐变背景、大圆角卡片、柔和阴影）。
+  - **核心业务流连贯性测试**: 验证了从预问诊 -> 测评 -> 报告 -> 购买 -> 绑定 -> 任务 -> 家属的完整闭环，确保状态流转与 UI 呈现正确无误。
+  - **居家管家 (ManagerView) 体验优化**: 彻底移除了深色卡片与大面积留白，重构为极具呼吸感的浅色弥散渐变风格。将横向滚动的健康洞察升级为置顶的“AI 健康简报”卡片。优化了设备绑定流，已绑定时动态展示带有心跳动效的实时体征数据卡片。修复了测评与绑定完成后未正确流转至 ACTIVE 态的数据同步 Bug。
+
+---
+
+## 🚀 待办事项 (To-Do)
+- [x] **Batch 9: 生产环境准备与性能优化 (Production Ready & Optimization)**
+  - [x] 路由懒加载 (Lazy Loading) 与代码分割 (Code Splitting)
+  - [x] 静态资源预加载与骨架屏 (Skeleton) 覆盖率提升
+  - [x] 极端网络环境下的降级体验 (Offline/Error Boundaries)
+
 ### v1.1.0 (Phase 6.1 Data Flow & Business Loop Integration)
 - **Batch 2: 身份双轨制深度适配 (Dual-Identity Adaptation)**：
   - **癫痫管家 (`EpilepsyManager`)**：读取 `useAppStore` 中的 `identity`。当身份为家属 (`UserIdentity.FAMILY`) 时，动态将标题切换为“长辈癫痫护航管家”，并将紧急录像后的熔断报警文案切换为第三人称视角（“长辈癫痫发作已超过 5 分钟...”）。
@@ -261,6 +481,41 @@
 - 升级 `AssessmentEngine` 动态渲染引擎：
   - 完美兼容并渲染 `radio_with_input` 题型（如判断力第 4 题的“具体原因”填空）。
   - 增强 Schema 字段的向下兼容性，支持 `text` 作为 `title` 的别名，支持 `scaleId` 作为 `id` 的别名。
+
+### v0.5.8 (Phase 5.8 UI Refinement - Eliminate Whitespace)
+- **优化体征监测模块 (`VitalsGrid`)**：
+  - 移除了 `Swiper` 外层的 `paddingBottom: 24px`，将底部留白转移到卡片内部的 `pb-7`，让分页指示器 (Dots) 自然悬浮在卡片底部的安全区域内，彻底消除了外部大面积的突兀白边。
+  - 将“添加健康设备”卡片从垂直布局 (Vertical) 重构为水平紧凑布局 (Horizontal Compact)，大幅降低了卡片的最小高度，避免了因高度撑开导致的空旷感。
+  - 进一步压缩了内部元素的间距 (`p-4` -> `p-3`, `py-3` -> `py-2`)，提升了整体的信息密度，使其更符合商业级 C 端医疗产品的精致感。
+
+### v0.5.7 (Phase 5.7 UI Refinement - Swiper Carousel)
+- **优化体征监测模块 (`VitalsGrid`)**：
+  - 将原生 CSS `snap-x` 滚动替换为 `antd-mobile` 的 `Swiper` 组件。
+  - 解决了右侧大面积留白的问题，卡片现在 100% 占满容器宽度。
+  - 引入了底部指示器 (Pagination Indicators)，让多设备切换的交互更加直观和优雅。
+  - 增大了卡片内的圆角和间距，进一步提升了商业级 C 端医疗产品的视觉质感。
+
+### v0.5.6 (Phase 5.6 High-Density UI Refinement)
+- **重构体征监测模块 (`VitalsGrid`)**：
+  - 废弃垂直 2x2 网格，采用**高密度横向滚动卡片 (Horizontal Snap Scroll)** 布局。
+  - 大幅提升单卡片信息密度，将核心体征指标（心率、步数、脑电等）压缩至单行展示。
+  - 完美支持多设备横向滑动切换，并在队列末尾固定展示“添加健康设备”引导卡片。
+  - 优化商业级医疗文案，采用“授权同步基础体征，或接入医疗级高精度设备”。
+  - 保留并集成原有的 `DeviceManagerModal` 半屏设备管理交互。
+
+### v0.5.5 (Phase 5.5 Bugfix & Logic Rollback)
+- **修复逻辑漏洞**：重构 `ManagerView` 中的“体征监测”模块，严格根据 `connectedDevices` 状态进行条件渲染。
+- **回滚与优化**：
+  - 移除无视设备状态强制渲染的 `VitalsGrid` 数据。
+  - 恢复设备空状态引导设计（Empty State）。当用户未绑定设备时，展示引导绑定卡片并提供前往 `/device-connect` 的快捷入口，彻底杜绝“幽灵数据”问题。
+  - 修复了 Vite HMR 导致的动态导入模块失败问题。
+
+### v0.5.4 (Phase 5.4)
+- 完善 `VitalsGrid` 组件，实现 2x2 网格布局展示体征数据（HRV、深睡占比、脑电稳定度、步数），并集成设备连接状态栏。
+- 将 `VitalsGrid` 替换到 `ManagerView` 中，提升体征监测模块的视觉体验。
+- 在深度分析报告（`TriggerAnalysisView`, `ProgressionAnalysisView`, `VisitSummaryView`）中植入 `Paywall` 付费墙交互，实现高阶商业化转化。
+- 完善 `ProfileView` 中的家庭成员管理，实现患者与家属账号的绑定模拟。
+- 开发 `CaregiverReportView`，在家属视角下展示专属的“照护者周报”。
 
 ### v0.5.3 (Phase 3 Pre-consultation UI Refinement)
 - 彻底重构预问诊模块 (`src/views/Home/index.tsx`)：

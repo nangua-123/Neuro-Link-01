@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../../store';
 import { Switch, List, Toast, Modal, ActionSheet, Dialog } from 'antd-mobile';
 import { Shield, User, QrCode, FileText, ChevronRight, LogOut, HeartPulse, Settings, Users, Plus, Activity, Zap } from 'lucide-react';
@@ -6,15 +6,32 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import NeuroPassModal from '../../components/NeuroPassModal';
 import FamilyBindingModal from './components/FamilyBindingModal';
+import { DeviceManagerModal } from '../../components/DeviceManagerModal';
 import { UserIdentity } from '../../interfaces/user';
 import { showComingSoon } from '../../utils/ui';
+import { ProfileSkeleton } from '../../components/ProfileSkeleton';
 
 export default function ProfileView() {
-  const { hasSignedAgreement, signAgreement, revokeAgreement, clearAuth, identity, setAuth, userToken, familyId, boundPatients, currentPatientId, switchPatient } = useAppStore();
+  const { hasSignedAgreement, signAgreement, revokeAgreement, clearAuth, identity, setAuth, userToken, familyId, boundPatients, currentPatientId, switchPatient, connectedDevices } = useAppStore();
   const navigate = useNavigate();
   const [isNeuroPassOpen, setIsNeuroPassOpen] = useState(false);
   const [isIdentitySheetVisible, setIsIdentitySheetVisible] = useState(false);
   const [isBindingModalVisible, setIsBindingModalVisible] = useState(false);
+  const [isDeviceManagerVisible, setIsDeviceManagerVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleDeviceClick = () => {
+    if (connectedDevices.length > 0) {
+      setIsDeviceManagerVisible(true);
+    } else {
+      navigate('/device-connect');
+    }
+  };
 
   const handleAuthChange = (checked: boolean) => {
     if (checked) {
@@ -94,8 +111,12 @@ export default function ProfileView() {
 
   const currentPatient = boundPatients?.find(p => p.id === currentPatientId);
 
+  if (isLoading) {
+    return <ProfileSkeleton />;
+  }
+
   return (
-    <div className="min-h-screen bg-[#FAFAFA] flex flex-col relative overflow-x-hidden pb-24">
+    <div className="bg-[#FAFAFA] flex flex-col relative overflow-x-hidden">
       {/* 极浅弥散暖色渐变背景 */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <div className="absolute -top-[10%] -right-[10%] w-[120%] h-[50%] bg-gradient-to-b from-[#E8F3FF] to-transparent opacity-60 blur-3xl" />
@@ -114,7 +135,7 @@ export default function ProfileView() {
           
           <div className="flex items-center gap-5 relative z-10">
             <div className="relative">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center text-blue-600 shadow-inner border border-blue-100/50 overflow-hidden">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-50 to-blue-50 flex items-center justify-center text-blue-600 shadow-inner border border-blue-100/50 overflow-hidden">
                 {identity === UserIdentity.FAMILY && currentPatient?.avatarUrl ? (
                   <img src={currentPatient.avatarUrl} alt="avatar" className="w-full h-full object-cover" />
                 ) : (
@@ -158,13 +179,13 @@ export default function ProfileView() {
             onClick={() => navigate('/ehr-timeline')}
             className="bg-white rounded-[16px] p-2.5 flex flex-col items-center justify-center gap-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-slate-100/50 active:scale-95 transition-transform"
           >
-            <div className="w-9 h-9 rounded-full bg-indigo-50 flex items-center justify-center">
-              <FileText className="w-4 h-4 text-indigo-600" />
+            <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center">
+              <FileText className="w-4 h-4 text-blue-600" />
             </div>
             <span className="text-[10px] font-semibold text-slate-700">健康档案</span>
           </button>
           <button 
-            onClick={() => navigate('/device')}
+            onClick={handleDeviceClick}
             className="bg-white rounded-[16px] p-2.5 flex flex-col items-center justify-center gap-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-slate-100/50 active:scale-95 transition-transform"
           >
             <div className="w-9 h-9 rounded-full bg-rose-50 flex items-center justify-center">
@@ -173,7 +194,7 @@ export default function ProfileView() {
             <span className="text-[10px] font-semibold text-slate-700">智能穿戴</span>
           </button>
           <button 
-            onClick={() => showComingSoon('体检报告', '历史体检报告与 AI 深度解读即将上线。')}
+            onClick={() => navigate('/health-report')}
             className="bg-white rounded-[16px] p-2.5 flex flex-col items-center justify-center gap-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-slate-100/50 active:scale-95 transition-transform"
           >
             <div className="w-9 h-9 rounded-full bg-emerald-50 flex items-center justify-center">
@@ -216,6 +237,59 @@ export default function ProfileView() {
               {(!boundPatients || boundPatients.length === 0) && (
                 <div className="w-full py-4 text-center text-slate-400 text-[13px]">
                   暂无绑定的照护对象
+                </div>
+              )}
+            </div>
+            
+            {boundPatients && boundPatients.length > 0 && (
+              <div className="mt-3 px-2">
+                <button
+                  onClick={() => navigate('/caregiver-report')}
+                  className="w-full bg-gradient-to-r from-blue-50 to-blue-50 border border-blue-100/50 rounded-[16px] p-3 flex items-center justify-between active:scale-[0.98] transition-transform"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-blue-100/50 flex items-center justify-center">
+                      <FileText className="w-4 h-4 text-blue-600" />
+                    </div>
+                    <div className="text-left">
+                      <div className="text-[14px] font-bold text-slate-800">家属周报</div>
+                      <div className="text-[11px] text-slate-500">查看本周照护数据与分析</div>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-slate-400" />
+                </button>
+              </div>
+            )}
+          </motion.div>
+        )}
+
+        {/* Module A.2: My Caregivers (Only visible if identity is PATIENT) */}
+        {identity === UserIdentity.PATIENT && (
+          <motion.div variants={itemVariants} className="bg-white rounded-[28px] p-4 mb-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100/50">
+            <div className="flex items-center justify-between mb-3 px-2">
+              <h3 className="font-semibold text-slate-900 text-[15px] tracking-tight">我的照护者</h3>
+              <button 
+                onClick={() => setIsNeuroPassOpen(true)}
+                className="text-blue-600 text-[13px] font-semibold flex items-center gap-1 bg-blue-50/50 px-3 py-1.5 rounded-full active:bg-blue-100/50 transition-colors"
+              >
+                <QrCode className="w-3.5 h-3.5" /> 邀请家属
+              </button>
+            </div>
+            <div className="flex gap-3 overflow-x-auto pb-2 px-2 snap-x">
+              {/* Mocking a bound caregiver if we have boundPatients (just for simulation) */}
+              {boundPatients && boundPatients.length > 0 ? (
+                <div className="flex-shrink-0 w-24 p-3 rounded-[20px] border border-slate-100 bg-slate-50 flex flex-col items-center gap-2 snap-center">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-blue-100 flex items-center justify-center text-blue-600 shadow-sm border border-blue-200/50">
+                    <User className="w-5 h-5" />
+                  </div>
+                  <div className="text-center">
+                    <div className="text-[13px] font-bold text-slate-900 leading-tight">李阿姨</div>
+                    <div className="text-[10px] text-slate-500 font-medium">女儿</div>
+                  </div>
+                </div>
+              ) : (
+                <div className="w-full py-4 text-center text-slate-400 text-[13px]">
+                  暂无绑定的照护者，点击右上角邀请
                 </div>
               )}
             </div>
@@ -304,6 +378,11 @@ export default function ProfileView() {
         onAction={(action) => handleIdentitySwitch(action.key as UserIdentity)}
         cancelText="取消"
         className="font-medium"
+      />
+
+      <DeviceManagerModal 
+        visible={isDeviceManagerVisible} 
+        onClose={() => setIsDeviceManagerVisible(false)} 
       />
     </div>
   );

@@ -53,9 +53,9 @@ export default function EHRTimelineView() {
       title: '签署《三方电子联合数据授权协议》',
       desc: '授权脱敏数据用于医疗科研与新药研发，获得 VIP 专属护航权益。',
       icon: ShieldCheck,
-      color: 'text-purple-500',
-      bgColor: 'bg-purple-50',
-      borderColor: 'border-purple-100',
+      color: 'text-blue-500',
+      bgColor: 'bg-blue-50',
+      borderColor: 'border-blue-100',
     },
     {
       id: 4,

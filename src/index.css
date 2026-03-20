@@ -8,13 +8,29 @@
   --adm-color-background: #F5F5F5;
 }
 
-body {
-  background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%); /* slate-50 to indigo-50 */
+html, body {
+  width: 100%;
+  height: 100%;
   margin: 0;
   padding: 0;
+  overflow-x: hidden; /* Prevent horizontal scroll globally */
+  -webkit-tap-highlight-color: transparent;
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%); /* slate-50 to blue-50 */
   font-family: var(--adm-font-family);
   -webkit-font-smoothing: antialiased;
-  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+  max-width: 28rem; /* max-w-md (448px) */
+  margin-left: auto;
+  margin-right: auto;
+  min-height: 100dvh;
+  position: relative;
+  background-color: #FAFAFA;
+  box-shadow: 0 0 40px rgba(0,0,0,0.05);
+  overflow-x: hidden;
+  transform: translateZ(0); /* Make #root the containing block for fixed elements */
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

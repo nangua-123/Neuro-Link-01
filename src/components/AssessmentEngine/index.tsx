@@ -56,13 +56,16 @@ export const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ schema, onSu
             onChange={handleChange} 
           />
         ))}
+
+        {/* 底部悬浮按钮占位 */}
+        <div className="h-[calc(env(safe-area-inset-bottom)+100px)] shrink-0 pointer-events-none" />
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto p-5 bg-gradient-to-t from-[#f9fafb] via-[#f9fafb] to-transparent z-50 pointer-events-none">
         <button
           onClick={handleSubmit}
           disabled={isSubmitting}
-          className="w-full max-w-2xl mx-auto block bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-[24px] py-4 font-medium text-[15px] shadow-[0_8px_20px_rgba(79,70,229,0.25)] active:scale-95 transition-all pointer-events-auto disabled:opacity-70 flex items-center justify-center"
+          className="w-full max-w-2xl mx-auto block bg-gradient-to-r from-blue-600 to-blue-600 text-white rounded-[24px] py-4 font-medium text-[15px] shadow-[0_8px_20px_rgba(37,99,235,0.25)] active:scale-95 transition-all pointer-events-auto disabled:opacity-70 flex items-center justify-center"
         >
           {isSubmitting ? (
             <>

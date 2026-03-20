@@ -43,7 +43,7 @@ export default function NeuroPassModal({ visible, onClose }: Props) {
           <motion.div 
             animate={{ y: [0, 200, 0] }}
             transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-            className="absolute left-0 right-0 h-0.5 bg-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.8)] z-10"
+            className="absolute left-0 right-0 h-0.5 bg-blue-500/50 shadow-[0_0_15px_rgba(37,99,235,0.8)] z-10"
             style={{ top: '24px' }}
           />
           

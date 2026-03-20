@@ -36,7 +36,7 @@ export default function DeviceAuthView() {
       });
       Toast.show({ icon: 'success', content: '授权成功' });
       setTimeout(() => {
-        navigate('/device', { replace: true });
+        navigate('/profile', { replace: true });
       }, 1500);
     }, 2000);
   };

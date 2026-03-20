@@ -13,7 +13,7 @@ export const IoTStatusCard: React.FC = () => {
       <motion.div 
         whileTap={{ scale: 0.98 }}
         onClick={() => navigate('/device-connect')}
-        className="bg-white rounded-[16px] p-3 shadow-[0_4px_20px_rgba(22,119,255,0.06)] border border-blue-50/50 relative overflow-hidden cursor-pointer group flex items-center justify-between"
+        className="bg-white rounded-[16px] p-3 shadow-[0_4px_20px_rgba(37,99,235,0.06)] border border-blue-50/50 relative overflow-hidden cursor-pointer group flex items-center justify-between"
       >
         <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-full blur-2xl -mr-8 -mt-8 pointer-events-none transition-transform group-hover:scale-110" />
         <div className="flex items-center gap-3 relative z-10">
@@ -53,8 +53,8 @@ export const IoTStatusCard: React.FC = () => {
   return (
     <motion.div 
       whileTap={{ scale: 0.98 }}
-      onClick={() => navigate('/device')}
-      className="bg-white rounded-[16px] p-3 shadow-[0_4px_20px_rgba(22,119,255,0.08)] border border-blue-100/50 relative overflow-hidden cursor-pointer group flex items-center justify-between"
+      onClick={() => navigate('/profile')}
+      className="bg-white rounded-[16px] p-3 shadow-[0_4px_20px_rgba(37,99,235,0.08)] border border-blue-100/50 relative overflow-hidden cursor-pointer group flex items-center justify-between"
     >
       <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50/80 rounded-full blur-3xl -mr-8 -mt-8 pointer-events-none" />
       <div className="flex items-center gap-3 relative z-10">

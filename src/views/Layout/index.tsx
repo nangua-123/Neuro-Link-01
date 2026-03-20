@@ -37,9 +37,9 @@ export default function Layout() {
   ];
 
   return (
-    <div className="flex flex-col h-screen w-full max-w-md mx-auto bg-[#FAFAFA] relative overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.05)]">
+    <div className="flex flex-col h-[100dvh] w-full max-w-md mx-auto bg-[#FAFAFA] relative overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.05)]">
       {/* 沉浸式内容区，底部留出 TabBar 的高度与安全区 */}
-      <div className="flex-1 overflow-y-auto flex flex-col relative">
+      <div className="flex-1 overflow-y-auto relative hide-scrollbar">
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
@@ -50,9 +50,11 @@ export default function Layout() {
               duration: 0.3, 
               ease: [0.22, 1, 0.36, 1] // Custom easing for smooth C-end feel
             }}
-            className="flex-grow shrink-0 flex flex-col min-h-full pb-[calc(env(safe-area-inset-bottom)+80px)] absolute inset-0 w-full"
+            className="min-h-full pb-[calc(env(safe-area-inset-bottom)+80px)] w-full"
           >
-            {outlet}
+            <React.Suspense fallback={<div className="flex items-center justify-center h-full"><div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div></div>}>
+              {outlet}
+            </React.Suspense>
           </motion.div>
         </AnimatePresence>
       </div>

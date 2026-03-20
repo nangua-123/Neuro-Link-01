@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { NavBar, Result, SafeArea, Toast } from 'antd-mobile';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAppStore } from '../../store';
 import { DiseaseTag } from '../../configs/constants';
@@ -22,7 +22,14 @@ import { scale_migraine_midas_mock } from '../../configs/scales/migraine';
 
 export default function AssessmentView() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { selectedDiseaseTag } = useAppStore();
+  
+  // 从 URL 参数中获取 diseaseTag，如果没有则使用 store 中的
+  const queryParams = new URLSearchParams(location.search);
+  const urlDiseaseTag = queryParams.get('diseaseTag') as DiseaseTag | null;
+  const effectiveDiseaseTag = urlDiseaseTag || selectedDiseaseTag;
+
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [assessmentData, setAssessmentData] = useState<Record<string, any>>({});
   const [isCompleted, setIsCompleted] = useState(false);
@@ -41,7 +48,7 @@ export default function AssessmentView() {
   }, [isCompleted]);
 
   const { steps: assessmentSteps, subtitle } = useMemo(() => {
-    switch (selectedDiseaseTag) {
+    switch (effectiveDiseaseTag) {
       case DiseaseTag.EPILEPSY:
         return {
           subtitle: '华西癫痫基线期评估',
@@ -108,9 +115,15 @@ export default function AssessmentView() {
           ],
         };
     }
-  }, [selectedDiseaseTag]);
+  }, [effectiveDiseaseTag]);
 
-  const currentStep = assessmentSteps[currentStepIndex];
+  const currentStep = assessmentSteps[currentStepIndex] || assessmentSteps[0];
+
+  useEffect(() => {
+    if (currentStepIndex >= assessmentSteps.length) {
+      setCurrentStepIndex(0);
+    }
+  }, [assessmentSteps.length, currentStepIndex]);
 
   const handleNextStep = useCallback(
     async (stepData: Record<string, any>) => {
@@ -128,7 +141,7 @@ export default function AssessmentView() {
           setIsSubmitting(false);
           setIsCompleted(true);
           setTimeout(() => {
-            navigate('/report', { state: { payload: finalData, diseaseTag: selectedDiseaseTag } });
+            navigate('/report', { state: { payload: finalData, diseaseTag: effectiveDiseaseTag } });
           }, 1500);
         } catch (error) {
           setIsSubmitting(false);
@@ -136,7 +149,7 @@ export default function AssessmentView() {
         }
       }
     },
-    [currentStepIndex, assessmentSteps.length, assessmentData, navigate, selectedDiseaseTag]
+    [currentStepIndex, assessmentSteps.length, assessmentData, navigate, effectiveDiseaseTag]
   );
 
   const handleBackStep = useCallback(() => {
@@ -167,7 +180,7 @@ export default function AssessmentView() {
             className="relative w-24 h-24 mb-8"
           >
             <div className="absolute inset-0 bg-blue-100 rounded-full animate-ping opacity-60" />
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-full border border-blue-200 shadow-[0_8px_30px_rgba(59,130,246,0.15)] flex items-center justify-center z-10">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-50 rounded-full border border-blue-200 shadow-[0_8px_30px_rgba(59,130,246,0.15)] flex items-center justify-center z-10">
               <svg className="w-10 h-10 text-blue-600 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
               </svg>
@@ -203,7 +216,7 @@ export default function AssessmentView() {
   const progressPercent = ((currentStepIndex + 1) / assessmentSteps.length) * 100;
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] flex flex-col overflow-hidden">
+    <div className="h-[100dvh] bg-[#FAFAFA] flex flex-col overflow-hidden">
       <div className="bg-white z-10 shadow-[0_4px_20px_rgba(0,0,0,0.02)] relative">
         <NavBar
           onBack={handleBackStep}
@@ -211,7 +224,7 @@ export default function AssessmentView() {
         >
           <div className="flex flex-col items-center">
             <span className="text-[16px] font-bold text-slate-900">
-              {currentStepIndex + 1} / {assessmentSteps.length} {currentStep.title}
+              {currentStepIndex + 1} / {assessmentSteps.length} {currentStep?.title}
             </span>
             <span className="text-[12px] text-slate-500 mt-0.5 tracking-wide font-medium">{subtitle}</span>
           </div>
@@ -228,27 +241,29 @@ export default function AssessmentView() {
 
       <div className="flex-1 relative overflow-hidden">
         <AnimatePresence initial={false} custom={direction}>
-          <motion.div
-            key={currentStep.id}
-            custom={direction}
-            variants={stepTransitionVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{
-              x: { type: "spring", stiffness: 300, damping: 30 },
-              opacity: { duration: 0.2 }
-            }}
-            className="absolute inset-0 w-full h-full overflow-y-auto"
-          >
-            <div className="pt-6 pb-24">
-              <AssessmentEngine 
-                schema={currentStep.schema as any}
-                onSubmit={handleNextStep}
-                isSubmitting={isSubmitting}
-              />
-            </div>
-          </motion.div>
+          {currentStep && (
+            <motion.div
+              key={currentStep.id}
+              custom={direction}
+              variants={stepTransitionVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                x: { type: "spring", stiffness: 300, damping: 30 },
+                opacity: { duration: 0.2 }
+              }}
+              className="absolute inset-0 w-full h-full overflow-y-auto"
+            >
+              <div className="pt-6 pb-24">
+                <AssessmentEngine 
+                  schema={currentStep.schema as any}
+                  onSubmit={handleNextStep}
+                  isSubmitting={isSubmitting}
+                />
+              </div>
+            </motion.div>
+          )}
         </AnimatePresence>
       </div>
       <SafeArea position="bottom" />

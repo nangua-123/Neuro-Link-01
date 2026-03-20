@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { NavBar, SafeArea, Popup } from 'antd-mobile';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, Smartphone, Watch, Activity, Heart, ShoppingBag, Bluetooth, ShieldCheck, FileText } from 'lucide-react';
+import { ChevronLeft, Smartphone, Watch, Activity, Heart, ShoppingBag, Bluetooth, ShieldCheck, FileText, BrainCircuit, Moon } from 'lucide-react';
 import { useAppStore } from '../../store';
 import { DiseaseTag } from '../../configs/constants';
 
 export default function DeviceConnectView() {
   const navigate = useNavigate();
-  const { selectedDiseaseTag, connectDevice } = useAppStore();
+  const { selectedDiseaseTag, connectDevice, bindDevice } = useAppStore();
   
   const [pairingDevice, setPairingDevice] = useState<any>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -31,10 +31,11 @@ export default function DeviceConnectView() {
         syncTime: '刚刚同步',
         battery: 85
       });
+      bindDevice();
     }
     setShowAuthModal(false);
     setPairingDevice(null);
-    navigate('/device', { replace: true });
+    navigate('/profile', { replace: true });
   };
 
   const healthApps = [
@@ -64,14 +65,14 @@ export default function DeviceConnectView() {
       name: 'BCI 认知训练头环',
       desc: '精准采集认知波段，辅助数字疗法',
       tags: [DiseaseTag.AD],
-      icon: BrainIcon,
+      icon: BrainCircuit,
     },
     {
       id: 'sleep_monitor',
       name: '医用级睡眠分期仪',
       desc: '深度睡眠结构分析与呼吸暂停监测',
       tags: [DiseaseTag.AD, DiseaseTag.MIGRAINE],
-      icon: MoonIcon,
+      icon: Moon,
     }
   ];
 
@@ -218,7 +219,7 @@ export default function DeviceConnectView() {
                     transition={{ duration: 2, repeat: Infinity, ease: "easeOut", delay: 0.5 }}
                     className="absolute w-20 h-20 bg-blue-400 rounded-full"
                   />
-                  <div className="relative w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full shadow-[0_8px_30px_rgba(59,130,246,0.3)] flex items-center justify-center z-10">
+                  <div className="relative w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full shadow-[0_8px_30px_rgba(59,130,246,0.3)] flex items-center justify-center z-10">
                     <Bluetooth className="w-10 h-10 text-white" />
                   </div>
                 </div>
@@ -255,7 +256,7 @@ export default function DeviceConnectView() {
                 <div className="space-y-3 mt-auto">
                   <button
                     onClick={handleAgreeAndBind}
-                    className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-[24px] font-medium text-[16px] shadow-[0_8px_24px_rgba(79,70,229,0.25)] active:scale-95 transition-transform"
+                    className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-600 text-white rounded-[24px] font-medium text-[16px] shadow-[0_8px_24px_rgba(37,99,235,0.25)] active:scale-95 transition-transform"
                   >
                     同意授权并绑定
                   </button>

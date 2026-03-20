@@ -17,7 +17,7 @@ export default function ReportView() {
   const [result, setResult] = useState<ScoringResult | null>(null);
   const [isAgreementOpen, setIsAgreementOpen] = useState(false);
   const [isNeuroPassOpen, setIsNeuroPassOpen] = useState(false);
-  const { hasSignedAgreement, signAgreement, setDiseaseTag, identity } = useAppStore();
+  const { hasSignedAgreement, signAgreement, setDiseaseTag, identity, setUserStage, completeAssessment } = useAppStore();
   const isFamily = identity === UserIdentity.FAMILY;
 
   useEffect(() => {
@@ -26,9 +26,11 @@ export default function ReportView() {
     // Simulate network delay for scoring
     const timer = setTimeout(() => {
       setResult(calculateReport(payload, diseaseTag, isFamily));
+      // Mark assessment as completed in store
+      completeAssessment();
     }, 1500);
     return () => clearTimeout(timer);
-  }, [location.state, isFamily]);
+  }, [location.state, isFamily, completeAssessment]);
 
   const handleCTAClick = () => {
     if (!result) return;
@@ -38,6 +40,7 @@ export default function ReportView() {
       // 轻症留云端：进入居家管家
       const diseaseTag = location.state?.diseaseTag || DiseaseTag.NONE;
       setDiseaseTag(diseaseTag);
+      setUserStage('ACTIVE'); // Upgrade user stage to ACTIVE
       if (hasSignedAgreement) {
         navigate('/manager');
       } else {
@@ -69,6 +72,7 @@ export default function ReportView() {
   const handleAgree = () => {
     signAgreement();
     setIsAgreementOpen(false);
+    setUserStage('ACTIVE'); // Ensure user stage is ACTIVE
     navigate('/manager');
   };
 
@@ -93,7 +97,7 @@ export default function ReportView() {
       <div className="min-h-screen bg-[#0f172a] flex flex-col items-center justify-center relative overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
         
         <Brain className="w-16 h-16 text-blue-400 animate-bounce mb-6 relative z-10" />
         <h2 className="text-[20px] font-bold text-white mb-2 tracking-wider relative z-10">Neuro-Link AI</h2>
@@ -160,7 +164,7 @@ export default function ReportView() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] flex flex-col relative pb-40">
+    <div className="min-h-screen bg-[#FAFAFA] flex flex-col relative">
       {/* Header Section with Dynamic Gradient */}
       <div className={`relative bg-gradient-to-b ${theme.bg} pt-12 pb-24 px-6 overflow-hidden rounded-b-[40px] shadow-[0_8px_30px_rgba(0,0,0,0.1)] transition-colors duration-1000`}>
         {/* Watermark / Texture */}
@@ -333,6 +337,8 @@ export default function ReportView() {
           </motion.div>
         )}
 
+        {/* 底部悬浮按钮占位 */}
+        <div className="h-[calc(env(safe-area-inset-bottom)+140px)] shrink-0 pointer-events-none" />
       </div>
 
       {/* Bottom CTA */}

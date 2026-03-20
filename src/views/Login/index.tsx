@@ -1,13 +1,14 @@
 // File: src/views/Login/index.tsx
 import React, { useState, useEffect } from 'react';
 import { Button, Input, Checkbox, Toast } from 'antd-mobile';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppStore } from '../../store';
 import { UserIdentity } from '../../interfaces/user';
 import { Sparkles } from 'lucide-react';
 
 export default function LoginView() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { setAuth, signAgreement } = useAppStore();
   const [phone, setPhone] = useState('');
   const [code, setCode] = useState('');
@@ -16,6 +17,8 @@ export default function LoginView() {
   const [agreed, setAgreed] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  const from = location.state?.from?.pathname || '/';
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -76,7 +79,7 @@ export default function LoginView() {
         signAgreement();
       }
       Toast.show({ icon: 'success', content: '登录成功' });
-      navigate('/', { replace: true });
+      navigate(from, { replace: true });
     }, 1000);
   };
 
@@ -180,7 +183,7 @@ export default function LoginView() {
           <button 
             onClick={handleLogin}
             disabled={isLoggingIn}
-            className="w-full rounded-[24px] bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium py-4 shadow-[0_8px_24px_rgba(79,70,229,0.25)] active:scale-95 transition-transform flex items-center justify-center disabled:opacity-70"
+            className="w-full rounded-[24px] bg-gradient-to-r from-blue-600 to-blue-600 text-white font-medium py-4 shadow-[0_8px_24px_rgba(37,99,235,0.25)] active:scale-95 transition-transform flex items-center justify-center disabled:opacity-70"
           >
             <span className="tracking-wide text-[16px]">
               {isLoggingIn ? '登录中...' : '安全登录'}

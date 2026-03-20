@@ -29,6 +29,6 @@ export interface MetricData {
   unit: string;
   trend?: string;
   trendDirection?: 'up' | 'down' | 'neutral';
-  colorTheme: 'indigo' | 'rose' | 'emerald' | 'amber';
+  colorTheme: 'blue' | 'rose' | 'emerald' | 'amber';
   chartData: any[];
 }

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { NavBar, Toast, Popup, SafeArea } from 'antd-mobile';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../store';
@@ -6,6 +6,7 @@ import { DiseaseTag } from '../../configs/constants';
 import { Check, Shield, Zap, Watch, Brain, Bluetooth, Loader2, ChevronLeft, Receipt } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { showComingSoon } from '../../utils/ui';
+import { MallSkeleton } from '../../components/MallSkeleton';
 
 interface PackageInfo {
   id: string;
@@ -17,7 +18,7 @@ interface PackageInfo {
   hardware: string;
   features: string[];
   tag: DiseaseTag;
-  theme: 'blue' | 'indigo';
+  theme: 'blue' | 'blue';
   icon: React.ElementType;
 }
 
@@ -55,7 +56,7 @@ const PACKAGES: PackageInfo[] = [
       '专属认知康复师在线指导'
     ],
     tag: DiseaseTag.AD,
-    theme: 'indigo',
+    theme: 'blue',
     icon: Brain
   }
 ];
@@ -67,6 +68,12 @@ export default function MallView() {
   const [showBindModal, setShowBindModal] = useState(false);
   const [isBinding, setIsBinding] = useState(false);
   const [purchaseMode, setPurchaseMode] = useState<'rent' | 'buy'>('rent');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Sort packages to put the matching one first
   const sortedPackages = useMemo(() => {
@@ -102,13 +109,17 @@ export default function MallView() {
         icon: 'success',
       });
       setTimeout(() => {
-        navigate('/device');
+        navigate('/profile');
       }, 500);
     }, 2000);
   };
 
+  if (isLoading) {
+    return <MallSkeleton />;
+  }
+
   return (
-    <div className="min-h-screen bg-[#FAFAFA] flex flex-col relative overflow-hidden">
+    <div className="bg-[#FAFAFA] flex flex-col relative">
       {/* 极浅弥散暖色渐变背景 */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <div className="absolute -top-[10%] -right-[10%] w-[120%] h-[50%] bg-gradient-to-b from-[#E8F3FF] to-transparent opacity-60 blur-3xl" />
@@ -159,7 +170,7 @@ export default function MallView() {
         <div className="space-y-6">
           {sortedPackages.map((pkg, index) => {
             const isMatch = index === 0 && pkg.tag === selectedDiseaseTag;
-            const isBlue = pkg.theme === 'blue';
+            const isIndigo = pkg.theme === 'blue';
             
             return (
               <motion.div
@@ -176,7 +187,7 @@ export default function MallView() {
                 )}
 
                 {/* Header Section */}
-                <div className={`p-4 relative overflow-hidden ${isBlue ? 'bg-gradient-to-br from-blue-600 to-indigo-700' : 'bg-gradient-to-br from-indigo-600 to-purple-700'}`}>
+                <div className={`p-4 relative overflow-hidden ${isIndigo ? 'bg-gradient-to-br from-blue-600 to-blue-700' : 'bg-gradient-to-br from-blue-600 to-blue-700'}`}>
                   <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
                   
                   <div className="relative z-10 text-white flex items-center justify-between">
@@ -207,7 +218,7 @@ export default function MallView() {
                 {/* Content Section */}
                 <div className="p-4">
                   <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-[16px] mb-4 border border-slate-100/50">
-                    <div className={`w-8 h-8 rounded-[12px] flex items-center justify-center ${isBlue ? 'bg-blue-100 text-blue-600' : 'bg-indigo-100 text-indigo-600'}`}>
+                    <div className={`w-8 h-8 rounded-[12px] flex items-center justify-center ${isIndigo ? 'bg-blue-100 text-blue-600' : 'bg-blue-100 text-blue-600'}`}>
                       <Watch className="w-4 h-4" />
                     </div>
                     <div>
@@ -219,7 +230,7 @@ export default function MallView() {
                   <div className="space-y-2 mb-5">
                     {pkg.features.map((feature, i) => (
                       <div key={i} className="flex items-start gap-2">
-                        <div className={`mt-0.5 w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${isBlue ? 'bg-blue-50 text-blue-500' : 'bg-indigo-50 text-indigo-500'}`}>
+                        <div className={`mt-0.5 w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${isIndigo ? 'bg-blue-50 text-blue-500' : 'bg-blue-50 text-blue-500'}`}>
                           <Check className="w-2.5 h-2.5" strokeWidth={3} />
                         </div>
                         <span className="text-[13px] text-slate-600 leading-relaxed font-medium">{feature}</span>
@@ -231,9 +242,9 @@ export default function MallView() {
                     onClick={() => handleSubscribe(pkg.id)}
                     disabled={isSubscribing !== null}
                     className={`w-full py-3 rounded-[20px] font-medium text-[15px] tracking-wide flex items-center justify-center gap-2 transition-transform active:scale-95 ${
-                      isBlue 
-                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_8px_24px_rgba(79,70,229,0.25)]' 
-                        : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-[0_8px_24px_rgba(124,58,237,0.25)]'
+                      isIndigo 
+                        ? 'bg-gradient-to-r from-blue-600 to-blue-600 text-white shadow-[0_8px_24px_rgba(37,99,235,0.25)]' 
+                        : 'bg-gradient-to-r from-blue-600 to-blue-600 text-white shadow-[0_8px_24px_rgba(37,99,235,0.25)]'
                     }`}
                   >
                     {isSubscribing === pkg.id ? (
@@ -298,7 +309,7 @@ export default function MallView() {
                 <div className="w-full space-y-3">
                   <button
                     onClick={handleBind}
-                    className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-[24px] font-medium text-[16px] shadow-[0_8px_24px_rgba(79,70,229,0.25)] active:scale-95 transition-transform"
+                    className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-600 text-white rounded-[24px] font-medium text-[16px] shadow-[0_8px_24px_rgba(37,99,235,0.25)] active:scale-95 transition-transform"
                   >
                     立即绑定
                   </button>

@@ -68,7 +68,7 @@ export default function NeuroPassView() {
           </p>
           
           <div className="w-full bg-white rounded-[28px] p-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100/50 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-50 to-blue-50 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
             
             <div className="flex justify-between items-center relative z-10 mb-8">
               <div>
@@ -80,7 +80,7 @@ export default function NeuroPassView() {
               </div>
             </div>
             
-            <button className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-[24px] font-medium text-[16px] shadow-[0_8px_24px_rgba(79,70,229,0.25)] active:scale-95 transition-transform relative z-10">
+            <button className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-600 text-white rounded-[24px] font-medium text-[16px] shadow-[0_8px_24px_rgba(37,99,235,0.25)] active:scale-95 transition-transform relative z-10">
               立即开通
             </button>
           </div>

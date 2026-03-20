@@ -399,15 +399,15 @@ export default function HomeView() {
   };
 
   return (
-    <div className="flex flex-col flex-1 w-full bg-[#FAFAFA] relative overflow-hidden">
+    <div className="flex flex-col w-full bg-[#FAFAFA] relative">
       {/* 极浅弥散暖色渐变背景 */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+      <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <div className="absolute -top-[10%] -right-[10%] w-[120%] h-[50%] bg-gradient-to-b from-[#E8F3FF] to-transparent opacity-60 blur-3xl" />
         <div className="absolute top-[20%] -left-[20%] w-[80%] h-[60%] bg-gradient-to-tr from-[#FFF0E6] to-transparent opacity-30 blur-3xl" />
       </div>
 
       {/* 极窄顶部状态栏 */}
-      <div className="absolute top-0 left-0 w-full z-20 bg-white/80 backdrop-blur-md pt-3 pb-2 px-4 flex items-center justify-between shadow-[0_2px_10px_rgba(0,0,0,0.02)] border-b border-slate-100/50">
+      <div className="fixed top-0 left-0 right-0 max-w-md mx-auto z-20 bg-white/80 backdrop-blur-md pt-3 pb-2 px-4 flex items-center justify-between shadow-[0_2px_10px_rgba(0,0,0,0.02)] border-b border-slate-100/50">
         <div className="w-8 flex items-center justify-start cursor-pointer active:opacity-70"></div>
         <div className="flex flex-col items-center justify-center">
           <div className="flex items-center space-x-1.5">
@@ -425,7 +425,7 @@ export default function HomeView() {
       </div>
 
       {/* 最大化对话视口 */}
-      <div className="flex-1 overflow-y-auto px-4 pt-20 pb-28 z-10 scroll-smooth">
+      <div className="px-4 pt-20 z-10">
         <div className="flex flex-col space-y-6 max-w-md mx-auto">
           {messages.map((msg) => {
             if (msg.role === 'ai') {
@@ -472,7 +472,7 @@ export default function HomeView() {
             if (msg.role === 'user') {
               return (
                 <div key={msg.id} className="flex items-start justify-end w-full animate-fade-in">
-                  <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-[20px] rounded-tr-sm px-4 py-3 shadow-[0_4px_12px_rgba(79,70,229,0.2)] max-w-[85%] text-[15px] leading-relaxed tracking-wide">
+                  <div className="bg-gradient-to-r from-blue-600 to-blue-600 text-white rounded-[20px] rounded-tr-sm px-4 py-3 shadow-[0_4px_12px_rgba(37,99,235,0.2)] max-w-[85%] text-[15px] leading-relaxed tracking-wide">
                     {msg.content}
                   </div>
                 </div>
@@ -521,7 +521,7 @@ export default function HomeView() {
                     <button 
                       onClick={() => handlePayment(msg.tags)}
                       disabled={isPaying}
-                      className="w-full rounded-[16px] bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium py-3 shadow-[0_8px_24px_rgba(79,70,229,0.25)] active:scale-95 transition-transform flex items-center justify-center relative z-10 disabled:opacity-70"
+                      className="w-full rounded-[16px] bg-gradient-to-r from-blue-600 to-blue-600 text-white font-medium py-3 shadow-[0_8px_24px_rgba(37,99,235,0.25)] active:scale-95 transition-transform flex items-center justify-center relative z-10 disabled:opacity-70"
                     >
                       <span className="tracking-wide text-[14px] line-clamp-1">
                         {isPaying ? '处理中...' : '1元解锁完整评估报告'}
@@ -549,11 +549,14 @@ export default function HomeView() {
             </div>
           )}
           <div ref={messagesEndRef} className="h-4" />
+          
+          {/* 底部悬浮栏等高占位，确保最后一条消息不被遮挡 */}
+          <div className="h-[calc(env(safe-area-inset-bottom)+160px)] shrink-0" />
         </div>
       </div>
 
       {/* 悬浮药丸输入舱 (Floating Pill) - 完美解决间距问题并支持多模态 */}
-      <div className="absolute bottom-4 left-4 right-4 z-30 bg-white/90 backdrop-blur-xl rounded-[24px] shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-white/60 p-2 flex items-center space-x-2">
+      <div className="fixed bottom-[calc(env(safe-area-inset-bottom)+80px)] left-4 right-4 max-w-md mx-auto z-30 bg-white/90 backdrop-blur-xl rounded-[24px] shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-white/60 p-2 flex items-center space-x-2">
         {/* 语音/键盘切换 */}
         <div 
           onClick={() => setInputMode(m => m === 'voice' ? 'text' : 'voice')} 
@@ -585,7 +588,7 @@ export default function HomeView() {
             className={`flex-1 h-10 rounded-full flex items-center justify-center text-white text-[15px] font-medium transition-all select-none cursor-pointer ${
               isRecording 
                 ? 'bg-gradient-to-r from-red-500 to-red-600 scale-[0.98] shadow-inner' 
-                : 'bg-gradient-to-r from-blue-600 to-indigo-600 active:scale-[0.98]'
+                : 'bg-gradient-to-r from-blue-600 to-blue-600 active:scale-[0.98]'
             }`}
           >
             {isRecording ? '松开 发送' : '按住 说话'}
