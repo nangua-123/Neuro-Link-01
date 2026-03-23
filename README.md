@@ -56,6 +56,34 @@
 - `recharts`: [新增] 数据可视化图表库。
 
 ## Changelog
+### Batch 24: 居家管家与装备库 UI/UX 深度重构 (Premium UI/UX Refactoring)
+- **Objective:** Refactor the UI styles of the "Manager" and "Equipments" pages to align with a modern, clean, and premium aesthetic, eliminating deviations from the established system instructions.
+- **Key Changes:**
+  - **Background and Aura:** Introduced a subtle blue-gray background (`bg-[#F4F7FB]`) with a soft blue gradient halo effect (`blur-3xl`) across both views to create a premium, breathable atmosphere.
+  - **Hero Sections:** Replaced standard headers with prominent, gradient-based "Hero" sections. `ManagerView` now features a personalized greeting, while `EquipmentsView` highlights the "soft-hardware integration" value proposition.
+  - **Card Styling:** Updated all cards (`ClinicReportCard`, `DailyTaskManager`, `VitalsGrid`, `UniversalToolbox`, and Equipment product cards) to use large rounded corners (`rounded-[24px]` or `rounded-[32px]`), soft diffused shadows (`shadow-[0_4px_20px_rgba(0,0,0,0.03)]`), and eliminated harsh borders.
+  - **`ClinicReportCard` Redesign:** Transformed into a premium, full-gradient card (`bg-gradient-to-br from-[#2563EB] to-[#1D4ED8]`) with glassmorphism stats, reinforcing the "全景数字病历" concept.
+  - **Equipment Cards:** Replaced static product images with dynamic CSS gradients and decorative glow effects. Enhanced typography and spacing for a more commercial, high-end presentation.
+  - **Action Buttons:** Restyled primary action buttons with high contrast, gradient effects, and prominent icons (e.g., `ChevronRight`, `CheckCircle2`) to improve click-through rates and visual hierarchy.
+  - **Spacing and Typography:** Significantly increased whitespace ("breathing room") and adjusted font sizes/weights to enhance readability and the overall premium feel, strictly adhering to the C-end consumer medical design paradigm.
+
+### Batch 23: 全景数字病历重构 (Panoramic Digital Medical Record)
+- **Objective:** Consolidate fragmented analysis and reporting modules into a unified, medically rigorous "全景数字病历" (Neuro-Dossier) for both C-end users and B-end doctors.
+- **Key Changes:**
+  - **Unified Reporting System:** Removed old fragmented reports (`TriggerAnalysis`, `VisitSummary`, `ProgressionAnalysis`, `CaregiverReport`, `AIHealthBriefing`) and introduced a single, comprehensive `/clinic-report` route.
+  - **ClinicReportView:** Developed a new tabbed interface presenting an AI Executive Summary alongside raw, objective data across multiple dimensions (History, Clinical Events, Medications, IoT Vitals, Standardized Scales).
+  - **B-End Integration (QR Code):** Implemented a prominent QR code modal within the report summary, allowing doctors to scan and access the full patient dossier on their workstations.
+  - **ManagerView Refinement:** Replaced the `AIHealthBriefing` with a new, professional `ClinicReportCard` and removed the "Premium Services" section to streamline the dashboard.
+  - **Profile Navigation:** Updated quick action grids and family management links in `ProfileView` to direct users to the new "全景档案" (Panoramic Archive).
+  - **Medical-Grade UI/UX:** Shifted the aesthetic of the report section towards a clean, high-density, high-contrast "medical-grade" design, distinct from the softer "AI Butler" style used elsewhere.
+
+### Batch 22: Equipment Module Commercialization & Banner Unification
+- **Objective:** Elevate the commercial appeal of the Equipment module and unify the visual presentation of top-level banners across the application.
+- **Key Changes:**
+  - **Visual Overhaul:** Replaced broken external image URLs with high-quality CSS gradients and Lucide icons in both `EquipmentsView` and `EquipmentDetailView` to ensure a premium, commercial-grade user experience.
+  - **Banner Unification:** Refactored `AIHealthBriefing` in `ManagerView` to use the `HeroBanner` component, ensuring visual consistency across the application's top-level modules.
+  - **Component Enhancements:** Updated `HeroBanner` to accept `children` and `className` props for greater flexibility.
+
 ### Batch 9: 生产环境准备与性能优化 (Production Ready & Optimization)
 - **Objective:** Improve application performance, bundle size, and resilience in poor network conditions.
 - **Key Changes:**
@@ -297,6 +325,13 @@
 ---
 
 ## 🚀 待办事项 (To-Do)
+- [x] **Batch 25: 居家管家首屏深度重构 (AI Insight Board & Health Summary)**
+  - [x] 废弃静态问候语，升级为动态“AI 智能洞察舱”，根据测评状态、疾病标签和身份动态生成高密度洞察文案。
+  - [x] 废弃静态“全景数字病历”入口，升级为“AI 阶段健康摘要”白玻拟物卡片，动态提取用药依从性、体征监测、发作控制、脑力训练等核心指标，形成“洞察 -> 任务 -> 沉淀”的业务闭环。
+  - [x] 统一背景光晕与弥散渐变
+  - [x] 重构 Hero Section 与欢迎语，提升信息密度
+  - [x] 卡片大圆角与柔和阴影重构，引入白玻拟物风格 (White Glassmorphism)
+  - [x] 装备库商业化视觉升级，缩小卡片高度，提升信息密度
 - [x] **Batch 9: 生产环境准备与性能优化 (Production Ready & Optimization)**
   - [x] 路由懒加载 (Lazy Loading) 与代码分割 (Code Splitting)
   - [x] 静态资源预加载与骨架屏 (Skeleton) 覆盖率提升

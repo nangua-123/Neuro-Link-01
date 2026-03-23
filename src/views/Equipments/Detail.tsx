@@ -11,7 +11,9 @@ import {
   BrainCircuit, 
   Users, 
   Wind,
-  Info
+  Info,
+  Watch,
+  Moon
 } from 'lucide-react';
 import { EQUIPMENTS_MOCK, Equipment } from '../../mocks/equipments';
 import { useAppStore } from '../../store';
@@ -23,7 +25,9 @@ const iconMap: Record<string, React.ElementType> = {
   FileText,
   BrainCircuit,
   Users,
-  Wind
+  Wind,
+  Watch,
+  Moon
 };
 
 export default function EquipmentDetailView() {
@@ -95,27 +99,29 @@ export default function EquipmentDetailView() {
 
       {/* Hero Image */}
       <div className="pt-14">
-        <div className="relative w-full aspect-square bg-slate-100">
-          <img 
-            src={equipment.imageUrl} 
-            alt={equipment.name}
-            className="w-full h-full object-cover"
-            referrerPolicy="no-referrer"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent" />
-          <div className="absolute bottom-6 left-5 right-5">
+        <div className={`relative w-full aspect-square bg-gradient-to-br ${equipment.gradient} overflow-hidden flex items-center justify-center border-b border-slate-100/50`}>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl -mr-20 -mt-20" />
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-indigo-400/5 rounded-full blur-3xl -ml-20 -mb-20" />
+          
+          {(() => {
+            const IconComponent = iconMap[equipment.icon] || Activity;
+            return <IconComponent className="w-48 h-48 text-blue-500/80 drop-shadow-md relative z-10" strokeWidth={1.5} />;
+          })()}
+          
+          <div className="absolute inset-0 bg-gradient-to-t from-white/90 via-white/20 to-transparent z-10" />
+          <div className="absolute bottom-6 left-5 right-5 z-20">
             <div className="flex flex-wrap gap-2 mb-3">
               {equipment.tags.map(tag => (
-                <span key={tag} className="px-2.5 py-1 bg-white/20 backdrop-blur-md text-white text-[11px] font-medium rounded-md border border-white/20">
+                <span key={tag} className="px-2.5 py-1 bg-white/60 backdrop-blur-md text-blue-600 text-[11px] font-bold rounded-md border border-blue-100/50 shadow-sm">
                   {tag}
                 </span>
               ))}
             </div>
-            <h1 className="text-[28px] font-extrabold text-white leading-tight mb-1">
+            <h1 className="text-[28px] font-extrabold text-slate-800 leading-tight mb-1">
               {equipment.name}
             </h1>
-            <div className="flex items-center gap-1.5 text-[12px] text-white/80 font-medium">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <div className="flex items-center gap-1.5 text-[12px] text-slate-500 font-medium">
+              <ShieldCheck className="w-4 h-4 text-emerald-500" />
               {equipment.certification}
             </div>
           </div>

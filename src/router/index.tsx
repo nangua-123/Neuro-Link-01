@@ -20,19 +20,15 @@ const LoginView = React.lazy(() => import('../views/Login'));
 const AssessmentView = React.lazy(() => import('../views/Assessment'));
 const CRFAssessmentView = React.lazy(() => import('../views/CRFAssessment'));
 const ReportView = React.lazy(() => import('../views/Report'));
-const HealthReportView = React.lazy(() => import('../views/HealthReport'));
+const ClinicReportView = React.lazy(() => import('../views/ClinicReport'));
 const MedicationsView = React.lazy(() => import('../views/Medications'));
 const DiaryView = React.lazy(() => import('../views/Diary'));
 const CareDiary = React.lazy(() => import('../views/CareDiary').then(m => ({ default: m.CareDiary })));
 const CognitiveCareView = React.lazy(() => import('../views/CognitiveCare'));
 const FeatureView = React.lazy(() => import('../views/Feature'));
-const TriggerAnalysisView = React.lazy(() => import('../views/Analysis/TriggerAnalysis'));
-const VisitSummaryView = React.lazy(() => import('../views/Analysis/VisitSummary'));
-const ProgressionAnalysisView = React.lazy(() => import('../views/Analysis/ProgressionAnalysis'));
 const BrainTrainingView = React.lazy(() => import('../views/BrainTraining'));
 const DTxRunnerView = React.lazy(() => import('../views/DTxRunner'));
 const LBSFenceView = React.lazy(() => import('../views/LBSFence'));
-const CaregiverReportView = React.lazy(() => import('../views/CaregiverReport'));
 
 // Loading fallback
 const PageLoader = () => (
@@ -127,8 +123,8 @@ export const router = createBrowserRouter([
         element: <RequireAuth><RequireAgreement><ReportView /></RequireAgreement></RequireAuth>,
       },
       {
-        path: '/health-report',
-        element: <RequireAuth><RequireAgreement><HealthReportView /></RequireAgreement></RequireAuth>,
+        path: '/clinic-report',
+        element: <RequireAuth><RequireAgreement><ClinicReportView /></RequireAgreement></RequireAuth>,
       },
       {
         path: '/ehr-timeline',
@@ -157,22 +153,6 @@ export const router = createBrowserRouter([
       {
         path: '/feature/lbs-fence',
         element: <RequireAuth><RequireAgreement><LBSFenceView /></RequireAgreement></RequireAuth>,
-      },
-      {
-        path: '/analysis/trigger',
-        element: <RequireAuth><RequireAgreement><TriggerAnalysisView /></RequireAgreement></RequireAuth>,
-      },
-      {
-        path: '/analysis/visit-summary',
-        element: <RequireAuth><RequireAgreement><VisitSummaryView /></RequireAgreement></RequireAuth>,
-      },
-      {
-        path: '/analysis/progression',
-        element: <RequireAuth><RequireAgreement><ProgressionAnalysisView /></RequireAgreement></RequireAuth>,
-      },
-      {
-        path: '/caregiver-report',
-        element: <RequireAuth><RequireAgreement><CaregiverReportView /></RequireAgreement></RequireAuth>,
       },
       {
         path: '/equipments/:id',

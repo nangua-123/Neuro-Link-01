@@ -36,13 +36,13 @@ export const VitalsGrid: React.FC = () => {
 
   return (
     <div className="w-full relative">
-      <div className="bg-white rounded-[20px] shadow-[0_2px_12px_rgba(0,0,0,0.04)] border border-slate-100/80 overflow-hidden">
+      <div className="bg-white rounded-[24px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] overflow-hidden">
         <Swiper
           indicatorProps={{
             color: 'primary',
           }}
           style={{
-            '--border-radius': '20px',
+            '--border-radius': '24px',
           } as any}
         >
           {[
@@ -52,40 +52,40 @@ export const VitalsGrid: React.FC = () => {
 
               return (
                 <Swiper.Item key={device.id}>
-                  <div className="pt-3 px-3 pb-7">
+                  <div className="pt-4 px-4 pb-8">
                     {/* Card Header */}
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-9 h-9 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100">
-                          <DeviceIcon className="w-4 h-4 text-slate-600" />
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100/80">
+                          <DeviceIcon className="w-5 h-5 text-slate-600" />
                         </div>
                         <div>
-                          <h3 className="text-[14px] font-bold text-slate-900 leading-tight">{device.name}</h3>
-                          <div className="flex items-center gap-1.5 mt-0.5">
-                            <div className="flex items-center gap-1 text-[10px] text-emerald-600 bg-emerald-50/80 px-1.5 py-0.5 rounded font-medium">
-                              <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
+                          <h3 className="text-[15px] font-bold text-slate-800 leading-tight">{device.name}</h3>
+                          <div className="flex items-center gap-1.5 mt-1">
+                            <div className="flex items-center gap-1 text-[11px] text-emerald-600 bg-emerald-50/80 px-2 py-0.5 rounded-full font-medium">
+                              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                               实时同步
                             </div>
-                            {device.battery && <span className="text-[10px] text-slate-400 font-medium">电量 {device.battery}%</span>}
+                            {device.battery && <span className="text-[11px] text-slate-400 font-medium">电量 {device.battery}%</span>}
                           </div>
                         </div>
                       </div>
-                      <button onClick={() => setIsManagerVisible(true)} className="w-7 h-7 rounded-full bg-slate-50 flex items-center justify-center active:bg-slate-100 transition-colors">
-                        <Settings className="w-3.5 h-3.5 text-slate-400" />
+                      <button onClick={() => setIsManagerVisible(true)} className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center active:bg-slate-100 transition-colors">
+                        <Settings className="w-4 h-4 text-slate-400" />
                       </button>
                     </div>
 
                     {/* Metrics Row */}
-                    <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center justify-between gap-3">
                       {metrics.map((m, i) => (
-                        <div key={i} className="flex-1 flex flex-col items-center justify-center bg-slate-50/50 rounded-[12px] py-2 px-1">
-                          <div className="flex items-center gap-1 mb-1">
-                            <m.icon className={`w-3.5 h-3.5 ${m.colorClass}`} />
-                            <span className="text-[11px] text-slate-500 font-medium">{m.label}</span>
+                        <div key={i} className="flex-1 flex flex-col items-center justify-center bg-slate-50/80 rounded-[16px] py-3 px-2">
+                          <div className="flex items-center gap-1.5 mb-1.5">
+                            <m.icon className={`w-4 h-4 ${m.colorClass}`} />
+                            <span className="text-[12px] text-slate-500 font-medium">{m.label}</span>
                           </div>
-                          <div className="flex items-baseline gap-0.5">
-                            <span className="text-[18px] font-bold text-slate-900 tracking-tight">{m.value}</span>
-                            <span className="text-[10px] text-slate-400 font-medium">{m.unit}</span>
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-[20px] font-bold text-slate-800 tracking-tight">{m.value}</span>
+                            <span className="text-[11px] text-slate-400 font-medium">{m.unit}</span>
                           </div>
                         </div>
                       ))}
@@ -95,18 +95,18 @@ export const VitalsGrid: React.FC = () => {
               );
             }),
             <Swiper.Item key="add-device">
-              <div className="pt-3 px-3 pb-7 h-full">
+              <div className="pt-4 px-4 pb-8 h-full">
                 <motion.div
                   whileTap={{ scale: 0.98 }}
                   onClick={() => navigate('/device-connect')}
-                  className="h-full bg-gradient-to-br from-blue-50/40 to-slate-50/40 rounded-[16px] p-3 border border-blue-100/60 border-dashed flex items-center justify-center gap-3 cursor-pointer"
+                  className="h-full bg-gradient-to-br from-blue-50/40 to-slate-50/40 rounded-[20px] p-4 border border-blue-100/60 border-dashed flex items-center justify-center gap-4 cursor-pointer"
                 >
-                  <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-blue-500 shrink-0">
-                    <Plus className="w-5 h-5" />
+                  <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center text-blue-500 shrink-0">
+                    <Plus className="w-6 h-6" />
                   </div>
                   <div className="text-left">
-                    <h4 className="text-[14px] font-bold text-slate-800">添加健康设备</h4>
-                    <p className="text-[11px] text-slate-500 mt-0.5 leading-tight">
+                    <h4 className="text-[15px] font-bold text-slate-800">添加健康设备</h4>
+                    <p className="text-[12px] text-slate-500 mt-1 leading-relaxed">
                       授权同步基础体征，或接入高精度设备
                     </p>
                   </div>

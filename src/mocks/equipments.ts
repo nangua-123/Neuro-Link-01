@@ -4,7 +4,8 @@ export interface Equipment {
   subtitle: string;
   price: number;
   certification: string;
-  imageUrl: string;
+  icon: string;
+  gradient: string;
   bundledPrivileges: {
     id: string;
     title: string;
@@ -21,7 +22,8 @@ export const EQUIPMENTS_MOCK: Equipment[] = [
     subtitle: '24h 动态体征监测，精准捕捉异常放电与发作预警',
     price: 1299,
     certification: '国械注准 20232070012',
-    imageUrl: 'https://images.unsplash.com/photo-1575311373937-040b8e1fd5b0?auto=format&fit=crop&q=80&w=800&h=600',
+    icon: 'Watch',
+    gradient: 'from-blue-50 to-indigo-50/80',
     bundledPrivileges: [
       {
         id: 'seizure_alert',
@@ -56,7 +58,8 @@ export const EQUIPMENTS_MOCK: Equipment[] = [
     subtitle: '隐形穿戴，无感记录全天候脑电波形',
     price: 899,
     certification: '国械注准 20222070158',
-    imageUrl: 'https://images.unsplash.com/photo-1550005973-e4c8d0d0f41a?auto=format&fit=crop&q=80&w=800&h=600',
+    icon: 'Activity',
+    gradient: 'from-emerald-50 to-teal-50/80',
     bundledPrivileges: [
       {
         id: 'trigger_analysis',
@@ -79,7 +82,8 @@ export const EQUIPMENTS_MOCK: Equipment[] = [
     subtitle: '非接触式雷达监测，深度解析睡眠分期与呼吸暂停',
     price: 1599,
     certification: '国械注准 20242070088',
-    imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5e4a8716b?auto=format&fit=crop&q=80&w=800&h=600',
+    icon: 'Moon',
+    gradient: 'from-violet-50 to-purple-50/80',
     bundledPrivileges: [
       {
         id: 'sleep_apnea_alert',

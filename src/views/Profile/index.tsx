@@ -194,13 +194,13 @@ export default function ProfileView() {
             <span className="text-[10px] font-semibold text-slate-700">智能穿戴</span>
           </button>
           <button 
-            onClick={() => navigate('/health-report')}
+            onClick={() => navigate('/clinic-report')}
             className="bg-white rounded-[16px] p-2.5 flex flex-col items-center justify-center gap-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-slate-100/50 active:scale-95 transition-transform"
           >
             <div className="w-9 h-9 rounded-full bg-emerald-50 flex items-center justify-center">
               <Activity className="w-4 h-4 text-emerald-600" />
             </div>
-            <span className="text-[10px] font-semibold text-slate-700">体检报告</span>
+            <span className="text-[10px] font-semibold text-slate-700">全景档案</span>
           </button>
         </motion.div>
 
@@ -244,7 +244,7 @@ export default function ProfileView() {
             {boundPatients && boundPatients.length > 0 && (
               <div className="mt-3 px-2">
                 <button
-                  onClick={() => navigate('/caregiver-report')}
+                  onClick={() => navigate('/clinic-report')}
                   className="w-full bg-gradient-to-r from-blue-50 to-blue-50 border border-blue-100/50 rounded-[16px] p-3 flex items-center justify-between active:scale-[0.98] transition-transform"
                 >
                   <div className="flex items-center gap-3">
@@ -252,8 +252,8 @@ export default function ProfileView() {
                       <FileText className="w-4 h-4 text-blue-600" />
                     </div>
                     <div className="text-left">
-                      <div className="text-[14px] font-bold text-slate-800">家属周报</div>
-                      <div className="text-[11px] text-slate-500">查看本周照护数据与分析</div>
+                      <div className="text-[14px] font-bold text-slate-800">全景数字病历</div>
+                      <div className="text-[11px] text-slate-500">查看长辈全维度健康数据</div>
                     </div>
                   </div>
                   <ChevronRight className="w-4 h-4 text-slate-400" />
