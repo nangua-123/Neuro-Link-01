@@ -25,8 +25,8 @@ export default function Layout() {
       icon: HeartPulse,
     },
     {
-      key: '/mall',
-      title: '商城',
+      key: '/equipments',
+      title: '装备',
       icon: ShoppingBag,
     },
     {
@@ -37,7 +37,7 @@ export default function Layout() {
   ];
 
   return (
-    <div className="flex flex-col h-[100dvh] w-full max-w-md mx-auto bg-[#FAFAFA] relative overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.05)]">
+    <div className="flex flex-col h-full w-full max-w-md mx-auto bg-[#FAFAFA] relative overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.05)]">
       {/* 沉浸式内容区，底部留出 TabBar 的高度与安全区 */}
       <div className="flex-1 overflow-y-auto relative hide-scrollbar">
         <AnimatePresence mode="wait">

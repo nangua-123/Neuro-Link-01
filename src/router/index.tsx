@@ -10,7 +10,8 @@ import GlobalError from '../components/GlobalError';
 const Layout = React.lazy(() => import('../views/Layout'));
 const HomeView = React.lazy(() => import('../views/Home'));
 const ManagerView = React.lazy(() => import('../views/Manager'));
-const MallView = React.lazy(() => import('../views/Mall'));
+const EquipmentsView = React.lazy(() => import('../views/Equipments'));
+const EquipmentDetailView = React.lazy(() => import('../views/Equipments/Detail'));
 const ProfileView = React.lazy(() => import('../views/Profile'));
 const EHRTimelineView = React.lazy(() => import('../views/Profile/EHRTimeline'));
 const DeviceConnectView = React.lazy(() => import('../views/Profile/DeviceConnect'));
@@ -67,7 +68,7 @@ const RootLayout: React.FC = () => {
   const outlet = useOutlet();
 
   // 判断是否为底部导航栏的路由，如果是，则共用一个 key，避免 Layout 卸载
-  const isTabRoute = ['/', '/manager', '/mall', '/profile'].includes(location.pathname);
+  const isTabRoute = ['/', '/manager', '/equipments', '/profile'].includes(location.pathname);
   const animationKey = isTabRoute ? 'tabs' : location.pathname;
 
   return (
@@ -174,6 +175,10 @@ export const router = createBrowserRouter([
         element: <RequireAuth><RequireAgreement><CaregiverReportView /></RequireAgreement></RequireAuth>,
       },
       {
+        path: '/equipments/:id',
+        element: <RequireAuth><RequireAgreement><EquipmentDetailView /></RequireAgreement></RequireAuth>,
+      },
+      {
         path: '/',
         element: <RequireAuth><Layout /></RequireAuth>,
         children: [
@@ -186,8 +191,8 @@ export const router = createBrowserRouter([
             element: <RequireAgreement><ManagerView /></RequireAgreement>, // 核心履约区，强制拦截
           },
           {
-            path: 'mall',
-            element: <RequireAgreement><MallView /></RequireAgreement>, // 交易区，强制拦截
+            path: 'equipments',
+            element: <RequireAgreement><EquipmentsView /></RequireAgreement>, // 交易区，强制拦截
           },
           {
             path: 'profile',

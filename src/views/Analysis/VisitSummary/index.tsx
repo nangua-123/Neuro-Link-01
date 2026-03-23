@@ -6,6 +6,7 @@ import { motion } from 'motion/react';
 import { TrendBarChart } from '../../../components/Charts/TrendBarChart';
 import { useAppStore } from '../../../store';
 import { Paywall } from '../../../components/Paywall';
+import { DiseaseTag } from '../../../configs/constants';
 
 const adherenceData = [
   { date: '周一', value: 100 },
@@ -19,12 +20,13 @@ const adherenceData = [
 
 export default function VisitSummaryView() {
   const navigate = useNavigate();
-  const { isPremium } = useAppStore();
+  const { unlockedPrivileges, selectedDiseaseTag } = useAppStore();
+  const hasAccess = unlockedPrivileges.includes('visit_summary');
   const [isSimulating, setIsSimulating] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
 
   const handleExport = () => {
-    if (!isPremium) {
+    if (!hasAccess) {
       setShowPaywall(true);
       return;
     }
@@ -35,7 +37,7 @@ export default function VisitSummaryView() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] flex flex-col relative">
+    <div className="min-h-full bg-[#FAFAFA] flex flex-col relative">
       <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-blue-50 to-transparent opacity-80 pointer-events-none" />
       
       <NavBar 
@@ -174,7 +176,7 @@ export default function VisitSummaryView() {
             onClick={handleExport}
             className="h-14 rounded-full text-[16px] font-bold text-white border-none shadow-lg shadow-blue-200 bg-gradient-to-r from-blue-500 to-blue-600"
           >
-            {isSimulating ? '生成中...' : (isPremium ? '生成 PDF 报表' : '解锁并生成 PDF 报表')}
+            {isSimulating ? '生成中...' : (hasAccess ? '生成 PDF 报表' : '解锁并生成 PDF 报表')}
           </Button>
         </div>
       </div>
@@ -182,7 +184,9 @@ export default function VisitSummaryView() {
       {showPaywall && (
         <Paywall 
           onClose={() => setShowPaywall(false)} 
-          onUnlock={() => setShowPaywall(false)}
+          equipmentId={selectedDiseaseTag === DiseaseTag.EPILEPSY ? "neuro_band_pro" : undefined}
+          title="解锁复诊一页纸"
+          description="该深度报告需要高精度的临床级体征数据支撑。购买并绑定「Neuro-Band Pro 预警手环」，即可终身解锁该报告及所有高阶管家服务。"
         />
       )}
     </div>

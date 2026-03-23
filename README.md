@@ -64,7 +64,25 @@
   - Created `OfflineBoundary` component to detect network status (`navigator.onLine`) and display a graceful fallback UI when the user is offline.
   - Wrapped the entire application with `ErrorBoundary` in `src/main.tsx` to catch unhandled React errors and prevent white screens.
 
-### Batch 19: Device Management Consolidation
+### Batch 21: Paywall Refactoring & Global Layout Standardization
+- **Objective:** Implement a flat display of premium services, enhance the Paywall component for direct equipment routing, and strictly enforce global layout and scrolling rules.
+- **Key Changes:**
+  - **Flat Premium Services (No "Thousand Faces"):** Refactored `ManagerView` to display all 4 premium services (Trigger Analysis, Visit Summary, Progression Analysis, Family Care) universally, regardless of the selected disease tag. Locked services are visually dimmed.
+  - **Paywall Enhancement:** Updated the `Paywall` component to accept an `equipmentId` parameter, allowing direct redirection to specific equipment detail pages (e.g., `/equipments/eeg_patch_24h`) when a user attempts to access a locked feature.
+  - **Deep Report Interception:** Applied the updated `Paywall` logic across all deep report views (`TriggerAnalysisView`, `VisitSummaryView`, `ProgressionAnalysisView`, `CaregiverReportView`) to ensure un-unlocked users are correctly intercepted and guided to the relevant hardware purchase.
+  - **Global UI/UX Layout Fixes:** 
+    - Eradicated the use of `min-h-screen` and `h-[100dvh]` across child views (`TriggerAnalysisView`, `VisitSummaryView`, `ProgressionAnalysisView`, `CaregiverReportView`, `AssessmentView`) to prevent layout stretching and scrolling calculation errors.
+    - Removed nested `overflow-y-auto` containers in `HomeView`, delegating scrolling entirely to the global `Layout` component (Single Scroll Context).
+    - Adjusted floating element bottom spacing in `HomeView` to perfectly align with the `Layout`'s safe area and TabBar padding, eliminating excessive white space.
+
+### Batch 20: Equipment Purchase Flow & Paywall Integration
+- **Objective:** Implement the equipment purchase flow and integrate high-level software privileges into the ManagerView with seamless Paywall redirection.
+- **Key Changes:**
+  - **Equipment Catalog & Detail:** Refactored `EquipmentsView` to act as a catalog and created `EquipmentDetailView` for detailed information, JIT agreement, and purchase logic.
+  - **Paywall Refinement:** Enhanced `Paywall` component to accept a `targetPath` prop, redirecting users to specific equipment pages (e.g., `/equipments/eeg_patch_24h`) based on the locked feature and disease tag.
+  - **ManagerView Enhancements:** Added a "Premium Services" section to `ManagerView`, displaying high-level privileges (locked/unlocked) and linking to respective analysis views.
+  - **Dynamic Routing:** Updated `TriggerAnalysisView`, `VisitSummaryView`, `ProgressionAnalysisView`, and `CaregiverReportView` to use dynamic `targetPath` in Paywall based on `selectedDiseaseTag`.
+  - **UI/UX Consistency:** Ensured all new views and components adhere to the project's design guidelines (soft colors, gradients, rounded corners).
 - **Objective:** Refine the device management experience by consolidating functionalities into a modal and removing standalone pages.
 - **Key Changes:**
   - Deprecated the independent `/device` route and removed `DeviceManagement` and `Device` views.
@@ -234,7 +252,17 @@
   - **核心指标展示**: 采用 2x2 网格布局，集中展示 HRV 变异性、深睡比例、脑电平稳度、今日活动（步数）等关键健康指标。
   - **UI/UX 规范**: 严格遵循 C 端管家设计范式，使用大圆角 (`rounded-[20px]`)、柔和弥散光晕背景 (`blur-2xl opacity-60`)、精致的微阴影与无边界设计。
   - **状态联动**: 顶部新增同步状态栏，根据设备绑定状态（`isBound`）动态切换“实时同步中”与“演示数据”的文案与指示灯，并提供“设备管理”的快捷入口。
-- **核心痛点**: 目前各个模块（评估、日记、IoT、任务）的数据流尚未完全打通，且商业化转化路径（如购买高级服务、硬件）仍有断点。
+- **Batch 2: 装备库与商业化闭环 (Equipment Library & Monetization) (Current)**:
+  - **战略升级**: 将原有的“商城 (Mall)”模块全面重构为“专属装备 (Equipments)”库，确立“硬件作为现金牛，高阶软件特权作为价值锚点”的商业模式。
+  - **数据结构重构**: 在 Zustand Store 中移除旧版的 `isVip` 和 `isPremium` 状态，新增 `ownedEquipments`（已购设备）、`unlockedPrivileges`（解锁特权）和 `isRweAuthorized`（RWE 数据授权状态）。
+  - **UI/UX 升维**: 开发全新的 `EquipmentsView`，采用类似“Apple Store for Medical”的高端极简设计风格。强调硬件的医疗级认证与附赠的高阶软件特权（如复诊一页纸、诱因热力图）。
+  - **JIT 合规拦截**: 开发 `JITAgreementModal` 组件。在用户点击购买/绑定设备时，强制拦截并要求签署《三方电子联合数据授权协议》与《知情同意书》，确保 RWE（真实世界数据）收集的绝对合规。
+  - **路由重构**: 将 `/mall` 路由重定向至全新的 `EquipmentsView`，并更新底部导航栏的文案与图标。
+
+- **Batch 3: 付费墙重构与商业化闭环 (Paywall Refactoring & Loop Completion) (Upcoming)**:
+  - **Paywall 组件重构**: 彻底废弃按月/季订阅的纯软件收费模式，将 `Paywall` 重构为“硬件解锁墙 (Hardware Unlock Wall)”。当用户尝试访问高级功能时，引导其前往“专属装备”库购买对应硬件。
+  - **深度分析报告改造**: 更新诱因图谱分析 (`TriggerAnalysis`)、就诊一页纸 (`VisitSummary`)、衰退延缓评估 (`ProgressionAnalysis`) 等视图，将解锁条件从 `isPremium` 替换为 `unlockedPrivileges` 数组中是否包含对应特权 ID。
+  - **闭环验证**: 确保从免费工具 -> 触发痛点 -> 遇到硬件解锁墙 -> 购买硬件并签署 JIT 协议 -> 成功解锁高级功能的完整数据流转与 UI 呈现正确无误。
 - **重构目标**: 
   1. **数据中台化**: 完善 Zustand Store，将所有零散的 Mock 数据（如任务、体征、日记）统一为全局状态，实现跨页面的实时联动。
   2. **高阶商业化转化 (Premium Upsell)**: 在深度分析报告（如诱因图谱、衰退延缓评估）中，植入“解锁高级 AI 洞察”或“购买华西定制硬件”的付费墙 (Paywall) 交互。
@@ -487,6 +515,21 @@
   - 移除了 `Swiper` 外层的 `paddingBottom: 24px`，将底部留白转移到卡片内部的 `pb-7`，让分页指示器 (Dots) 自然悬浮在卡片底部的安全区域内，彻底消除了外部大面积的突兀白边。
   - 将“添加健康设备”卡片从垂直布局 (Vertical) 重构为水平紧凑布局 (Horizontal Compact)，大幅降低了卡片的最小高度，避免了因高度撑开导致的空旷感。
   - 进一步压缩了内部元素的间距 (`p-4` -> `p-3`, `py-3` -> `py-2`)，提升了整体的信息密度，使其更符合商业级 C 端医疗产品的精致感。
+
+### v0.6.1 (Phase 6.1 Equipment Detail & JIT Purchase Flow)
+- **开发装备详情页 (`EquipmentDetailView`)**：
+  - 采用沉浸式 Hero 视觉，展示装备大图、价格与核心卖点。
+  - 结构化展示“专属高阶权益 (Bundled Privileges)”与“硬件规格 (Hardware Specs)”。
+  - 底部悬浮操作栏 (Floating Action Bar) 动态适配 iOS 安全区，并根据购买状态切换按钮（“立即解锁”/“已拥有”）。
+- **落地 JIT 合规协议拦截 (`JITAgreementModal`)**：
+  - 在用户点击购买/绑定时，瞬间拦截路由，强制弹出《三方电子联合数据授权协议》。
+  - 签署后方可放行购买逻辑，并记录 RWE (真实世界数据) 授权状态，完成合规闭环。
+
+### v0.6.0 (Phase 6.0 Equipment Mall List)
+- **重构健康商城 (`EquipmentsView`)**：
+  - 定位为“数字医疗装备库”，仅展示与底层临床 CRF 数据打通的救命/防风险装备（如 AD 防走失胸牌、癫痫脑电贴、偏头痛手环）。
+  - 采用高密度卡片布局，展示装备缩略图、名称、价格及附赠的高阶软件特权。
+  - 移除硬编码的底部内边距，统一由全局 Layout 接管滚动与留白，彻底解决底部大面积白屏问题。
 
 ### v0.5.7 (Phase 5.7 UI Refinement - Swiper Carousel)
 - **优化体征监测模块 (`VitalsGrid`)**：

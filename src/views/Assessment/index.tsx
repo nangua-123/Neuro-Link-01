@@ -169,7 +169,7 @@ export default function AssessmentView() {
     ];
 
     return (
-      <div className="min-h-screen bg-[#FAFAFA] flex flex-col">
+      <div className="min-h-full bg-[#FAFAFA] flex flex-col">
         <NavBar onBack={() => navigate(-1)} className="bg-white border-b border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
           <span className="font-semibold text-[16px] text-slate-900">AI 分析中</span>
         </NavBar>
@@ -216,7 +216,7 @@ export default function AssessmentView() {
   const progressPercent = ((currentStepIndex + 1) / assessmentSteps.length) * 100;
 
   return (
-    <div className="h-[100dvh] bg-[#FAFAFA] flex flex-col overflow-hidden">
+    <div className="h-full bg-[#FAFAFA] flex flex-col overflow-hidden">
       <div className="bg-white z-10 shadow-[0_4px_20px_rgba(0,0,0,0.02)] relative">
         <NavBar
           onBack={handleBackStep}

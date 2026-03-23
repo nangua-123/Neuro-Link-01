@@ -91,11 +91,15 @@ interface AppState {
   userStage: 'NEW' | 'ACTIVE' | 'STABLE';
   selectedDiseaseTag: DiseaseTag;
   
-  // 1+1+N Architecture State
+  // ... existing state ...
   isFirstVisit: boolean;
   hasCompletedAssessment: boolean;
   boundDevices: string[];
-  isPremium: boolean;
+  
+  // Phase 6.0: Equipment & RWE
+  ownedEquipments: string[];
+  unlockedPrivileges: string[];
+  isRweAuthorized: boolean;
   
   painkillerDates: string[]; // 本月已服止痛药的日期列表 (MOH 防火墙)
   missedMedicationDates: string[]; // 漏服药物的日期列表
@@ -166,7 +170,10 @@ interface AppState {
   completeAssessment: () => void;
   bindIoTDevice: (deviceId: string) => void;
   unbindIoTDevice: (deviceId: string) => void;
-  unlockPremium: () => void;
+  
+  // Phase 6.0 Actions
+  buyEquipment: (equipmentId: string, privileges: string[]) => void;
+  authorizeRwe: () => void;
   
   // 用药管家 Actions
   addMedicationPlan: (plan: Omit<MedicationPlan, 'id'>) => void;
@@ -211,7 +218,10 @@ export const useAppStore = create<AppState>()(
       isFirstVisit: true,
       hasCompletedAssessment: false,
       boundDevices: [],
-      isPremium: false,
+      
+      ownedEquipments: [],
+      unlockedPrivileges: [],
+      isRweAuthorized: false,
       
       painkillerDates: [],
       missedMedicationDates: [],
@@ -406,7 +416,9 @@ export const useAppStore = create<AppState>()(
         isFirstVisit: true,
         hasCompletedAssessment: false,
         boundDevices: [],
-        isPremium: false,
+        ownedEquipments: [],
+        unlockedPrivileges: [],
+        isRweAuthorized: false,
         painkillerDates: [],
         missedMedicationDates: [],
         connectedDevices: [],
@@ -715,7 +727,21 @@ export const useAppStore = create<AppState>()(
       unbindIoTDevice: (deviceId) => set((state) => ({
         boundDevices: state.boundDevices.filter(id => id !== deviceId)
       })),
-      unlockPremium: () => set({ isPremium: true }),
+      
+      buyEquipment: (equipmentId, privileges) => set((state) => {
+        const newEquipments = state.ownedEquipments.includes(equipmentId) 
+          ? state.ownedEquipments 
+          : [...state.ownedEquipments, equipmentId];
+          
+        const newPrivileges = [...new Set([...state.unlockedPrivileges, ...privileges])];
+        
+        return {
+          ownedEquipments: newEquipments,
+          unlockedPrivileges: newPrivileges
+        };
+      }),
+      
+      authorizeRwe: () => set({ isRweAuthorized: true }),
       
       addMedicationPlan: (plan) => {
         set((state) => {

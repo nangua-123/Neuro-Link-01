@@ -15,7 +15,7 @@ export default function CRFAssessmentView() {
 
   if (isCompleted) {
     return (
-      <div className="min-h-screen bg-[#FAFAFA] flex flex-col relative overflow-hidden">
+      <div className="min-h-full bg-[#FAFAFA] flex flex-col relative overflow-hidden">
         {/* 极浅弥散暖色渐变背景 */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
           <div className="absolute -top-[10%] -right-[10%] w-[120%] h-[50%] bg-gradient-to-b from-[#E8F3FF] to-transparent opacity-60 blur-3xl" />
@@ -47,7 +47,7 @@ export default function CRFAssessmentView() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] flex flex-col relative overflow-hidden">
+    <div className="min-h-full bg-[#FAFAFA] flex flex-col relative overflow-hidden">
       {/* 极浅弥散暖色渐变背景 */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <div className="absolute -top-[10%] -right-[10%] w-[120%] h-[50%] bg-gradient-to-b from-[#E8F3FF] to-transparent opacity-60 blur-3xl" />
@@ -63,10 +63,9 @@ export default function CRFAssessmentView() {
           既往史信息采集
         </NavBar>
       </div>
-      <div className="flex-1 overflow-y-auto pt-6 relative z-10">
+      <div className="pt-6 relative z-10 pb-[calc(env(safe-area-inset-bottom)+80px)]">
         <AssessmentEngine schema={scale_cognitive_crf_history} onSubmit={handleComplete} />
       </div>
-      <SafeArea position="bottom" />
     </div>
   );
 }

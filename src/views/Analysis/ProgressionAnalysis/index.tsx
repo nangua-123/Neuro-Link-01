@@ -7,6 +7,7 @@ import { WaveChart } from '../../../components/common/charts/WaveChart';
 import { TrendBarChart } from '../../../components/Charts/TrendBarChart';
 import { useAppStore } from '../../../store';
 import { Paywall } from '../../../components/Paywall';
+import { DiseaseTag } from '../../../configs/constants';
 
 const cognitiveData = Array.from({ length: 7 }, (_, i) => ({ value: 70 + Math.random() * 20 }));
 const sleepData = [
@@ -21,12 +22,13 @@ const sleepData = [
 
 export default function ProgressionAnalysisView() {
   const navigate = useNavigate();
-  const { isPremium } = useAppStore();
+  const { unlockedPrivileges, selectedDiseaseTag } = useAppStore();
+  const hasAccess = unlockedPrivileges.includes('progression_analysis');
   const [isSimulating, setIsSimulating] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
 
   const handleExport = () => {
-    if (!isPremium) {
+    if (!hasAccess) {
       setShowPaywall(true);
       return;
     }
@@ -37,7 +39,7 @@ export default function ProgressionAnalysisView() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] flex flex-col relative">
+    <div className="min-h-full bg-[#FAFAFA] flex flex-col relative">
       <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-blue-50 to-transparent opacity-80 pointer-events-none" />
       
       <NavBar 
@@ -70,7 +72,7 @@ export default function ProgressionAnalysisView() {
 
         {/* Content Section with Blur for Non-Premium */}
         <div className="relative">
-          {!isPremium && (
+          {!hasAccess && (
             <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/40 backdrop-blur-sm rounded-[28px]">
               <div className="text-center p-6">
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
@@ -90,7 +92,7 @@ export default function ProgressionAnalysisView() {
             </div>
           )}
 
-          <div className={`space-y-6 ${!isPremium ? 'opacity-30 pointer-events-none' : ''}`}>
+          <div className={`space-y-6 ${!hasAccess ? 'opacity-30 pointer-events-none' : ''}`}>
             {/* Cognitive Trend Section */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
@@ -170,7 +172,7 @@ export default function ProgressionAnalysisView() {
             onClick={handleExport}
             className="h-14 rounded-full text-[16px] font-bold text-white border-none shadow-lg shadow-blue-200 bg-gradient-to-r from-blue-500 to-blue-600"
           >
-            {isSimulating ? '获取中...' : (isPremium ? '获取最新评估结果' : '解锁高级功能')}
+            {isSimulating ? '获取中...' : (hasAccess ? '获取最新评估结果' : '解锁高级功能')}
           </Button>
         </div>
       </div>
@@ -178,10 +180,10 @@ export default function ProgressionAnalysisView() {
 
       {showPaywall && (
         <Paywall 
-          title="解锁高级评估报告"
-          description="获取基于华西专病知识库的深度认知衰退预测模型与个性化干预方案。"
+          title="解锁衰退延缓评估"
+          description="该深度报告需要高精度的临床级睡眠与脑电数据支撑。购买并绑定「高精度睡眠监测仪 Max」，即可终身解锁该报告及所有高阶管家服务。"
+          equipmentId={selectedDiseaseTag === DiseaseTag.AD ? "sleep_monitor_max" : undefined}
           onClose={() => setShowPaywall(false)} 
-          onUnlock={() => setShowPaywall(false)}
         />
       )}
     </div>

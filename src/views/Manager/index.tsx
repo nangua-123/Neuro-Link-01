@@ -17,6 +17,7 @@ import { CDRDiarySheet } from '../../components/CDRDiarySheet';
 import { AudioTherapySheet } from '../../components/AudioTherapySheet';
 import { Task } from '../../interfaces/task';
 import { UserIdentity } from '../../interfaces/user';
+import { DiseaseTag } from '../../configs/constants';
 import { showComingSoon } from '../../utils/ui';
 import { ManagerSkeleton } from '../../components/ManagerSkeleton';
 
@@ -135,6 +136,15 @@ export default function ManagerView() {
           navigate={navigate}
           onOpenCDR={() => { setActiveTaskId(undefined); setIsCDRDiaryVisible(true); }}
         />
+      </motion.div>
+
+      {/* Module 5: Premium Services */}
+      <motion.div variants={itemVariants} className="space-y-2.5">
+        <h3 className="text-[17px] font-bold text-slate-800 px-1 tracking-tight flex items-center gap-1.5">
+          <Sparkles className="w-4 h-4 text-amber-500" />
+          高阶特权服务
+        </h3>
+        <PremiumServices navigate={navigate} />
       </motion.div>
 
       <SeizureDiarySheet 
@@ -306,6 +316,72 @@ function UniversalToolbox({ userStage, navigate, onOpenCDR }: any) {
            <ToolItem icon={<Smile/>} label="心理支持" onClick={() => showComingSoon('心理支持', '专业的心理咨询师团队即将上线，为您和家属提供情绪疏导与心理支持。')} color="emerald" userStage={userStage} />
         </div>
       </div>
+    </div>
+  );
+}
+
+function PremiumServices({ navigate }: any) {
+  const { unlockedPrivileges } = useAppStore();
+  
+  const services = [
+    {
+      id: 'trigger_analysis',
+      icon: <Zap className="w-5 h-5" />,
+      label: '诱发因素分析',
+      desc: '精准识别发作诱因',
+      path: '/analysis/trigger',
+      color: 'bg-amber-50 text-amber-600',
+    },
+    {
+      id: 'visit_summary',
+      icon: <FileText className="w-5 h-5" />,
+      label: '就诊总结生成',
+      desc: '一键生成医生专属报告',
+      path: '/analysis/visit-summary',
+      color: 'bg-blue-50 text-blue-600',
+    },
+    {
+      id: 'progression_analysis',
+      icon: <Activity className="w-5 h-5" />,
+      label: '疾病进展分析',
+      desc: '长期趋势深度洞察',
+      path: '/analysis/progression',
+      color: 'bg-emerald-50 text-emerald-600',
+    },
+    {
+      id: 'family_care',
+      icon: <HeartHandshake className="w-5 h-5" />,
+      label: '家属异地共管',
+      desc: '随时查看长辈状态',
+      path: '/caregiver-report',
+      color: 'bg-rose-50 text-rose-600',
+    }
+  ];
+
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      {services.map(service => {
+        const isUnlocked = unlockedPrivileges.includes(service.id);
+        return (
+          <div 
+            key={service.id}
+            onClick={() => navigate(service.path)}
+            className={`bg-white rounded-[20px] p-4 shadow-[0_4px_16px_rgba(0,0,0,0.03)] border border-slate-100/80 active:scale-95 transition-transform cursor-pointer relative overflow-hidden ${!isUnlocked ? 'opacity-80 grayscale-[0.3]' : ''}`}
+          >
+            <div className={`w-10 h-10 rounded-[12px] flex items-center justify-center mb-3 ${service.color}`}>
+              {service.icon}
+            </div>
+            <h3 className="text-[14px] font-bold text-slate-800 mb-1">{service.label}</h3>
+            <p className="text-[11px] text-slate-500">{service.desc}</p>
+            
+            {!isUnlocked && (
+              <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center shadow-sm">
+                <Lock className="w-3 h-3 text-slate-400" />
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

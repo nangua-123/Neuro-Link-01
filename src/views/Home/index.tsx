@@ -551,7 +551,7 @@ export default function HomeView() {
           <div ref={messagesEndRef} className="h-4" />
           
           {/* 底部悬浮栏等高占位，确保最后一条消息不被遮挡 */}
-          <div className="h-[calc(env(safe-area-inset-bottom)+160px)] shrink-0" />
+          <div className="h-[80px] shrink-0" />
         </div>
       </div>
 
