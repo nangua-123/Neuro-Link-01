@@ -1,16 +1,16 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { ShieldCheck, ChevronRight, CheckCircle2, ShoppingBag, Watch, Activity, Moon, Sparkles } from 'lucide-react';
+import { ShieldCheck, ChevronRight, CheckCircle2, ShoppingBag, Sparkles } from 'lucide-react';
 import { EQUIPMENTS_MOCK } from '../../mocks/equipments';
 import { useAppStore } from '../../store';
 import { useNavigate } from 'react-router-dom';
-import { PageHeader } from '../../components/PageHeader';
-import { HeroBanner } from '../../components/HeroBanner';
+import { DeviceIllustration } from '../../components/DeviceIllustration';
 
-const iconMap: Record<string, React.ElementType> = {
-  Watch,
-  Activity,
-  Moon
+const getDeviceType = (id: string) => {
+  if (id.includes('band')) return 'watch';
+  if (id.includes('patch')) return 'patch';
+  if (id.includes('monitor')) return 'monitor';
+  return 'watch';
 };
 
 export default function EquipmentsView() {
@@ -18,7 +18,7 @@ export default function EquipmentsView() {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-[#F7F9FC] pb-24 relative overflow-x-hidden">
+    <div className="bg-[#F7F9FC] relative overflow-x-hidden">
       {/* Soft Diffuse Background */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="absolute top-[-5%] left-[-10%] w-[60%] h-[30%] bg-blue-200/40 rounded-full blur-[80px]" />
@@ -30,7 +30,7 @@ export default function EquipmentsView() {
         <div className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-blue-600">
           <ShoppingBag className="w-4 h-4" />
         </div>
-        <h1 className="text-[20px] font-bold text-slate-800 tracking-tight">专属装备</h1>
+        <h1 className="text-[18px] font-bold text-slate-800 tracking-tight">专属装备</h1>
       </div>
 
       <div className="px-4 mb-4 relative z-10">
@@ -41,7 +41,7 @@ export default function EquipmentsView() {
             <p className="text-slate-500 text-[12px] leading-relaxed mb-3">
               告别纯软件订阅。绑定专属医疗硬件，终身享有复诊一页纸、诱因热力图等核心权益。
             </p>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 rounded-full text-[11px] font-bold text-blue-600">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 rounded-full text-[12px] font-bold text-blue-600">
               <Sparkles className="w-3 h-3" /> 软硬一体
             </div>
           </div>
@@ -52,7 +52,7 @@ export default function EquipmentsView() {
       <div className="px-4 space-y-4 relative z-10">
         {EQUIPMENTS_MOCK.map((item, index) => {
           const isOwned = ownedEquipments.includes(item.id);
-          const IconComponent = iconMap[item.icon] || Watch;
+          const deviceType = getDeviceType(item.id);
 
           return (
             <motion.div 
@@ -64,16 +64,16 @@ export default function EquipmentsView() {
               className="bg-white/90 backdrop-blur-xl rounded-[24px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-white overflow-hidden cursor-pointer active:scale-[0.98] transition-transform"
             >
               {/* Product Image Area */}
-              <div className={`relative h-40 bg-gradient-to-br ${item.gradient} overflow-hidden flex items-center justify-center border-b border-slate-100/50`}>
+              <div className={`relative h-48 bg-gradient-to-br ${item.gradient} overflow-hidden flex items-center justify-center border-b border-slate-100/50`}>
                 <div className="absolute top-0 right-0 w-32 h-32 bg-blue-400/10 rounded-full blur-2xl -mr-10 -mt-10" />
                 <div className="absolute bottom-0 left-0 w-40 h-40 bg-indigo-400/5 rounded-full blur-3xl -ml-10 -mb-10" />
                 
-                <IconComponent className="w-20 h-20 text-blue-500/80 drop-shadow-sm relative z-10" strokeWidth={1.5} />
+                <DeviceIllustration type={deviceType as any} className="relative z-10 scale-110" />
                 
                 <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between z-20">
                   <div className="flex flex-wrap gap-1.5">
                     {item.tags.map(tag => (
-                      <span key={tag} className="px-2 py-0.5 bg-white/80 backdrop-blur-md text-blue-600 text-[10px] font-bold rounded-md border border-blue-100/50 shadow-sm">
+                      <span key={tag} className="px-2 py-0.5 bg-white/80 backdrop-blur-md text-blue-600 text-[12px] font-bold rounded-md border border-blue-100/50 shadow-sm">
                         {tag}
                       </span>
                     ))}
@@ -89,28 +89,28 @@ export default function EquipmentsView() {
                 <div className="flex items-start justify-between mb-1.5">
                   <div>
                     <h3 className="text-[16px] font-bold text-slate-800 leading-tight mb-1">{item.name}</h3>
-                    <div className="flex items-center gap-1 text-[11px] text-slate-500 font-medium">
+                    <div className="flex items-center gap-1 text-[12px] text-slate-500 font-medium">
                       <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
                       {item.certification}
                     </div>
                   </div>
                 </div>
-                <p className="text-[12px] text-slate-500 leading-relaxed mb-4 line-clamp-2">
+                <p className="text-[13px] text-slate-500 leading-relaxed mb-4 line-clamp-2">
                   {item.subtitle}
                 </p>
 
                 {/* Bundled Privileges Preview */}
                 <div className="flex items-center gap-1.5 mb-4 overflow-x-auto hide-scrollbar">
-                  <div className="shrink-0 bg-blue-50 text-blue-600 text-[10px] font-bold px-2 py-1 rounded-full">
+                  <div className="shrink-0 bg-blue-50 text-blue-600 text-[12px] font-bold px-2.5 py-1 rounded-full">
                     赠送特权
                   </div>
                   {item.bundledPrivileges.slice(0, 2).map(privilege => (
-                    <div key={privilege.id} className="shrink-0 text-[10px] text-slate-600 bg-slate-50 px-2 py-1 rounded-full">
+                    <div key={privilege.id} className="shrink-0 text-[12px] text-slate-600 bg-slate-50 px-2.5 py-1 rounded-full">
                       {privilege.title}
                     </div>
                   ))}
                   {item.bundledPrivileges.length > 2 && (
-                    <div className="shrink-0 text-[10px] text-slate-400">
+                    <div className="shrink-0 text-[12px] text-slate-400 font-medium">
                       +{item.bundledPrivileges.length - 2}
                     </div>
                   )}

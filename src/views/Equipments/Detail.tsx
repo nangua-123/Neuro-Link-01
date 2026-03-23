@@ -11,13 +11,12 @@ import {
   BrainCircuit, 
   Users, 
   Wind,
-  Info,
-  Watch,
-  Moon
+  Info
 } from 'lucide-react';
 import { EQUIPMENTS_MOCK, Equipment } from '../../mocks/equipments';
 import { useAppStore } from '../../store';
 import { JITAgreementModal } from '../../components/JITAgreementModal';
+import { DeviceIllustration } from '../../components/DeviceIllustration';
 
 const iconMap: Record<string, React.ElementType> = {
   Activity,
@@ -25,9 +24,14 @@ const iconMap: Record<string, React.ElementType> = {
   FileText,
   BrainCircuit,
   Users,
-  Wind,
-  Watch,
-  Moon
+  Wind
+};
+
+const getDeviceType = (id: string) => {
+  if (id.includes('band')) return 'watch';
+  if (id.includes('patch')) return 'patch';
+  if (id.includes('monitor')) return 'monitor';
+  return 'watch';
 };
 
 export default function EquipmentDetailView() {
@@ -82,7 +86,7 @@ export default function EquipmentDetailView() {
   };
 
   return (
-    <div className="bg-slate-50 min-h-screen">
+    <div className="bg-slate-50">
       {/* Header */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100/50 pt-[env(safe-area-inset-top)]">
         <div className="flex items-center justify-between h-14 px-4">
@@ -103,21 +107,18 @@ export default function EquipmentDetailView() {
           <div className="absolute top-0 right-0 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl -mr-20 -mt-20" />
           <div className="absolute bottom-0 left-0 w-80 h-80 bg-indigo-400/5 rounded-full blur-3xl -ml-20 -mb-20" />
           
-          {(() => {
-            const IconComponent = iconMap[equipment.icon] || Activity;
-            return <IconComponent className="w-48 h-48 text-blue-500/80 drop-shadow-md relative z-10" strokeWidth={1.5} />;
-          })()}
+          <DeviceIllustration type={getDeviceType(equipment.id) as any} className="relative z-10 scale-[1.8]" />
           
-          <div className="absolute inset-0 bg-gradient-to-t from-white/90 via-white/20 to-transparent z-10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-white/90 via-white/20 to-transparent z-10 pointer-events-none" />
           <div className="absolute bottom-6 left-5 right-5 z-20">
             <div className="flex flex-wrap gap-2 mb-3">
               {equipment.tags.map(tag => (
-                <span key={tag} className="px-2.5 py-1 bg-white/60 backdrop-blur-md text-blue-600 text-[11px] font-bold rounded-md border border-blue-100/50 shadow-sm">
+                <span key={tag} className="px-2.5 py-1 bg-white/60 backdrop-blur-md text-blue-600 text-[12px] font-bold rounded-md border border-blue-100/50 shadow-sm">
                   {tag}
                 </span>
               ))}
             </div>
-            <h1 className="text-[28px] font-extrabold text-slate-800 leading-tight mb-1">
+            <h1 className="text-[24px] font-extrabold text-slate-800 leading-tight mb-1">
               {equipment.name}
             </h1>
             <div className="flex items-center gap-1.5 text-[12px] text-slate-500 font-medium">
@@ -133,9 +134,9 @@ export default function EquipmentDetailView() {
         <div>
           <div className="flex items-end gap-1 mb-3">
             <span className="text-[18px] font-bold text-blue-600">¥</span>
-            <span className="text-[36px] font-extrabold text-blue-600 leading-none tracking-tight">{equipment.price}</span>
+            <span className="text-[32px] font-extrabold text-blue-600 leading-none tracking-tight">{equipment.price}</span>
           </div>
-          <p className="text-[15px] text-slate-600 leading-relaxed">
+          <p className="text-[14px] text-slate-600 leading-relaxed">
             {equipment.subtitle}
           </p>
         </div>
@@ -145,7 +146,7 @@ export default function EquipmentDetailView() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-[18px] font-bold text-slate-900 flex items-center gap-2">
               购机赠送高阶特权
-              <span className="bg-blue-100 text-blue-600 text-[10px] px-2 py-0.5 rounded-full">价值 ¥2999/年</span>
+              <span className="bg-blue-100 text-blue-600 text-[12px] px-2 py-0.5 rounded-full">价值 ¥2999/年</span>
             </h2>
           </div>
           
@@ -164,7 +165,7 @@ export default function EquipmentDetailView() {
                     <Icon className="w-6 h-6 text-blue-500" />
                   </div>
                   <div>
-                    <h3 className="text-[15px] font-bold text-slate-800 mb-1">{privilege.title}</h3>
+                    <h3 className="text-[16px] font-bold text-slate-800 mb-1">{privilege.title}</h3>
                     <p className="text-[13px] text-slate-500 leading-relaxed">{privilege.desc}</p>
                   </div>
                 </motion.div>
@@ -206,7 +207,7 @@ export default function EquipmentDetailView() {
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-xl border-t border-slate-100/80 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_30px_rgba(0,0,0,0.06)]">
         <div className="p-4 max-w-md mx-auto flex items-center gap-4">
           <div className="flex-1">
-            <div className="text-[11px] text-slate-500 font-medium mb-0.5">合计金额</div>
+            <div className="text-[12px] text-slate-500 font-medium mb-0.5">合计金额</div>
             <div className="flex items-end gap-1">
               <span className="text-[16px] font-bold text-slate-900 leading-none">¥</span>
               <span className="text-[24px] font-extrabold text-slate-900 leading-none tracking-tight">{equipment.price}</span>

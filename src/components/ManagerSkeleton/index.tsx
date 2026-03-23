@@ -8,7 +8,7 @@ export const ManagerSkeleton = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.4 }}
-      className="min-h-screen bg-[#FAFAFA] flex flex-col pb-24 relative overflow-hidden"
+      className="min-h-full bg-[#FAFAFA] flex flex-col relative overflow-hidden"
     >
       {/* 极浅弥散暖色渐变背景 */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">

@@ -151,10 +151,10 @@ export default function ProfileView() {
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <h2 className="text-[20px] font-bold text-slate-900 tracking-tight">
+                <h2 className="text-[18px] font-bold text-slate-900 tracking-tight">
                   {identity === UserIdentity.FAMILY && currentPatient ? currentPatient.name : '138****5920'}
                 </h2>
-                <span className="px-2 py-0.5 bg-gradient-to-r from-amber-100 to-amber-50 text-amber-700 text-[10px] font-bold rounded-[8px] border border-amber-200/50 shadow-sm">VIP</span>
+                <span className="px-2 py-0.5 bg-gradient-to-r from-amber-100 to-amber-50 text-amber-700 text-[12px] font-bold rounded-[8px] border border-amber-200/50 shadow-sm">VIP</span>
               </div>
               <p className="text-[13px] text-slate-500 font-medium flex items-center gap-1">
                 当前视角: <span className="text-blue-600 font-semibold">{identity === UserIdentity.PATIENT ? '患者本人' : '家属/照护者'}</span>
@@ -173,7 +173,7 @@ export default function ProfileView() {
             <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center">
               <QrCode className="w-4 h-4 text-blue-600" />
             </div>
-            <span className="text-[10px] font-semibold text-slate-700">就诊码</span>
+            <span className="text-[12px] font-semibold text-slate-700">就诊码</span>
           </button>
           <button 
             onClick={() => navigate('/ehr-timeline')}
@@ -182,7 +182,7 @@ export default function ProfileView() {
             <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center">
               <FileText className="w-4 h-4 text-blue-600" />
             </div>
-            <span className="text-[10px] font-semibold text-slate-700">健康档案</span>
+            <span className="text-[12px] font-semibold text-slate-700">健康档案</span>
           </button>
           <button 
             onClick={handleDeviceClick}
@@ -191,7 +191,7 @@ export default function ProfileView() {
             <div className="w-9 h-9 rounded-full bg-rose-50 flex items-center justify-center">
               <HeartPulse className="w-4 h-4 text-rose-500" />
             </div>
-            <span className="text-[10px] font-semibold text-slate-700">智能穿戴</span>
+            <span className="text-[12px] font-semibold text-slate-700">智能穿戴</span>
           </button>
           <button 
             onClick={() => navigate('/clinic-report')}
@@ -200,7 +200,7 @@ export default function ProfileView() {
             <div className="w-9 h-9 rounded-full bg-emerald-50 flex items-center justify-center">
               <Activity className="w-4 h-4 text-emerald-600" />
             </div>
-            <span className="text-[10px] font-semibold text-slate-700">全景档案</span>
+            <span className="text-[12px] font-semibold text-slate-700">全景档案</span>
           </button>
         </motion.div>
 
@@ -230,7 +230,7 @@ export default function ProfileView() {
                   <img src={patient.avatarUrl} alt={patient.name} className="w-10 h-10 rounded-full bg-white shadow-sm" />
                   <div className="text-center">
                     <div className="text-[13px] font-bold text-slate-900 leading-tight">{patient.name}</div>
-                    <div className="text-[10px] text-slate-500 font-medium">{patient.relation}</div>
+                    <div className="text-[12px] text-slate-500 font-medium">{patient.relation}</div>
                   </div>
                 </div>
               ))}
@@ -284,7 +284,7 @@ export default function ProfileView() {
                   </div>
                   <div className="text-center">
                     <div className="text-[13px] font-bold text-slate-900 leading-tight">李阿姨</div>
-                    <div className="text-[10px] text-slate-500 font-medium">女儿</div>
+                    <div className="text-[12px] text-slate-500 font-medium">女儿</div>
                   </div>
                 </div>
               ) : (

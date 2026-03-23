@@ -2,7 +2,7 @@ import React from 'react';
 
 export const ProfileSkeleton = () => {
   return (
-    <div className="min-h-screen bg-slate-50 pb-24 animate-pulse">
+    <div className="min-h-full bg-slate-50 animate-pulse">
       {/* Header Skeleton */}
       <div className="bg-white rounded-b-[32px] p-6 pt-12 shadow-sm mb-6">
         <div className="flex items-center justify-between mb-6">

@@ -113,7 +113,7 @@ export default function ManagerView() {
   };
 
   if (isLoading) return (
-    <div className="bg-[#F4F7FB] pt-4 px-4 pb-24">
+    <div className="bg-[#F4F7FB] pt-4 px-4">
       <ManagerSkeleton />
     </div>
   );
@@ -123,7 +123,7 @@ export default function ManagerView() {
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="bg-[#F7F9FC] font-sans selection:bg-blue-100 pb-24 relative"
+      className="bg-[#F7F9FC] font-sans selection:bg-blue-100 relative"
     >
       {/* Soft Diffuse Background */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
@@ -133,7 +133,7 @@ export default function ManagerView() {
       </div>
       
       <div className="px-4 pt-5 pb-2 relative z-10">
-        <h1 className="text-[20px] font-bold text-slate-800 tracking-tight flex items-center gap-2 mb-2.5">
+        <h1 className="text-[18px] font-bold text-slate-800 tracking-tight flex items-center gap-2 mb-2.5">
           下午好，张建国
         </h1>
         <div className="flex items-start gap-2.5 bg-white/40 backdrop-blur-md px-4 py-3 rounded-[16px] shadow-[0_4px_16px_rgba(0,0,0,0.03)]">

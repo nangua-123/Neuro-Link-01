@@ -103,7 +103,7 @@ export default function Layout() {
                     )}
                   </div>
                   <span
-                    className={`text-[10px] font-bold tracking-wide transition-colors duration-300 ${
+                    className={`text-[12px] font-bold tracking-wide transition-colors duration-300 ${
                       isActive ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'
                     }`}
                   >
