@@ -38,10 +38,10 @@ export const DailyTaskManager = ({ onTaskAction }: { onTaskAction: (task: Task) 
   return (
     <div className="bg-white rounded-[24px] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-[17px] font-bold text-slate-800 tracking-tight px-1">
+        <h3 className="text-[18px] font-bold text-slate-800 tracking-tight px-1">
           {isFamily ? '长辈今日专属任务' : '今日专属任务'}
         </h3>
-        <div className="text-[11px] font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">
+        <div className="text-[12px] font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">
           已完成 {completedTasks.length}/{tasks.length}
         </div>
       </div>
@@ -80,7 +80,7 @@ export const DailyTaskManager = ({ onTaskAction }: { onTaskAction: (task: Task) 
 
         {completedTasks.length > 0 && (
           <div className="pt-2 space-y-2">
-            <h4 className="text-[13px] font-bold text-slate-400 px-1">已完成</h4>
+            <h4 className="text-[14px] font-bold text-slate-400 px-1">已完成</h4>
             {completedTasks.map(task => {
               const Icon = iconMap[task.iconName] || FileText;
               return (
@@ -94,7 +94,7 @@ export const DailyTaskManager = ({ onTaskAction }: { onTaskAction: (task: Task) 
                       <Icon className="w-5 h-5" />
                     </div>
                     <div className="min-w-0">
-                      <h4 className="text-[15px] font-bold text-slate-400 line-through decoration-slate-300 truncate">{task.title}</h4>
+                      <h4 className="text-[16px] font-bold text-slate-400 line-through decoration-slate-300 truncate">{task.title}</h4>
                     </div>
                   </div>
                   <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 ml-2" />

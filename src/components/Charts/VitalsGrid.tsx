@@ -60,13 +60,13 @@ export const VitalsGrid: React.FC = () => {
                           <DeviceIcon className="w-5 h-5 text-slate-600" />
                         </div>
                         <div>
-                          <h3 className="text-[15px] font-bold text-slate-800 leading-tight">{device.name}</h3>
+                          <h3 className="text-[16px] font-bold text-slate-800 leading-tight">{device.name}</h3>
                           <div className="flex items-center gap-1.5 mt-1">
-                            <div className="flex items-center gap-1 text-[11px] text-emerald-600 bg-emerald-50/80 px-2 py-0.5 rounded-full font-medium">
+                            <div className="flex items-center gap-1 text-[12px] text-emerald-600 bg-emerald-50/80 px-2 py-0.5 rounded-full font-medium">
                               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                               实时同步
                             </div>
-                            {device.battery && <span className="text-[11px] text-slate-400 font-medium">电量 {device.battery}%</span>}
+                            {device.battery && <span className="text-[12px] text-slate-400 font-medium">电量 {device.battery}%</span>}
                           </div>
                         </div>
                       </div>
@@ -84,8 +84,8 @@ export const VitalsGrid: React.FC = () => {
                             <span className="text-[12px] text-slate-500 font-medium">{m.label}</span>
                           </div>
                           <div className="flex items-baseline gap-1">
-                            <span className="text-[20px] font-bold text-slate-800 tracking-tight">{m.value}</span>
-                            <span className="text-[11px] text-slate-400 font-medium">{m.unit}</span>
+                            <span className="text-[18px] font-bold text-slate-800 tracking-tight">{m.value}</span>
+                            <span className="text-[12px] text-slate-400 font-medium">{m.unit}</span>
                           </div>
                         </div>
                       ))}

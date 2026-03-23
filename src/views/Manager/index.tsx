@@ -163,13 +163,13 @@ export default function ManagerView() {
 
       {/* Module 3: Vitals */}
       <motion.div variants={itemVariants} className="space-y-2.5">
-        <h3 className="text-[17px] font-bold text-slate-800 px-1 tracking-tight">体征监测</h3>
+        <h3 className="text-[18px] font-bold text-slate-800 px-1 tracking-tight">体征监测</h3>
         <VitalsGrid />
       </motion.div>
 
       {/* Module 4: Universal Toolbox */}
       <motion.div variants={itemVariants} className="space-y-2.5">
-        <h3 className="text-[17px] font-bold text-slate-800 px-1 tracking-tight">健康工具箱</h3>
+        <h3 className="text-[18px] font-bold text-slate-800 px-1 tracking-tight">健康工具箱</h3>
         <UniversalToolbox 
           userStage={userStage}
           navigate={navigate}
@@ -285,7 +285,7 @@ function AIHealthSummaryCard({ userStage, navigate, diseaseTag, hasMed, hasDevic
             <span className="text-[12px] font-medium text-slate-500">用药依从性</span>
           </div>
           <div className="flex items-baseline justify-center gap-1">
-            <span className={`text-[20px] font-bold leading-none ${hasMed ? 'text-slate-800' : 'text-slate-400'}`}>{hasMed ? '98%' : '未设置'}</span>
+            <span className={`text-[18px] font-bold leading-none ${hasMed ? 'text-slate-800' : 'text-slate-400'}`}>{hasMed ? '98%' : '未设置'}</span>
           </div>
           <div className={`text-[12px] mt-1.5 ${hasMed ? 'text-emerald-600' : 'text-blue-500'}`}>
             {hasMed ? '本周表现极佳' : '去添加计划 ➔'}
@@ -302,7 +302,7 @@ function AIHealthSummaryCard({ userStage, navigate, diseaseTag, hasMed, hasDevic
             <span className="text-[12px] font-medium text-slate-500">体征监测</span>
           </div>
           <div className="flex items-baseline justify-center gap-1">
-            <span className={`text-[20px] font-bold leading-none ${hasDevice ? 'text-slate-800' : 'text-slate-400'}`}>{hasDevice ? '均达标' : '未绑定'}</span>
+            <span className={`text-[18px] font-bold leading-none ${hasDevice ? 'text-slate-800' : 'text-slate-400'}`}>{hasDevice ? '均达标' : '未绑定'}</span>
           </div>
           <div className={`text-[12px] mt-1.5 ${hasDevice ? 'text-blue-600' : 'text-blue-500'}`}>
             {hasDevice ? '睡眠/心率平稳' : '去绑定设备 ➔'}
@@ -319,7 +319,7 @@ function AIHealthSummaryCard({ userStage, navigate, diseaseTag, hasMed, hasDevic
             <span className="text-[12px] font-medium text-slate-500">发作控制</span>
           </div>
           <div className="flex items-baseline justify-center gap-1">
-            <span className="text-[20px] font-bold text-slate-800 leading-none">0 <span className="text-[13px] font-normal text-slate-500 ml-0.5">次</span></span>
+            <span className="text-[18px] font-bold text-slate-800 leading-none">0 <span className="text-[13px] font-normal text-slate-500 ml-0.5">次</span></span>
           </div>
           <div className="text-[12px] mt-1.5 text-rose-600">
             本周无异常记录
@@ -336,7 +336,7 @@ function AIHealthSummaryCard({ userStage, navigate, diseaseTag, hasMed, hasDevic
             <span className="text-[12px] font-medium text-slate-500">脑力训练</span>
           </div>
           <div className="flex items-baseline justify-center gap-1">
-            <span className={`text-[20px] font-bold leading-none ${diseaseTag === 'AD' ? 'text-slate-800' : 'text-slate-400'}`}>{diseaseTag === 'AD' ? '80%' : '待激活'}</span>
+            <span className={`text-[18px] font-bold leading-none ${diseaseTag === 'AD' ? 'text-slate-800' : 'text-slate-400'}`}>{diseaseTag === 'AD' ? '80%' : '待激活'}</span>
           </div>
           <div className={`text-[12px] mt-1.5 ${diseaseTag === 'AD' ? 'text-indigo-600' : 'text-blue-500'}`}>
             {diseaseTag === 'AD' ? '达标率良好' : '开启专属训练 ➔'}
