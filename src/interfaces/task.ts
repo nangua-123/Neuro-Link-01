@@ -12,4 +12,5 @@ export interface Task {
   actionLabel: string;
   iconName: string;
   diseaseTag?: string;
+  actionRoute?: string;
 }

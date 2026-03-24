@@ -70,16 +70,25 @@ export const DailyTaskManager = ({ onTaskAction }: { onTaskAction: (task: Task) 
                     <p className="text-[13px] text-slate-500 mt-0.5 truncate">{task.description}</p>
                   </div>
                 </div>
-                <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors shrink-0 ml-2">
-                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-500" />
-                </div>
+                {task.type === 'MEDICATION' ? (
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); onTaskAction(task); }}
+                    className="px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-600 text-[13px] font-bold active:scale-95 transition-transform shrink-0 ml-2"
+                  >
+                    {task.actionLabel || '打卡'}
+                  </button>
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors shrink-0 ml-2">
+                    <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-500" />
+                  </div>
+                )}
               </motion.div>
             );
           })}
         </AnimatePresence>
 
         {completedTasks.length > 0 && (
-          <div className="pt-2 space-y-1.5">
+          <div className="pt-2 space-y-1">
             <h4 className="text-[13px] font-bold text-slate-400 px-1 mb-1">已完成</h4>
             {completedTasks.map(task => {
               const Icon = iconMap[task.iconName] || FileText;
@@ -87,17 +96,17 @@ export const DailyTaskManager = ({ onTaskAction }: { onTaskAction: (task: Task) 
                 <motion.div
                   key={task.id}
                   layout
-                  className="bg-slate-50/60 rounded-[12px] py-2 px-3 flex items-center justify-between"
+                  className="bg-slate-50/60 rounded-[10px] py-1.5 px-2.5 flex items-center justify-between"
                 >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="w-8 h-8 rounded-[10px] bg-slate-100/80 text-slate-400 flex items-center justify-center shrink-0">
-                      <Icon className="w-4 h-4" />
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className="w-7 h-7 rounded-[8px] bg-slate-100/80 text-slate-400 flex items-center justify-center shrink-0">
+                      <Icon className="w-3.5 h-3.5" />
                     </div>
                     <div className="min-w-0">
                       <h4 className="text-[12px] font-medium text-slate-400 line-through decoration-slate-300 truncate">{task.title}</h4>
                     </div>
                   </div>
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 ml-2" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 ml-2" />
                 </motion.div>
               );
             })}

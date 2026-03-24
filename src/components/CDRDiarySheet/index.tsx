@@ -96,7 +96,7 @@ export function CDRDiarySheet({ visible, onClose, activeTaskId, onTaskCompleted 
           {/* BPSD 症状多选 */}
           <div className="space-y-3">
             <label className="text-[15px] font-bold text-slate-900 ml-1">今日出现的异常行为 <span className="text-slate-400 font-normal text-[12px] ml-1">(多选)</span></label>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-2">
               {bpsdOptions.map(s => {
                 const isSelected = bpsd.includes(s.label);
                 return (
@@ -122,7 +122,7 @@ export function CDRDiarySheet({ visible, onClose, activeTaskId, onTaskCompleted 
           {bpsd.length > 0 && (
             <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
               <label className="text-[15px] font-bold text-slate-900 ml-1">症状严重程度 <span className="text-rose-500">*</span></label>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-2">
                 <button
                   onClick={() => setSeverity('mild')}
                   className={`py-3.5 rounded-[20px] text-[14px] font-bold transition-all duration-300 ${
@@ -164,7 +164,7 @@ export function CDRDiarySheet({ visible, onClose, activeTaskId, onTaskCompleted 
           <div className="pt-4">
             <button 
               onClick={handleSubmit}
-              className="w-full h-14 rounded-full bg-gradient-to-r from-blue-500 to-blue-500 text-white font-bold text-[16px] shadow-[0_8px_24px_rgba(59,130,246,0.25)] active:scale-95 transition-transform flex items-center justify-center gap-2"
+              className="w-full h-14 rounded-[16px] bg-gradient-to-r from-blue-500 to-blue-500 text-white font-bold text-[16px] shadow-[0_8px_24px_rgba(59,130,246,0.25)] active:scale-95 transition-transform flex items-center justify-center gap-2"
             >
               <Check size={20} strokeWidth={3} />
               保存日记

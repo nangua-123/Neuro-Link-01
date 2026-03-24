@@ -55,13 +55,22 @@ export default function ManagerView() {
   }, []);
 
   const handleTaskAction = (task: Task) => {
+    if (task.type === 'MEDICATION') {
+      setSelectedMedTask(task);
+      return;
+    }
+    
+    if (task.actionRoute) {
+      navigate(task.actionRoute, { state: { taskId: task.id } });
+      return;
+    }
+
+    // Fallback for tasks without actionRoute
     if (task.type === 'DIARY') {
       setActiveTaskId(task.id);
       if (task.title.includes('头痛')) setIsMigraineDiaryVisible(true);
       else if (task.title.includes('行为')) setIsCDRDiaryVisible(true);
       else setIsSeizureDiaryVisible(true);
-    } else if (task.type === 'MEDICATION') {
-      setSelectedMedTask(task);
     } else if (task.type === 'TRAINING') {
       if (task.title.includes('音频')) {
         setActiveTaskId(task.id);
@@ -118,7 +127,7 @@ export default function ManagerView() {
   };
 
   if (isLoading) return (
-    <div className="bg-gradient-to-br from-[#f4f7fb] to-[#eef2ff] pt-4 px-4 min-h-full">
+    <div className="bg-[#F4F7FB] pt-4 px-4">
       <ManagerSkeleton />
     </div>
   );
@@ -128,7 +137,7 @@ export default function ManagerView() {
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="bg-gradient-to-br from-[#f4f7fb] to-[#eef2ff] font-sans selection:bg-blue-100 relative min-h-full"
+      className="bg-[#F7F9FC] font-sans selection:bg-blue-100 relative"
     >
       {/* Soft Diffuse Background */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
@@ -137,7 +146,7 @@ export default function ManagerView() {
         <div className="absolute bottom-[20%] left-[10%] w-[40%] h-[30%] bg-purple-200/20 rounded-full blur-[80px]" />
       </div>
       
-      <div className="px-4 pt-5 pb-2 relative z-10">
+      <div className="px-4 pt-5 pb-0 relative z-10">
         <motion.h1 variants={itemVariants} className="text-[18px] font-bold text-slate-800 tracking-tight flex items-center gap-2 mb-2.5">
           下午好，张建国
         </motion.h1>
@@ -149,7 +158,7 @@ export default function ManagerView() {
         </motion.div>
       </div>
 
-      <div className="px-4 pt-2 space-y-4 relative z-10">
+      <div className="px-4 pt-5 space-y-5 relative z-10">
         {/* Module 1: AI Health Summary (Dynamic) */}
         <motion.div variants={itemVariants}>
           <AIHealthSummaryCard 
@@ -214,33 +223,44 @@ export default function ManagerView() {
       <Modal
         visible={!!selectedMedTask}
         content={
-          <div className="flex flex-col items-center pt-2 pb-1">
-            <div className="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center mb-4">
-              <Pill className="w-6 h-6 text-emerald-500" />
+          <div className="flex flex-col items-center pt-2 pb-1 w-full">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center mb-5 shadow-[0_4px_12px_rgba(16,185,129,0.3)]">
+              <Pill className="w-7 h-7 text-white" />
             </div>
-            <h3 className="text-[18px] font-bold text-slate-800 mb-2">确认服药</h3>
-            <p className="text-[14px] text-slate-500 text-center leading-relaxed">
-              您确认已完成 <span className="font-bold text-slate-700">{selectedMedTask?.title}</span> 吗？<br/>
-              <span className="text-[12px]">{selectedMedTask?.description}</span>
-            </p>
+            <h3 className="text-[20px] font-bold text-slate-800 mb-1">用药打卡</h3>
+            <p className="text-[14px] text-slate-500 text-center mb-6">请确认您已按时服用以下药物</p>
+            
+            <div className="w-full bg-slate-50 rounded-[16px] p-4 mb-6 border border-slate-100">
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-[13px] font-medium text-slate-500">服药时间</span>
+                <span className="text-[14px] font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md">{selectedMedTask?.title.replace('服药', '')}</span>
+              </div>
+              <div className="h-[1px] w-full bg-slate-200/60 mb-3" />
+              <div className="flex justify-between items-center">
+                <span className="text-[13px] font-medium text-slate-500">药物名称与剂量</span>
+                <span className="text-[15px] font-bold text-slate-800 text-right max-w-[60%]">{selectedMedTask?.description}</span>
+              </div>
+            </div>
+
+            <div className="w-full flex flex-col gap-3">
+              <button 
+                onClick={handleConfirmMedication}
+                className="w-full bg-emerald-500 text-white font-bold text-[16px] py-3.5 rounded-[16px] shadow-[0_4px_12px_rgba(16,185,129,0.2)] active:scale-95 transition-transform flex items-center justify-center gap-2"
+              >
+                <CheckCircle2 className="w-5 h-5" />
+                一键打卡
+              </button>
+              <button 
+                onClick={() => setSelectedMedTask(null)}
+                className="w-full bg-slate-50 text-slate-500 font-medium text-[15px] py-3.5 rounded-[16px] active:scale-95 transition-transform"
+              >
+                稍后提醒
+              </button>
+            </div>
           </div>
         }
         closeOnAction
         onClose={() => setSelectedMedTask(null)}
-        actions={[
-          {
-            key: 'cancel',
-            text: '取消',
-            className: 'text-slate-500 font-medium',
-            onClick: () => setSelectedMedTask(null),
-          },
-          {
-            key: 'confirm',
-            text: '确认已服药',
-            className: 'text-emerald-600 font-bold',
-            onClick: handleConfirmMedication,
-          },
-        ]}
       />
     </motion.div>
   );
@@ -258,7 +278,7 @@ function AIHealthSummaryCard({ userStage, navigate, diseaseTag, hasMed, hasDevic
     }
   };
 
-  const itemVariants = {
+  const itemVariants: any = {
     hidden: { opacity: 0, scale: 0.9 },
     show: { opacity: 1, scale: 1, transition: { type: 'spring', stiffness: 400, damping: 25 } }
   };
@@ -388,7 +408,7 @@ function UniversalToolbox({ userStage, navigate, onOpenCDR }: any) {
     }
   };
 
-  const itemVariants = {
+  const itemVariants: any = {
     hidden: { opacity: 0, scale: 0.9 },
     show: { opacity: 1, scale: 1, transition: { type: 'spring', stiffness: 400, damping: 25 } }
   };

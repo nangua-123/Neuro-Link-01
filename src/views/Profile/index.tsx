@@ -127,7 +127,7 @@ export default function ProfileView() {
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="p-5 relative z-10 pt-12"
+        className="p-5 relative z-10 pt-5"
       >
         {/* Module A: Header */}
         <motion.div variants={itemVariants} className="bg-white rounded-[32px] p-6 mb-4 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100/50 flex items-center justify-between relative overflow-hidden">

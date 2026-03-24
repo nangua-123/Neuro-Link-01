@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, Pill, Plus, CheckCircle2, Clock, CalendarDays, ShieldCheck, Bell, Trash2, Sunrise, Sun, Sunset, Moon, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Pill, Plus, CheckCircle2, Clock, CalendarDays, ShieldCheck, Bell, Trash2, Sunrise, Sun, Sunset, Moon, Sparkles } from 'lucide-react';
 import { useAppStore } from '../../store';
 import { MedicationSetupModal } from '../../components/MedicationSetupModal';
 import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
@@ -107,7 +107,7 @@ export default function MedicationsView() {
       </div>
       
       {/* Header */}
-      <div className="sticky top-0 z-50 px-4 pt-12 pb-3 flex items-center justify-between bg-[#FAFAFA]/80 backdrop-blur-xl">
+      <div className="sticky top-0 z-50 px-4 pt-5 pb-3 flex items-center justify-between bg-[#FAFAFA]/80 backdrop-blur-xl">
         <button 
           onClick={() => navigate(-1)}
           className="w-10 h-10 flex items-center justify-center bg-white/80 backdrop-blur-md rounded-full shadow-sm active:scale-95 transition-transform"
@@ -119,7 +119,7 @@ export default function MedicationsView() {
       </div>
 
       {/* Tabs */}
-      <div className="sticky top-[88px] z-40 px-4 py-2 bg-[#FAFAFA]/80 backdrop-blur-xl">
+      <div className="sticky top-[72px] z-40 px-4 py-2 bg-[#FAFAFA]/80 backdrop-blur-xl">
         <div className="flex bg-slate-200/50 p-1 rounded-[16px]">
           <button 
             onClick={() => setActiveTab('today')}
@@ -230,10 +230,9 @@ export default function MedicationsView() {
                             <div className="h-[1px] flex-1 bg-slate-100 ml-2" />
                           </div>
                           
-                          <div className="space-y-3">
-                            {plans.map((plan) => {
-                              const isCompleted = todayTakenIds.includes(plan.id);
-                              return (
+                          <div className="space-y-2">
+                            <AnimatePresence>
+                              {plans.filter(p => !todayTakenIds.includes(p.id)).map((plan) => (
                                 <SwipeAction
                                   key={plan.id}
                                   rightActions={[
@@ -244,42 +243,79 @@ export default function MedicationsView() {
                                       onClick: () => handleDelete(plan.id),
                                     },
                                   ]}
-                                  className="rounded-[24px] overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100/60"
+                                  className="rounded-[20px] overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.04)] border border-slate-50/80"
                                 >
-                                  <div className={`bg-white px-5 py-4 flex items-center gap-4 transition-all duration-300 ${isCompleted ? 'opacity-60 grayscale-[0.2]' : 'opacity-100'}`}>
-                                    <div className={`w-12 h-12 rounded-[18px] flex items-center justify-center shrink-0 transition-colors ${isCompleted ? 'bg-slate-50' : 'bg-blue-50'}`}>
-                                      {isCompleted ? <CheckCircle2 className="w-6 h-6 text-slate-300" /> : <Pill className="w-6 h-6 text-blue-500" />}
-                                    </div>
-                                    <div className="flex-1 min-w-0 flex flex-col justify-center">
-                                      <div className={`text-[16px] font-bold truncate mb-1 ${isCompleted ? 'text-slate-400 line-through decoration-slate-300' : 'text-slate-800'}`}>
-                                        {plan.name}
+                                  <motion.div
+                                    layout
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    onClick={() => toggleMedication(plan.id)}
+                                    className="bg-white p-3.5 flex items-center justify-between group cursor-pointer"
+                                  >
+                                    <div className="flex items-center gap-3.5 min-w-0">
+                                      <div className="w-12 h-12 rounded-[14px] bg-blue-50 text-blue-500 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform shrink-0">
+                                        <Pill className="w-6 h-6" />
                                       </div>
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-[13px] font-medium text-slate-500 shrink-0">{plan.dose}</span>
-                                        {plan.reminderEnabled && (
-                                          <>
-                                            <span className="w-1 h-1 rounded-full bg-slate-200" />
-                                            <span className="flex items-center gap-1 text-[12px] text-slate-400 font-medium shrink-0">
-                                              <Bell className="w-3 h-3" /> {plan.reminderTime}
-                                            </span>
-                                          </>
-                                        )}
+                                      <div className="min-w-0">
+                                        <h4 className="text-[16px] font-bold text-slate-800 truncate">{plan.name}</h4>
+                                        <div className="flex items-center gap-2 mt-0.5">
+                                          <span className="text-[13px] font-medium text-slate-500 shrink-0">{plan.dose}</span>
+                                          {plan.reminderEnabled && (
+                                            <>
+                                              <span className="w-1 h-1 rounded-full bg-slate-200" />
+                                              <span className="flex items-center gap-1 text-[12px] text-slate-400 font-medium shrink-0">
+                                                <Bell className="w-3 h-3" /> {plan.reminderTime}
+                                              </span>
+                                            </>
+                                          )}
+                                        </div>
                                       </div>
                                     </div>
-                                    <button 
-                                      onClick={() => toggleMedication(plan.id)}
-                                      className={`px-5 py-2.5 text-[14px] font-bold rounded-full transition-all active:scale-95 shrink-0 whitespace-nowrap ${
-                                        isCompleted 
-                                          ? 'bg-slate-50 text-slate-400 border border-slate-100 shadow-none' 
-                                          : 'bg-[#1677FF] text-white shadow-[0_4px_16px_rgba(22,119,255,0.3)] hover:shadow-[0_6px_20px_rgba(22,119,255,0.4)]'
-                                      }`}
-                                    >
-                                      {isCompleted ? '已服药' : '打卡'}
-                                    </button>
-                                  </div>
+                                    <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors shrink-0 ml-2">
+                                      <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-500" />
+                                    </div>
+                                  </motion.div>
                                 </SwipeAction>
-                              );
-                            })}
+                              ))}
+                            </AnimatePresence>
+
+                            {plans.filter(p => todayTakenIds.includes(p.id)).length > 0 && (
+                              <div className="pt-2 space-y-1.5">
+                                <h4 className="text-[13px] font-bold text-slate-400 px-1 mb-1">已完成</h4>
+                                {plans.filter(p => todayTakenIds.includes(p.id)).map((plan) => (
+                                  <SwipeAction
+                                    key={plan.id}
+                                    rightActions={[
+                                      {
+                                        key: 'delete',
+                                        text: '删除',
+                                        color: 'danger',
+                                        onClick: () => handleDelete(plan.id),
+                                      },
+                                    ]}
+                                    className="rounded-[12px] overflow-hidden"
+                                  >
+                                    <motion.div
+                                      layout
+                                      onClick={() => toggleMedication(plan.id)}
+                                      className="bg-slate-50/60 py-2 px-3 flex items-center justify-between cursor-pointer"
+                                    >
+                                      <div className="flex items-center gap-2.5 min-w-0">
+                                        <div className="w-8 h-8 rounded-[10px] bg-slate-100/80 text-slate-400 flex items-center justify-center shrink-0">
+                                          <Pill className="w-4 h-4" />
+                                        </div>
+                                        <div className="min-w-0">
+                                          <h4 className="text-[12px] font-medium text-slate-400 line-through decoration-slate-300 truncate">{plan.name}</h4>
+                                        </div>
+                                      </div>
+                                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 ml-2" />
+                                    </motion.div>
+                                  </SwipeAction>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         </div>
                       );

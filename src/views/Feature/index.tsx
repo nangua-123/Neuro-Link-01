@@ -1,12 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { NavBar, SafeArea, Button } from 'antd-mobile';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { NavBar, SafeArea, Button, Toast } from 'antd-mobile';
 import { ChevronLeft, Moon, FileText, ShieldAlert, Brain, PhoneCall, CalendarCheck, Users, MapPin, Activity, Sparkles, Lock, BrainCircuit } from 'lucide-react';
 import { motion } from 'motion/react';
 import { TrendBarChart } from '../../components/Charts/TrendBarChart';
 import { WaveChart } from '../../components/common/charts/WaveChart';
+import { useAppStore } from '../../store';
 
 const featureConfig: Record<string, any> = {
+  'brain-training': {
+    title: '每日脑力唤醒',
+    icon: Brain,
+    theme: 'blue',
+    desc: '15分钟画钟与词汇回忆训练',
+    content: 'chart',
+    chartType: 'wave',
+    actionText: '开始训练',
+    mockData: Array.from({ length: 7 }, () => ({ value: 40 + Math.random() * 40 }))
+  },
+  'audio-therapy': {
+    title: '暗室舒缓音频',
+    icon: Moon,
+    theme: 'blue',
+    desc: '发作期白噪音与呼吸节律引导',
+    content: 'list',
+    actionText: '开始播放',
+    items: [
+      { label: '深海白噪音', status: '15分钟', color: 'text-blue-500' },
+      { label: '4-7-8 呼吸法', status: '10分钟', color: 'text-emerald-500' },
+      { label: '渐进式肌肉放松', status: '20分钟', color: 'text-rose-500' }
+    ]
+  },
   'sleep-log': {
     title: '睡眠日志',
     icon: Moon,
@@ -131,7 +155,9 @@ const themeColors = {
 export default function FeatureView() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isSimulating, setIsSimulating] = useState(false);
+  const { completeTask } = useAppStore();
 
   const config = featureConfig[id || ''] || featureConfig['sleep-log'];
   const Icon = config.icon;
@@ -141,6 +167,14 @@ export default function FeatureView() {
     setIsSimulating(true);
     setTimeout(() => {
       setIsSimulating(false);
+      const taskId = location.state?.taskId;
+      if (taskId) {
+        completeTask(taskId);
+        Toast.show({ content: '任务已完成', icon: 'success' });
+        setTimeout(() => navigate(-1), 1000);
+      } else {
+        Toast.show({ content: '操作成功', icon: 'success' });
+      }
     }, 1500);
   };
 

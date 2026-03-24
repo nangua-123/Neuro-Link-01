@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { NavBar, SafeArea } from 'antd-mobile';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, X, CheckCircle2 } from 'lucide-react';
@@ -17,7 +17,9 @@ import DailyExecTask from './DailyExecTask';
 export default function DTxRunnerView() {
   const { taskId } = useParams<{ taskId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const completeDTxTask = useAppStore(state => state.completeDTxTask);
+  const completeTask = useAppStore(state => state.completeTask);
   
   const [task, setTask] = useState<DTxTask | null>(null);
   const [stage, setStage] = useState<'intro' | 'running' | 'outro'>('intro');
@@ -40,6 +42,10 @@ export default function DTxRunnerView() {
   const handleStart = () => setStage('running');
   const handleComplete = () => {
     completeDTxTask(task.id);
+    const dailyTaskId = location.state?.dailyTaskId;
+    if (dailyTaskId) {
+      completeTask(dailyTaskId);
+    }
     setStage('outro');
   };
   const handleExit = () => navigate(-1);

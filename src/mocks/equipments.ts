@@ -6,6 +6,7 @@ export interface Equipment {
   certification: string;
   icon: string;
   gradient: string;
+  targetDisease: 'AD' | '癫痫' | '偏头痛' | '通用';
   bundledPrivileges: {
     id: string;
     title: string;
@@ -24,6 +25,7 @@ export const EQUIPMENTS_MOCK: Equipment[] = [
     certification: '国械注准 20232070012',
     icon: 'Watch',
     gradient: 'from-blue-50 to-indigo-50/80',
+    targetDisease: '癫痫',
     bundledPrivileges: [
       {
         id: 'seizure_alert',
@@ -38,12 +40,6 @@ export const EQUIPMENTS_MOCK: Equipment[] = [
         icon: 'FileText'
       },
       {
-        id: 'progression_analysis',
-        title: '衰退延缓评估报告',
-        desc: '综合脑力游戏通关率与睡眠质量，评估干预效果',
-        icon: 'BrainCircuit'
-      },
-      {
         id: 'family_care',
         title: '家属异地共管',
         desc: '子女随时随地查看长辈脑电与睡眠状态',
@@ -53,13 +49,45 @@ export const EQUIPMENTS_MOCK: Equipment[] = [
     tags: ['医疗级高精度', '支持医保支付']
   },
   {
-    id: 'eeg_patch_24h',
-    name: '24h 动态脑电贴',
-    subtitle: '隐形穿戴，无感记录全天候脑电波形',
+    id: 'neuro_tracker_ad',
+    name: 'Neuro-Tracker 认知守护环',
+    subtitle: '防走失电子围栏与跌倒报警，全天候守护长辈安全',
+    price: 1599,
+    certification: '国械注准 20242070088',
+    icon: 'Watch',
+    gradient: 'from-emerald-50 to-teal-50/80',
+    targetDisease: 'AD',
+    bundledPrivileges: [
+      {
+        id: 'anti_wandering',
+        title: '防走失与跌倒报警',
+        desc: '精准定位，意外跌倒秒级通知家属',
+        icon: 'MapPin'
+      },
+      {
+        id: 'sleep_rhythm',
+        title: '睡眠节律与认知分析',
+        desc: '监测夜间游荡，辅助评估认知衰退',
+        icon: 'BrainCircuit'
+      },
+      {
+        id: 'family_care',
+        title: '家属异地共管',
+        desc: '子女随时随地查看长辈位置与状态',
+        icon: 'Users'
+      }
+    ],
+    tags: ['北斗高精定位', '适老化设计']
+  },
+  {
+    id: 'neuro_sense_migraine',
+    name: 'Neuro-Sense 舒缓头带',
+    subtitle: '脑电波舒缓与压力监测，精准记录偏头痛诱因',
     price: 899,
     certification: '国械注准 20222070158',
     icon: 'Activity',
-    gradient: 'from-emerald-50 to-teal-50/80',
+    gradient: 'from-violet-50 to-purple-50/80',
+    targetDisease: '偏头痛',
     bundledPrivileges: [
       {
         id: 'trigger_analysis',
@@ -68,42 +96,18 @@ export const EQUIPMENTS_MOCK: Equipment[] = [
         icon: 'Activity'
       },
       {
+        id: 'eeg_soothing',
+        title: '脑电波靶向舒缓',
+        desc: '定制化声光干预，缓解急性头痛',
+        icon: 'Wind'
+      },
+      {
         id: 'visit_summary',
         title: '华西标准复诊一页纸',
         desc: '就诊免沟通，医生一秒看懂病情趋势',
         icon: 'FileText'
       }
     ],
-    tags: ['无感佩戴', '防水防汗']
-  },
-  {
-    id: 'sleep_monitor_max',
-    name: '高精度睡眠监测仪 Max',
-    subtitle: '非接触式雷达监测，深度解析睡眠分期与呼吸暂停',
-    price: 1599,
-    certification: '国械注准 20242070088',
-    icon: 'Moon',
-    gradient: 'from-violet-50 to-purple-50/80',
-    bundledPrivileges: [
-      {
-        id: 'sleep_apnea_alert',
-        title: '睡眠呼吸暂停预警',
-        desc: '实时监测血氧与呼吸，异常自动唤醒',
-        icon: 'Wind'
-      },
-      {
-        id: 'progression_analysis',
-        title: '衰退延缓评估报告',
-        desc: '综合脑力游戏通关率与睡眠质量，评估干预效果',
-        icon: 'BrainCircuit'
-      },
-      {
-        id: 'family_care',
-        title: '家属异地共管',
-        desc: '子女随时随地查看长辈脑电与睡眠状态',
-        icon: 'Users'
-      }
-    ],
-    tags: ['非接触式', '雷达级精度']
+    tags: ['无感佩戴', '物理舒缓']
   }
 ];

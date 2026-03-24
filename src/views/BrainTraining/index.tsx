@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { NavBar, SafeArea, Toast } from 'antd-mobile';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -151,6 +151,7 @@ export const dtxZones: DTxZone[] = [
 
 export default function BrainTrainingView() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState<'today' | 'data'>('today');
   const [greeting, setGreeting] = useState('开启今日脑力唤醒');
   
@@ -173,7 +174,7 @@ export default function BrainTrainingView() {
   }, []);
 
   const handleStart = (taskId: string) => {
-    navigate(`/dtx/runner/${taskId}`);
+    navigate(`/dtx/runner/${taskId}`, { state: { dailyTaskId: location.state?.taskId } });
   };
 
   // Calculate progress percentage

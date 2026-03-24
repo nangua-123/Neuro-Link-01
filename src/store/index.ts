@@ -319,8 +319,8 @@ export const useAppStore = create<AppState>()(
         }
         
         if (state.selectedDiseaseTag === DiseaseTag.AD) {
-          newTasks.push({ id: 't1', title: '每日脑力唤醒', description: '15分钟画钟与词汇回忆训练', type: 'TRAINING', time: 'MORNING', status: existingTasksMap.get('t1')?.status || 'PENDING', actionLabel: '去训练', iconName: 'Brain' });
-          newTasks.push({ id: 't2', title: '记录异常行为', description: '随手记录长辈精神行为症状', type: 'DIARY', time: 'ANYTIME', status: existingTasksMap.get('t2')?.status || 'PENDING', actionLabel: '去记录', iconName: 'HeartHandshake' });
+          newTasks.push({ id: 't1', title: '每日脑力唤醒', description: '15分钟画钟与词汇回忆训练', type: 'TRAINING', time: 'MORNING', status: existingTasksMap.get('t1')?.status || 'PENDING', actionLabel: '去训练', iconName: 'Brain', actionRoute: '/feature/brain-training' });
+          newTasks.push({ id: 't2', title: '记录异常行为', description: '随手记录长辈精神行为症状', type: 'DIARY', time: 'ANYTIME', status: existingTasksMap.get('t2')?.status || 'PENDING', actionLabel: '去记录', iconName: 'HeartHandshake', actionRoute: '/cdr' });
           if (state.medicationPlans.length === 0) {
             newTasks.push({ id: 't3', title: '日常用药打卡', description: '记录改善认知药物服用情况', type: 'MEDICATION', time: 'ANYTIME', status: existingTasksMap.get('t3')?.status || 'PENDING', actionLabel: '打卡', iconName: 'Pill' });
           }
@@ -330,14 +330,14 @@ export const useAppStore = create<AppState>()(
             newTasks.push({ id: 't2', title: '午间服药', description: '丙戊酸钠缓释片 500mg', type: 'MEDICATION', time: 'NOON', status: existingTasksMap.get('t2')?.status || 'PENDING', actionLabel: '打卡', iconName: 'Pill' });
             newTasks.push({ id: 't3', title: '晚间服药', description: '左乙拉西坦片 500mg', type: 'MEDICATION', time: 'EVENING', status: existingTasksMap.get('t3')?.status || 'PENDING', actionLabel: '打卡', iconName: 'Pill' });
           }
-          newTasks.push({ id: 't4', title: '记录发作日记', description: '如有发作请及时记录', type: 'DIARY', time: 'ANYTIME', status: existingTasksMap.get('t4')?.status || 'PENDING', actionLabel: '去记录', iconName: 'Activity' });
-          newTasks.push({ id: 't5', title: '规律作息打卡', description: '保持充足睡眠，规避诱发因素', type: 'TRAINING', time: 'EVENING', status: existingTasksMap.get('t5')?.status || 'PENDING', actionLabel: '打卡', iconName: 'HeartHandshake' });
+          newTasks.push({ id: 't4', title: '记录发作日记', description: '如有发作请及时记录', type: 'DIARY', time: 'ANYTIME', status: existingTasksMap.get('t4')?.status || 'PENDING', actionLabel: '去记录', iconName: 'Activity', actionRoute: '/diary' });
+          newTasks.push({ id: 't5', title: '规律作息打卡', description: '保持充足睡眠，规避诱发因素', type: 'TRAINING', time: 'EVENING', status: existingTasksMap.get('t5')?.status || 'PENDING', actionLabel: '打卡', iconName: 'HeartHandshake', actionRoute: '/feature/sleep-log' });
         } else if (state.selectedDiseaseTag === DiseaseTag.MIGRAINE) {
-          newTasks.push({ id: 't1', title: '记录头痛闪记', description: '0-10分疼痛评估与症状记录', type: 'DIARY', time: 'ANYTIME', status: existingTasksMap.get('t1')?.status || 'PENDING', actionLabel: '去记录', iconName: 'Activity' });
+          newTasks.push({ id: 't1', title: '记录头痛闪记', description: '0-10分疼痛评估与症状记录', type: 'DIARY', time: 'ANYTIME', status: existingTasksMap.get('t1')?.status || 'PENDING', actionLabel: '去记录', iconName: 'Activity', actionRoute: '/diary' });
           if (state.medicationPlans.length === 0) {
             newTasks.push({ id: 't2', title: '记录止痛药', description: '防范药物过度使用头痛(MOH)', type: 'MEDICATION', time: 'ANYTIME', status: existingTasksMap.get('t2')?.status || 'PENDING', actionLabel: '打卡', iconName: 'Pill' });
           }
-          newTasks.push({ id: 't3', title: '暗室舒缓音频', description: '发作期白噪音与呼吸节律引导', type: 'TRAINING', time: 'ANYTIME', status: existingTasksMap.get('t3')?.status || 'PENDING', actionLabel: '去放松', iconName: 'Brain' });
+          newTasks.push({ id: 't3', title: '暗室舒缓音频', description: '发作期白噪音与呼吸节律引导', type: 'TRAINING', time: 'ANYTIME', status: existingTasksMap.get('t3')?.status || 'PENDING', actionLabel: '去放松', iconName: 'Brain', actionRoute: '/feature/audio-therapy' });
         }
         
         return { tasks: newTasks };

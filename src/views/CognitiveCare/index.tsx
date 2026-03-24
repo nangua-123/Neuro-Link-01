@@ -41,7 +41,7 @@ export default function CognitiveCareView() {
       <div className="absolute top-32 -left-24 w-48 h-48 bg-blue-300/10 rounded-full blur-3xl" />
 
       {/* Header */}
-      <div className="relative z-10 px-4 pt-12 pb-4 flex items-center justify-between shrink-0">
+      <div className="relative z-10 px-4 pt-5 pb-4 flex items-center justify-between shrink-0">
         <button 
           onClick={() => navigate(-1)}
           className="w-10 h-10 flex items-center justify-center bg-white/60 backdrop-blur-md rounded-full shadow-sm active:scale-95 transition-transform"
