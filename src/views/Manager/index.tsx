@@ -103,17 +103,22 @@ export default function ManagerView() {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: { staggerChildren: 0.1 }
+      transition: { staggerChildren: 0.08, delayChildren: 0.05 }
     }
   };
 
   const itemVariants: any = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
+    hidden: { opacity: 0, y: 24, scale: 0.98 },
+    show: { 
+      opacity: 1, 
+      y: 0, 
+      scale: 1,
+      transition: { type: 'spring', stiffness: 400, damping: 30 } 
+    }
   };
 
   if (isLoading) return (
-    <div className="bg-[#F4F7FB] pt-4 px-4">
+    <div className="bg-gradient-to-br from-[#f4f7fb] to-[#eef2ff] pt-4 px-4 min-h-full">
       <ManagerSkeleton />
     </div>
   );
@@ -123,7 +128,7 @@ export default function ManagerView() {
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="bg-[#F7F9FC] font-sans selection:bg-blue-100 relative"
+      className="bg-gradient-to-br from-[#f4f7fb] to-[#eef2ff] font-sans selection:bg-blue-100 relative min-h-full"
     >
       {/* Soft Diffuse Background */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
@@ -133,15 +138,15 @@ export default function ManagerView() {
       </div>
       
       <div className="px-4 pt-5 pb-2 relative z-10">
-        <h1 className="text-[18px] font-bold text-slate-800 tracking-tight flex items-center gap-2 mb-2.5">
+        <motion.h1 variants={itemVariants} className="text-[18px] font-bold text-slate-800 tracking-tight flex items-center gap-2 mb-2.5">
           下午好，张建国
-        </h1>
-        <div className="flex items-start gap-2.5 bg-white/40 backdrop-blur-md px-4 py-3 rounded-[16px] shadow-[0_4px_16px_rgba(0,0,0,0.03)]">
+        </motion.h1>
+        <motion.div variants={itemVariants} className="flex items-start gap-2.5 bg-white/40 backdrop-blur-md px-4 py-3 rounded-[16px] shadow-[0_4px_16px_rgba(0,0,0,0.03)]">
           <Sparkles className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
           <p className="text-[13px] text-slate-700 leading-relaxed font-medium">
             {getDynamicInsight(userStage, selectedDiseaseTag, identity)}
           </p>
-        </div>
+        </motion.div>
       </div>
 
       <div className="px-4 pt-2 space-y-4 relative z-10">
@@ -245,9 +250,27 @@ function AIHealthSummaryCard({ userStage, navigate, diseaseTag, hasMed, hasDevic
   const { identity } = useAppStore();
   const isFamily = identity === UserIdentity.FAMILY;
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.05, delayChildren: 0.05 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, scale: 0.9 },
+    show: { opacity: 1, scale: 1, transition: { type: 'spring', stiffness: 400, damping: 25 } }
+  };
+
   if (userStage === 'NEW') {
     return (
-      <div className="bg-white/90 backdrop-blur-xl rounded-[24px] p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-white relative overflow-hidden">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+        className="bg-white/90 backdrop-blur-xl rounded-[24px] p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-white relative overflow-hidden"
+      >
         <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100/30 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
         <div className="relative z-10">
           <h2 className="text-[18px] font-bold text-slate-800 mb-2">专属健康管家尚未激活</h2>
@@ -259,24 +282,30 @@ function AIHealthSummaryCard({ userStage, navigate, diseaseTag, hasMed, hasDevic
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="bg-white/90 backdrop-blur-xl rounded-[24px] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-white relative overflow-hidden">
-      <div className="flex justify-between items-center mb-4">
+    <motion.div 
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, margin: "-50px" }}
+      className="bg-white/90 backdrop-blur-xl rounded-[24px] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-white relative overflow-hidden"
+    >
+      <motion.div variants={itemVariants} className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-1.5">
           <h2 className="text-[18px] font-bold text-slate-800 tracking-tight">AI 阶段健康摘要</h2>
         </div>
         <div onClick={() => navigate('/clinic-report')} className="flex items-center gap-0.5 text-[12px] font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full cursor-pointer active:scale-95 transition-transform">
           全景病历 <ChevronRight className="w-3 h-3" />
         </div>
-      </div>
+      </motion.div>
       
       <div className="grid grid-cols-2 gap-2.5">
         {/* Metric 1: Medication */}
-        <div 
+        <motion.div variants={itemVariants}
           onClick={hasMed ? undefined : () => navigate('/medications')}
           className={`flex flex-col items-center text-center rounded-[16px] p-3 border ${hasMed ? 'bg-emerald-50/50 border-emerald-100/50' : 'bg-slate-50/80 border-slate-100/80 cursor-pointer active:scale-95 transition-transform'}`}
         >
@@ -290,10 +319,10 @@ function AIHealthSummaryCard({ userStage, navigate, diseaseTag, hasMed, hasDevic
           <div className={`text-[12px] mt-1.5 ${hasMed ? 'text-emerald-600' : 'text-blue-500'}`}>
             {hasMed ? '本周表现极佳' : '去添加计划 ➔'}
           </div>
-        </div>
+        </motion.div>
 
         {/* Metric 2: Device */}
-        <div 
+        <motion.div variants={itemVariants}
           onClick={hasDevice ? undefined : () => navigate('/device-connect')}
           className={`flex flex-col items-center text-center rounded-[16px] p-3 border ${hasDevice ? 'bg-blue-50/50 border-blue-100/50' : 'bg-slate-50/80 border-slate-100/80 cursor-pointer active:scale-95 transition-transform'}`}
         >
@@ -307,10 +336,10 @@ function AIHealthSummaryCard({ userStage, navigate, diseaseTag, hasMed, hasDevic
           <div className={`text-[12px] mt-1.5 ${hasDevice ? 'text-blue-600' : 'text-blue-500'}`}>
             {hasDevice ? '睡眠/心率平稳' : '去绑定设备 ➔'}
           </div>
-        </div>
+        </motion.div>
 
         {/* Metric 3: Diary/Control */}
-        <div 
+        <motion.div variants={itemVariants}
           onClick={() => navigate('/diary')}
           className="flex flex-col items-center text-center rounded-[16px] p-3 border bg-rose-50/50 border-rose-100/50 cursor-pointer active:scale-95 transition-transform"
         >
@@ -324,10 +353,10 @@ function AIHealthSummaryCard({ userStage, navigate, diseaseTag, hasMed, hasDevic
           <div className="text-[12px] mt-1.5 text-rose-600">
             本周无异常记录
           </div>
-        </div>
+        </motion.div>
 
         {/* Metric 4: Training (Dynamic based on disease) */}
-        <div 
+        <motion.div variants={itemVariants}
           onClick={() => navigate('/feature/brain-training')}
           className={`flex flex-col items-center text-center rounded-[16px] p-3 border ${diseaseTag === 'AD' ? 'bg-indigo-50/50 border-indigo-100/50' : 'bg-slate-50/80 border-slate-100/80'} cursor-pointer active:scale-95 transition-transform`}
         >
@@ -341,9 +370,9 @@ function AIHealthSummaryCard({ userStage, navigate, diseaseTag, hasMed, hasDevic
           <div className={`text-[12px] mt-1.5 ${diseaseTag === 'AD' ? 'text-indigo-600' : 'text-blue-500'}`}>
             {diseaseTag === 'AD' ? '达标率良好' : '开启专属训练 ➔'}
           </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -351,53 +380,72 @@ function UniversalToolbox({ userStage, navigate, onOpenCDR }: any) {
   const { identity } = useAppStore();
   const isFamily = identity === UserIdentity.FAMILY;
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.05, delayChildren: 0.1 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, scale: 0.9 },
+    show: { opacity: 1, scale: 1, transition: { type: 'spring', stiffness: 400, damping: 25 } }
+  };
+
   return (
-    <div className="bg-white/90 backdrop-blur-xl rounded-[24px] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-white space-y-4">
+    <motion.div 
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, margin: "-50px" }}
+      className="bg-white/90 backdrop-blur-xl rounded-[24px] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-white space-y-4"
+    >
       {/* Section A: 日常记录 */}
       <div>
-        <div className="text-[14px] font-bold text-slate-800 mb-3 px-1">日常记录</div>
+        <motion.div variants={itemVariants} className="text-[14px] font-bold text-slate-800 mb-3 px-1">日常记录</motion.div>
         <div className="grid grid-cols-4 gap-y-4">
-           <ToolItem icon={<Pill/>} label={isFamily ? "长辈用药" : "智能用药"} onClick={() => navigate('/medications')} color="emerald" userStage={userStage} />
-           <ToolItem icon={<Activity/>} label={isFamily ? "长辈发作" : "发作日记"} onClick={() => navigate('/diary', { state: { defaultTab: 'EPILEPSY' } })} color="blue" userStage={userStage} />
-           <ToolItem icon={<Zap/>} label={isFamily ? "长辈头痛" : "头痛闪记"} onClick={() => navigate('/diary', { state: { defaultTab: 'MIGRAINE' } })} color="rose" userStage={userStage} />
-           <ToolItem icon={<HeartHandshake/>} label="照护日记" onClick={onOpenCDR} color="blue" userStage={userStage} />
+           <motion.div variants={itemVariants}><ToolItem icon={<Pill/>} label={isFamily ? "长辈用药" : "智能用药"} onClick={() => navigate('/medications')} color="emerald" userStage={userStage} /></motion.div>
+           <motion.div variants={itemVariants}><ToolItem icon={<Activity/>} label={isFamily ? "长辈发作" : "发作日记"} onClick={() => navigate('/diary', { state: { defaultTab: 'EPILEPSY' } })} color="blue" userStage={userStage} /></motion.div>
+           <motion.div variants={itemVariants}><ToolItem icon={<Zap/>} label={isFamily ? "长辈头痛" : "头痛闪记"} onClick={() => navigate('/diary', { state: { defaultTab: 'MIGRAINE' } })} color="rose" userStage={userStage} /></motion.div>
+           <motion.div variants={itemVariants}><ToolItem icon={<HeartHandshake/>} label="照护日记" onClick={onOpenCDR} color="blue" userStage={userStage} /></motion.div>
         </div>
       </div>
       
-      <div className="h-[1px] bg-slate-100/40 mx-2" />
+      <motion.div variants={itemVariants} className="h-[1px] bg-slate-100/40 mx-2" />
       
       {/* Section B: 测评与洞察 */}
       <div>
-        <div className="text-[14px] font-bold text-slate-800 mb-3 px-1">测评与洞察</div>
+        <motion.div variants={itemVariants} className="text-[14px] font-bold text-slate-800 mb-3 px-1">测评与洞察</motion.div>
         <div className="grid grid-cols-4 gap-y-4">
-           <ToolItem icon={<FileText/>} label="专业量表" onClick={() => navigate('/assessment')} color="blue" userStage={userStage} />
-           <ToolItem icon={<FileText/>} label="全景档案" onClick={() => navigate('/clinic-report')} color="blue" userStage={userStage} requiresAssessment />
+           <motion.div variants={itemVariants}><ToolItem icon={<FileText/>} label="专业量表" onClick={() => navigate('/assessment')} color="blue" userStage={userStage} /></motion.div>
+           <motion.div variants={itemVariants}><ToolItem icon={<FileText/>} label="全景档案" onClick={() => navigate('/clinic-report')} color="blue" userStage={userStage} requiresAssessment /></motion.div>
         </div>
       </div>
 
-      <div className="h-[1px] bg-slate-100/40 mx-2" />
+      <motion.div variants={itemVariants} className="h-[1px] bg-slate-100/40 mx-2" />
       
       {/* Section C: 干预与守护 */}
       <div>
-        <div className="text-[14px] font-bold text-slate-800 mb-3 px-1">干预与守护</div>
+        <motion.div variants={itemVariants} className="text-[14px] font-bold text-slate-800 mb-3 px-1">干预与守护</motion.div>
         <div className="grid grid-cols-4 gap-y-4">
-           <ToolItem icon={<BrainCircuit/>} label="脑力训练" onClick={() => navigate('/feature/brain-training')} color="blue" userStage={userStage} requiresAssessment />
-           <ToolItem icon={<MapPin/>} label="安全围栏" onClick={() => navigate('/feature/lbs-fence')} color="orange" userStage={userStage} requiresAssessment />
-           <ToolItem icon={<ShieldAlert/>} label="紧急录像" onClick={() => Toast.show({ content: '已触发紧急录像', icon: 'success' })} color="red" userStage={userStage} />
+           <motion.div variants={itemVariants}><ToolItem icon={<BrainCircuit/>} label="脑力训练" onClick={() => navigate('/feature/brain-training')} color="blue" userStage={userStage} requiresAssessment /></motion.div>
+           <motion.div variants={itemVariants}><ToolItem icon={<MapPin/>} label="安全围栏" onClick={() => navigate('/feature/lbs-fence')} color="orange" userStage={userStage} requiresAssessment /></motion.div>
+           <motion.div variants={itemVariants}><ToolItem icon={<ShieldAlert/>} label="紧急录像" onClick={() => Toast.show({ content: '已触发紧急录像', icon: 'success' })} color="red" userStage={userStage} /></motion.div>
         </div>
       </div>
 
-      <div className="h-[1px] bg-slate-100/40 mx-2" />
+      <motion.div variants={itemVariants} className="h-[1px] bg-slate-100/40 mx-2" />
       
       {/* Section D: 医疗服务 */}
       <div>
-        <div className="text-[14px] font-bold text-slate-800 mb-3 px-1">医疗服务</div>
+        <motion.div variants={itemVariants} className="text-[14px] font-bold text-slate-800 mb-3 px-1">医疗服务</motion.div>
         <div className="grid grid-cols-4 gap-y-4">
-           <ToolItem icon={<Stethoscope/>} label="专家复诊" onClick={() => showComingSoon('专家在线复诊', '华西神经内科专家团队即将入驻，为您提供线上复诊与处方调整服务。')} color="blue" userStage={userStage} />
-           <ToolItem icon={<Smile/>} label="心理支持" onClick={() => showComingSoon('心理支持', '专业的心理咨询师团队即将上线，为您和家属提供情绪疏导与心理支持。')} color="emerald" userStage={userStage} />
+           <motion.div variants={itemVariants}><ToolItem icon={<Stethoscope/>} label="专家复诊" onClick={() => showComingSoon('专家在线复诊', '华西神经内科专家团队即将入驻，为您提供线上复诊与处方调整服务。')} color="blue" userStage={userStage} /></motion.div>
+           <motion.div variants={itemVariants}><ToolItem icon={<Smile/>} label="心理支持" onClick={() => showComingSoon('心理支持', '专业的心理咨询师团队即将上线，为您和家属提供情绪疏导与心理支持。')} color="emerald" userStage={userStage} /></motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

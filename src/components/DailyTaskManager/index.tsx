@@ -79,25 +79,25 @@ export const DailyTaskManager = ({ onTaskAction }: { onTaskAction: (task: Task) 
         </AnimatePresence>
 
         {completedTasks.length > 0 && (
-          <div className="pt-2 space-y-2">
-            <h4 className="text-[14px] font-bold text-slate-400 px-1">已完成</h4>
+          <div className="pt-2 space-y-1.5">
+            <h4 className="text-[13px] font-bold text-slate-400 px-1 mb-1">已完成</h4>
             {completedTasks.map(task => {
               const Icon = iconMap[task.iconName] || FileText;
               return (
                 <motion.div
                   key={task.id}
                   layout
-                  className="bg-slate-50/80 rounded-[16px] py-2.5 px-3.5 flex items-center justify-between"
+                  className="bg-slate-50/60 rounded-[12px] py-2 px-3 flex items-center justify-between"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-10 h-10 rounded-[12px] bg-slate-100/80 text-slate-400 flex items-center justify-center shrink-0">
-                      <Icon className="w-5 h-5" />
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="w-8 h-8 rounded-[10px] bg-slate-100/80 text-slate-400 flex items-center justify-center shrink-0">
+                      <Icon className="w-4 h-4" />
                     </div>
                     <div className="min-w-0">
-                      <h4 className="text-[16px] font-bold text-slate-400 line-through decoration-slate-300 truncate">{task.title}</h4>
+                      <h4 className="text-[12px] font-medium text-slate-400 line-through decoration-slate-300 truncate">{task.title}</h4>
                     </div>
                   </div>
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 ml-2" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 ml-2" />
                 </motion.div>
               );
             })}
