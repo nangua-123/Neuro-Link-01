@@ -56,6 +56,18 @@
 - `recharts`: [新增] 数据可视化图表库。
 
 ## Changelog
+### 🔄 Device State UI Refinement (2026-03-25)
+- **Objective:** Address user feedback regarding the "Pending Delivery" card being too large and confusing when no device was purchased.
+- **Key Changes:**
+  - **Compacted UI:** Significantly reduced the size of the "Pending Delivery" (Purchased but not connected) state in `VitalsGrid.tsx` to a single-line banner, matching the minimal footprint of the "Empty" state.
+  - **Logic Clarification:** Confirmed that the "Pending Delivery" state is correctly triggered by `purchasedAssets` in the global store. If a user sees this state without having purchased a device in the current session, it is due to the state being persisted in `localStorage` from a previous test session.
+
+### 🔄 核心业务闭环：IoT 资产与商城联动 (Purchase-to-Bind)
+为了提供极致的 C 端管家体验，系统打通了电商模块与 IoT 监测模块：
+1. **资产状态流转**：商城订单 (Order) -> 待激活资产 (Pending Asset) -> 已连接设备 (Connected IoT)。
+2. **JIT 动态引导**：用户购买硬件后，管家首页 (Manager) 会自动生成最高优先级的“设备激活引导卡片”，消除用户收到硬件后的操作迷茫感。
+3. **免搜索直连**：在设备添加页面，已购资产将置顶并高亮，点击即可直接进入专属蓝牙配对流程。
+
 ### Batch 24: 居家管家与装备库 UI/UX 深度重构 (Premium UI/UX Refactoring)
 - **Objective:** Refactor the UI styles of the "Manager" and "Equipments" pages to align with a modern, clean, and premium aesthetic, eliminating deviations from the established system instructions.
 - **Key Changes:**
@@ -324,6 +336,59 @@
 
 ---
 
+### Batch 33: Manager View UI/UX Refactoring (C-End Butler Paradigm)
+- **File**: `src/views/Manager/index.tsx`
+- **Changes**:
+  - **Layout Constraints**: Applied `h-full flex flex-col` to the main container and `flex-1 overflow-y-auto` to the content area to ensure proper scrolling within the single scroll context managed by the Layout component. Added `pb-[120px]` to the scroll container to prevent bottom content from being obscured by the navigation bar.
+  - **Visual Enhancements**: 
+    - Updated the main background color to `#FAFAFA` for a cleaner look.
+    - Enhanced the dynamic insight card with a stronger glassmorphism effect (`bg-white/60 backdrop-blur-md`), a subtle white border (`border-white/80`), and increased bottom margin (`mb-5`) for better separation from the content below.
+
+### Batch 32: Home View UI/UX Refactoring (C-End Butler Paradigm)
+- **File**: `src/views/Home/index.tsx`
+- **Changes**:
+  - **Layout Constraints**: Applied `h-full` to the main container and `flex-1 overflow-y-auto` to the chat viewport to ensure proper scrolling within the single scroll context managed by the Layout component. Replaced the hardcoded bottom spacer with padding (`pb-[120px]`) on the scroll container to prevent the floating input pill from obscuring the last message.
+  - **Visual Enhancements**: 
+    - Upgraded user message bubbles with a gradient background (`bg-gradient-to-r from-blue-600 to-indigo-600`).
+    - Upgraded the "Unlock Report" button and the voice recording button to use the same `from-blue-600 to-indigo-600` gradient for consistency and a more premium feel.
+    - Added a subtle shadow (`shadow-sm`) to the send button.
+
+### Batch 31: Family Binding Modal UI/UX Refactoring (C-End Butler Paradigm)
+- **File**: `src/views/Profile/components/FamilyBindingModal.tsx`
+- **Changes**:
+  - **Visual Overhaul**: Applied the C-end butler paradigm with a soft, diffuse gradient background (`bg-gradient-to-b from-blue-100/60`, `bg-gradient-to-tr from-indigo-50/40`) within the modal content area.
+  - **Icon & Header**: Upgraded the central icon to a larger, gradient-filled container with a decorative sparkle element. Improved typography for the title and description for better readability and a friendlier tone.
+  - **Input Field**: Enhanced the passcode input field with a larger size, monospaced font, increased letter spacing (`tracking-[0.2em]`), and a subtle inner shadow to make it feel more like a secure entry point.
+  - **Action Buttons**: 
+    - Upgraded the "Scan to Bind" button to a clean, white style with a subtle border and shadow.
+    - Upgraded the "Confirm Binding" button to a prominent gradient (`from-blue-600 to-indigo-600`) with a strong shadow and active scale transform for better tactile feedback.
+  - **Modal Container**: Applied `rounded-[32px]` and `overflow-hidden` to the modal body to ensure the background gradients and content fit perfectly within the modern, rounded aesthetic.
+
+### Batch 30: Profile View UI/UX Refactoring (C-End Butler Paradigm)
+- **File**: `src/views/Profile/index.tsx`
+- **Changes**:
+  - **Visual Overhaul**: Replaced the plain background with a soft, diffuse gradient background using blurred elements (`bg-blue-200/40`, `bg-indigo-200/30`) to create a premium, high-tech feel.
+  - **Header Section**: Upgraded the user profile card with `backdrop-blur-xl`, subtle borders, and refined shadows. Enhanced the avatar display and identity switching button.
+  - **Quick Actions Grid**: Redesigned the quick action buttons (就诊码, 健康档案, etc.) with glassmorphism effects, larger icons, and improved typography.
+  - **Family Management (A.1 & A.2)**: 
+    - Upgraded the "照护对象管理" and "我的照护者" modules with `backdrop-blur-xl` and dynamic gradient backgrounds.
+    - Improved the visual presentation of bound patients/caregivers with better spacing, shadows, and typography.
+  - **Privacy & Settings (Module C)**: Refined the list items with larger, gradient-filled icon containers and updated typography for a cleaner look.
+  - **Layout Constraints**: Ensured strict adherence to mobile layout guidelines, using `min-h-full` and proper safe area padding (`pb-[calc(env(safe-area-inset-bottom)+20px)]`) to prevent content cutoff and maintain a clean scrolling experience within the main layout.
+
+### Batch 29: Equipment List UI/UX Refactoring (C-End Butler Paradigm)
+- **File**: `src/views/Equipments/index.tsx`
+- **Changes**:
+  - **Visual Overhaul**: Replaced the basic background with a soft, diffuse gradient background using blurred elements to create a premium, high-tech feel.
+  - **Hero Section**: Added a prominent hero card ("Neuro-Link IoT") with a deep blue gradient, glassmorphism effects, and clear messaging about the benefits of hardware integration (e.g., "无感直连", "医疗级认证").
+  - **Equipment Cards**:
+    - Upgraded card styling with `backdrop-blur-xl`, subtle borders, and refined shadows.
+    - Enhanced the product image area with dynamic gradients and increased the scale of the `DeviceIllustration` for better visual impact.
+    - Improved typography for titles, subtitles, and tags, ensuring better readability and information hierarchy.
+  - **Privileges Display**: Redesigned the "购机解锁特权" (Bundled Privileges) section to use a vertical list with custom icons and softer backgrounds, making the benefits clearer.
+  - **Action Area**: Upgraded the price display and action button. The "View Details" button now uses a prominent gradient, while the "Owned" state features a pulsing green indicator to signify an active connection.
+  - **Layout Constraints**: Ensured strict adherence to mobile layout guidelines, using `min-h-full` and proper safe area padding (`pb-[calc(env(safe-area-inset-bottom)+20px)]`) to prevent content cutoff and maintain a clean scrolling experience within the main layout.
+
 ### Batch 28: 全景病例 UI/UX 深度重构 (EHR Timeline Polish)
 - **视觉重构**: 彻底摒弃了 B 端后台的冰冷感，引入 C 端管家范式。采用极浅弥散冷暖色渐变背景，配合高级柔和的阴影（Glow Shadows）。
 - **信息密度与排版**: 新增了顶部 Hero Card（AI Archive 资产卡），强调金融级脱敏加密，增强用户信任感。时间轴节点升级为毛玻璃卡片（Glassmorphism），并增加了标签（Tag）分类，提升信息密度。
@@ -344,6 +409,16 @@
     - **信息层级优化**: 精准提取并高亮展示“服药时间”（如“早间”）、“药物名称与剂量”（如“丙戊酸钠 500mg”），确保核心医疗信息一目了然。
     - **视觉升维**: 引入科技蓝渐变图标与柔和的背景色块，彻底摒弃生硬的系统默认弹窗样式。
     - **沉浸式操作**: 将“一键打卡”与“稍后提醒”按钮内置于 Modal 内容区，采用高对比度渐变按钮与大圆角设计，提升点击转化率与操作连贯性。
+
+### Batch 34: IoT Integration & New User Onboarding Refinement
+- **Objective:** Refine the IoT device integration and management features, ensuring a logical and intuitive user experience, especially for new users post-assessment.
+- **Key Changes:**
+  - **Navigation Logic:** Implemented `replace: true` in navigation from `ReportView`, `DeviceAuthView`, `DeviceConnectView`, and `AssessmentView` to prevent cluttered history stacks.
+  - **Device State Visualization:** Refactored `VitalsGrid` to correctly display three states: connected devices, purchased but pending devices, and an empty state with clear CTAs.
+  - **New User Experience:** Hid device-related modules (`AI Health Summary`, `VitalsGrid`) in `ManagerView` for new users (`userStage === 'NEW'`) until their initial assessment is complete. Adjusted the empty state of `DailyTaskManager` to a slim banner.
+  - **AI Health Summary:** Modified `getDynamicInsight` in `ManagerView` to accurately reflect device connection status, preventing AI hallucinations.
+  - **Task Management:** Refactored `generateDailyTasks` in `store/index.ts` to ensure new users receive initial "ice-breaker" tasks immediately after their first assessment.
+  - **UI Polish:** Adjusted font sizes in `VitalsGrid` and `ManagerView` for better visual hierarchy and consistency with the light, diffused visual style. Changed the payment button text in `HomeView` to "开启专业评测".
 
 ## 🚀 待办事项 (To-Do)
 - [x] **Batch 25: 居家管家首屏深度重构 (AI Insight Board & Health Summary)**

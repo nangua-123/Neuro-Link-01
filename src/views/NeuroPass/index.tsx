@@ -30,7 +30,7 @@ export default function NeuroPassView() {
 
   if (loading || !result) {
     return (
-      <div className="min-h-screen bg-[#FAFAFA] p-6">
+      <div className="h-full bg-[#FAFAFA] p-6 overflow-y-auto hide-scrollbar">
         <Skeleton.Title animated className="mt-4 mb-8 h-8 w-1/2 rounded-full" />
         <div className="space-y-4">
           <Skeleton.Paragraph lineCount={5} animated className="rounded-xl" />
@@ -42,7 +42,7 @@ export default function NeuroPassView() {
   // 绿灯：会员转化卡片
   if (result.riskLevel === RiskLevel.GREEN) {
     return (
-      <div className="min-h-screen bg-[#FAFAFA] flex flex-col relative overflow-hidden">
+      <div className="h-full bg-[#FAFAFA] flex flex-col relative overflow-hidden">
         {/* 极浅弥散暖色渐变背景 */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
           <div className="absolute -top-[10%] -right-[10%] w-[120%] h-[50%] bg-gradient-to-b from-[#E8F3FF] to-transparent opacity-60 blur-3xl" />
@@ -58,7 +58,7 @@ export default function NeuroPassView() {
           </NavBar>
         </div>
 
-        <div className="flex-1 p-6 flex flex-col items-center pt-16 relative z-10">
+        <div className="flex-1 p-6 flex flex-col items-center pt-16 relative z-10 overflow-y-auto hide-scrollbar">
           <div className="w-24 h-24 rounded-full bg-emerald-50 flex items-center justify-center mb-6 shadow-[0_8px_30px_rgba(16,185,129,0.12)] border border-emerald-100/50">
             <Check className="w-12 h-12 text-emerald-500" strokeWidth={2.5} />
           </div>
@@ -98,7 +98,7 @@ export default function NeuroPassView() {
   const themeLightBgClass = isRed ? 'bg-rose-50' : 'bg-amber-50';
 
   return (
-    <div className="min-h-screen bg-[#141414] flex flex-col relative overflow-hidden">
+    <div className="h-full bg-[#141414] flex flex-col relative overflow-hidden">
       {/* Dark mode background effects */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <div className={`absolute -top-[10%] -right-[10%] w-[80%] h-[50%] ${isRed ? 'bg-rose-900/20' : 'bg-amber-900/20'} blur-3xl`} />
@@ -114,7 +114,7 @@ export default function NeuroPassView() {
         </NavBar>
       </div>
       
-      <div className="flex-1 p-5 pt-8 relative z-10">
+      <div className="flex-1 p-5 pt-8 relative z-10 overflow-y-auto hide-scrollbar">
         {/* 登机牌主体 */}
         <div className="bg-white rounded-[32px] overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.4)] relative">
           

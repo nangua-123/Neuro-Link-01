@@ -18,7 +18,7 @@ export default function LBSFenceView() {
   };
 
   return (
-    <div className="h-[100dvh] bg-[#FAFAFA] flex flex-col relative overflow-hidden">
+    <div className="h-full bg-[#FAFAFA] flex flex-col relative overflow-y-auto hide-scrollbar">
       {/* 极浅弥散暖色渐变背景 */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[40%] bg-emerald-200/20 rounded-full blur-3xl" />

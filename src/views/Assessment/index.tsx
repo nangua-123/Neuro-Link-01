@@ -141,7 +141,7 @@ export default function AssessmentView() {
           setIsSubmitting(false);
           setIsCompleted(true);
           setTimeout(() => {
-            navigate('/report', { state: { payload: finalData, diseaseTag: effectiveDiseaseTag } });
+            navigate('/report', { state: { payload: finalData, diseaseTag: effectiveDiseaseTag }, replace: true });
           }, 1500);
         } catch (error) {
           setIsSubmitting(false);

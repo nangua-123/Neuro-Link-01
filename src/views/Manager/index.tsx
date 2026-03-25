@@ -21,12 +21,14 @@ import { showComingSoon } from '../../utils/ui';
 import { ManagerSkeleton } from '../../components/ManagerSkeleton';
 import { HeroBanner } from '../../components/HeroBanner';
 
-const getDynamicInsight = (stage: string, tag: string, identity: string) => {
+const getDynamicInsight = (stage: string, tag: string, identity: string, hasDevice: boolean) => {
   const isFamily = identity === UserIdentity.FAMILY;
   const prefix = isFamily ? '长辈' : '您';
   
   if (stage === 'NEW') return `${prefix}的专属健康管家尚未激活。只需 3 分钟完成专业量表测评，AI 将为${prefix}量身定制康复与干预方案。`;
   
+  if (!hasDevice) return `✨ AI 档案已建立。我是您的专属管家，请尽快连接监测设备或设置用药计划，以便我为您提供精准守护。`;
+
   if (tag === 'EPILEPSY') return `✨ AI 状态评估：良好。${prefix}已连续 14 天无异常发作，近期深睡比例提升 12%，请继续保持当前的用药规律。`;
   if (tag === 'MIGRAINE') return `✨ AI 预警：未来 48 小时气压变化剧烈，偏头痛发作风险轻微上升，请提醒${prefix}注意防寒保暖并随身携带备用药。`;
   if (tag === 'AD') return `✨ AI 洞察：本周脑力训练达标率为 80%，建议今日增加 15 分钟的记忆力强化训练，以巩固康复效果。`;
@@ -35,7 +37,7 @@ const getDynamicInsight = (stage: string, tag: string, identity: string) => {
 };
 
 export default function ManagerView() {
-  const { userStage, completeTask, toggleMedication, recordPainkiller, selectedDiseaseTag, medicationPlans, connectedDevices, identity } = useAppStore();
+  const { userStage, completeTask, toggleMedication, recordPainkiller, selectedDiseaseTag, medicationPlans, connectedDevices, identity, purchasedAssets } = useAppStore();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   
@@ -137,7 +139,7 @@ export default function ManagerView() {
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="bg-[#F7F9FC] font-sans selection:bg-blue-100 relative"
+      className="bg-[#FAFAFA] font-sans selection:bg-blue-100 relative h-full flex flex-col"
     >
       {/* Soft Diffuse Background */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
@@ -146,51 +148,55 @@ export default function ManagerView() {
         <div className="absolute bottom-[20%] left-[10%] w-[40%] h-[30%] bg-purple-200/20 rounded-full blur-[80px]" />
       </div>
       
-      <div className="px-4 pt-5 pb-0 relative z-10">
+      <div className="flex-1 overflow-y-auto px-4 pt-5 pb-[120px] relative z-10 hide-scrollbar">
         <motion.h1 variants={itemVariants} className="text-[18px] font-bold text-slate-800 tracking-tight flex items-center gap-2 mb-2.5">
           下午好，张建国
         </motion.h1>
-        <motion.div variants={itemVariants} className="flex items-start gap-2.5 bg-white/40 backdrop-blur-md px-4 py-3 rounded-[16px] shadow-[0_4px_16px_rgba(0,0,0,0.03)]">
+        <motion.div variants={itemVariants} className="flex items-start gap-2.5 bg-white/60 backdrop-blur-md px-4 py-3 rounded-[16px] shadow-[0_4px_16px_rgba(0,0,0,0.03)] border border-white/80 mb-5">
           <Sparkles className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
           <p className="text-[13px] text-slate-700 leading-relaxed font-medium">
-            {getDynamicInsight(userStage, selectedDiseaseTag, identity)}
+            {getDynamicInsight(userStage, selectedDiseaseTag, identity, connectedDevices.length > 0)}
           </p>
         </motion.div>
-      </div>
 
-      <div className="px-4 pt-5 space-y-5 relative z-10">
-        {/* Module 1: AI Health Summary (Dynamic) */}
-        <motion.div variants={itemVariants}>
-          <AIHealthSummaryCard 
-            userStage={userStage} 
-            navigate={navigate} 
-            diseaseTag={selectedDiseaseTag}
-            hasMed={medicationPlans.length > 0}
-            hasDevice={connectedDevices.length > 0}
-          />
-        </motion.div>
+        <div className="space-y-5">
+          {/* Module 1: AI Health Summary (Dynamic) */}
+          <motion.div variants={itemVariants}>
+            <AIHealthSummaryCard 
+              userStage={userStage} 
+              navigate={navigate} 
+              diseaseTag={selectedDiseaseTag}
+              hasMed={medicationPlans.length > 0}
+              hasDevice={connectedDevices.length > 0}
+              purchasedAssets={purchasedAssets}
+            />
+          </motion.div>
 
-      {/* Module 2: Today's Tasks */}
-      <motion.div variants={itemVariants}>
-        <DailyTaskManager onTaskAction={handleTaskAction} />
-      </motion.div>
+          {/* Module 2: Today's Tasks */}
+          {userStage !== 'NEW' && (
+            <motion.div variants={itemVariants}>
+              <DailyTaskManager onTaskAction={handleTaskAction} />
+            </motion.div>
+          )}
 
-      {/* Module 3: Vitals */}
-      <motion.div variants={itemVariants} className="space-y-2.5">
-        <h3 className="text-[18px] font-bold text-slate-800 px-1 tracking-tight">体征监测</h3>
-        <VitalsGrid />
-      </motion.div>
+          {/* Module 3: Vitals */}
+          {userStage !== 'NEW' && (
+            <motion.div variants={itemVariants} className="space-y-2.5">
+              <h3 className="text-[18px] font-bold text-slate-800 px-1 tracking-tight">体征监测</h3>
+              <VitalsGrid />
+            </motion.div>
+          )}
 
-      {/* Module 4: Universal Toolbox */}
-      <motion.div variants={itemVariants} className="space-y-2.5">
-        <h3 className="text-[18px] font-bold text-slate-800 px-1 tracking-tight">健康工具箱</h3>
-        <UniversalToolbox 
-          userStage={userStage}
-          navigate={navigate}
-          onOpenCDR={() => { setActiveTaskId(undefined); setIsCDRDiaryVisible(true); }}
-        />
-      </motion.div>
-
+          {/* Module 4: Universal Toolbox */}
+          <motion.div variants={itemVariants} className="space-y-2.5">
+            <h3 className="text-[18px] font-bold text-slate-800 px-1 tracking-tight">健康工具箱</h3>
+            <UniversalToolbox 
+              userStage={userStage}
+              navigate={navigate}
+              onOpenCDR={() => { setActiveTaskId(undefined); setIsCDRDiaryVisible(true); }}
+            />
+          </motion.div>
+        </div>
       </div>
 
       <SeizureDiarySheet 
@@ -266,9 +272,10 @@ export default function ManagerView() {
   );
 }
 
-function AIHealthSummaryCard({ userStage, navigate, diseaseTag, hasMed, hasDevice }: any) {
+function AIHealthSummaryCard({ userStage, navigate, diseaseTag, hasMed, hasDevice, purchasedAssets = [] }: any) {
   const { identity } = useAppStore();
   const isFamily = identity === UserIdentity.FAMILY;
+  const hasPurchased = purchasedAssets.length > 0;
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -344,17 +351,27 @@ function AIHealthSummaryCard({ userStage, navigate, diseaseTag, hasMed, hasDevic
         {/* Metric 2: Device */}
         <motion.div variants={itemVariants}
           onClick={hasDevice ? undefined : () => navigate('/device-connect')}
-          className={`flex flex-col items-center text-center rounded-[16px] p-3 border ${hasDevice ? 'bg-blue-50/50 border-blue-100/50' : 'bg-slate-50/80 border-slate-100/80 cursor-pointer active:scale-95 transition-transform'}`}
+          className={`flex flex-col items-center text-center rounded-[16px] p-3 border ${
+            hasDevice ? 'bg-blue-50/50 border-blue-100/50' : 
+            hasPurchased ? 'bg-indigo-50/50 border-indigo-100/50 cursor-pointer active:scale-95 transition-transform' : 
+            'bg-slate-50/80 border-slate-100/80 cursor-pointer active:scale-95 transition-transform'
+          }`}
         >
           <div className="flex items-center justify-center gap-1.5 mb-1.5">
-            <Watch className={`w-4 h-4 ${hasDevice ? 'text-blue-500' : 'text-slate-400'}`} />
+            {hasPurchased && !hasDevice ? (
+              <span className="text-[14px]">📦</span>
+            ) : (
+              <Watch className={`w-4 h-4 ${hasDevice ? 'text-blue-500' : 'text-slate-400'}`} />
+            )}
             <span className="text-[12px] font-medium text-slate-500">体征监测</span>
           </div>
           <div className="flex items-baseline justify-center gap-1">
-            <span className={`text-[18px] font-bold leading-none ${hasDevice ? 'text-slate-800' : 'text-slate-400'}`}>{hasDevice ? '均达标' : '未绑定'}</span>
+            <span className={`font-bold leading-none ${hasDevice ? 'text-[18px] text-slate-800' : hasPurchased ? 'text-[15px] text-indigo-600' : 'text-[15px] text-slate-400'}`}>
+              {hasDevice ? '守护中' : hasPurchased ? '新设备待连接' : '未绑定设备'}
+            </span>
           </div>
-          <div className={`text-[12px] mt-1.5 ${hasDevice ? 'text-blue-600' : 'text-blue-500'}`}>
-            {hasDevice ? '睡眠/心率平稳' : '去绑定设备 ➔'}
+          <div className={`text-[12px] mt-1.5 ${hasDevice ? 'text-blue-600' : hasPurchased ? 'text-indigo-500' : 'text-slate-500'}`}>
+            {hasDevice ? '心率 72bpm' : hasPurchased ? '收到后点击激活' : '去连接手表/手环 ➔'}
           </div>
         </motion.div>
 

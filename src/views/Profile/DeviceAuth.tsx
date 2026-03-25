@@ -36,13 +36,13 @@ export default function DeviceAuthView() {
       });
       Toast.show({ icon: 'success', content: '授权成功' });
       setTimeout(() => {
-        navigate('/profile', { replace: true });
+        navigate('/manager', { replace: true });
       }, 1500);
     }, 2000);
   };
 
   return (
-    <div className="max-w-md mx-auto h-screen overflow-y-auto bg-white shadow-2xl flex flex-col relative">
+    <div className="max-w-md mx-auto h-full overflow-y-auto hide-scrollbar bg-white shadow-2xl flex flex-col relative">
       <div className="absolute inset-0 bg-gradient-to-b from-blue-50/50 to-transparent pointer-events-none" />
       <NavBar 
         onBack={() => navigate(-1)}

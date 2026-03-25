@@ -53,7 +53,7 @@ export const IoTStatusCard: React.FC = () => {
   return (
     <motion.div 
       whileTap={{ scale: 0.98 }}
-      onClick={() => navigate('/profile')}
+      onClick={() => navigate('/device-connect')}
       className="bg-white rounded-[16px] p-3 shadow-[0_4px_20px_rgba(37,99,235,0.08)] border border-blue-100/50 relative overflow-hidden cursor-pointer group flex items-center justify-between"
     >
       <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50/80 rounded-full blur-3xl -mr-8 -mt-8 pointer-events-none" />

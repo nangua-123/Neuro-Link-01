@@ -8,7 +8,7 @@ export default function GlobalError() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center justify-center p-6 text-center">
+    <div className="h-full bg-[#FAFAFA] flex flex-col items-center justify-center p-6 text-center overflow-y-auto hide-scrollbar">
       <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mb-6">
         <AlertCircle className="w-10 h-10 text-red-500" />
       </div>

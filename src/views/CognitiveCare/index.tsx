@@ -34,7 +34,7 @@ export default function CognitiveCareView() {
   ];
 
   return (
-    <div className="flex flex-col h-[100dvh] bg-slate-50 relative overflow-hidden">
+    <div className="flex flex-col h-full bg-slate-50 relative overflow-y-auto hide-scrollbar">
       {/* 柔和背景光晕 */}
       <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-br from-blue-50/80 via-blue-50/40 to-transparent" />
       <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl" />

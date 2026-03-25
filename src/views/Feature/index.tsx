@@ -179,7 +179,7 @@ export default function FeatureView() {
   };
 
   return (
-    <div className="max-w-md mx-auto h-screen overflow-y-auto bg-[#FAFAFA] flex flex-col relative">
+    <div className="max-w-md mx-auto h-full overflow-y-auto hide-scrollbar bg-[#FAFAFA] flex flex-col relative">
       <div className={`absolute top-0 left-0 right-0 h-64 bg-gradient-to-b ${colors.bg} to-transparent opacity-50 pointer-events-none`} />
       
       <NavBar 

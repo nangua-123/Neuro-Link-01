@@ -23,14 +23,16 @@ export const DailyTaskManager = ({ onTaskAction }: { onTaskAction: (task: Task) 
 
   if (tasks.length === 0) {
     return (
-      <div className="bg-white rounded-[24px] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col items-center justify-center text-center">
-        <div className="w-14 h-14 rounded-full bg-slate-50 flex items-center justify-center mb-4">
-          <FileText className="w-7 h-7 text-slate-300" />
+      <div className="bg-white rounded-[20px] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex items-center gap-4">
+        <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
+          <FileText className="w-5 h-5 text-slate-300" />
         </div>
-        <h4 className="text-[16px] font-bold text-slate-800 mb-1.5">暂无专属任务</h4>
-        <p className="text-[13px] text-slate-500 max-w-[220px] leading-relaxed">
-          完成专业量表测评后，AI 将为{isFamily ? '长辈' : '您'}生成每日康复与打卡任务。
-        </p>
+        <div>
+          <h4 className="text-[15px] font-bold text-slate-800 mb-0.5">今日暂无专属任务</h4>
+          <p className="text-[12px] text-slate-500">
+            {isFamily ? '长辈' : '您'}今天可以好好休息，保持良好作息。
+          </p>
+        </div>
       </div>
     );
   }

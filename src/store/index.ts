@@ -100,6 +100,9 @@ interface AppState {
   ownedEquipments: string[];
   unlockedPrivileges: string[];
   isRweAuthorized: boolean;
+  purchasedAssets: string[]; // 已购待激活的设备资产
+  addPurchasedAsset: (deviceId: string) => void;
+  activateAsset: (deviceId: string) => void;
   
   painkillerDates: string[]; // 本月已服止痛药的日期列表 (MOH 防火墙)
   missedMedicationDates: string[]; // 漏服药物的日期列表
@@ -222,6 +225,18 @@ export const useAppStore = create<AppState>()(
       ownedEquipments: [],
       unlockedPrivileges: [],
       isRweAuthorized: false,
+      purchasedAssets: [],
+      
+      addPurchasedAsset: (deviceId) => set((state) => {
+        if (!state.purchasedAssets.includes(deviceId)) {
+          return { purchasedAssets: [...state.purchasedAssets, deviceId] };
+        }
+        return state;
+      }),
+      
+      activateAsset: (deviceId) => set((state) => ({
+        purchasedAssets: state.purchasedAssets.filter(id => id !== deviceId)
+      })),
       
       painkillerDates: [],
       missedMedicationDates: [],
@@ -712,13 +727,16 @@ export const useAppStore = create<AppState>()(
       }),
       
       completeFirstVisit: () => set({ isFirstVisit: false }),
-      completeAssessment: () => set((state) => {
-        const newState = { hasCompletedAssessment: true };
-        if (state.userStage === 'NEW') {
-          return { ...newState, userStage: 'ACTIVE' };
-        }
-        return newState;
-      }),
+      completeAssessment: () => {
+        set((state) => {
+          const newState = { hasCompletedAssessment: true };
+          if (state.userStage === 'NEW') {
+            return { ...newState, userStage: 'ACTIVE' };
+          }
+          return newState;
+        });
+        get().generateDailyTasks();
+      },
       bindIoTDevice: (deviceId) => set((state) => ({
         boundDevices: state.boundDevices.includes(deviceId) 
           ? state.boundDevices 
@@ -735,9 +753,14 @@ export const useAppStore = create<AppState>()(
           
         const newPrivileges = [...new Set([...state.unlockedPrivileges, ...privileges])];
         
+        const newPurchasedAssets = state.purchasedAssets.includes(equipmentId)
+          ? state.purchasedAssets
+          : [...state.purchasedAssets, equipmentId];
+        
         return {
           ownedEquipments: newEquipments,
-          unlockedPrivileges: newPrivileges
+          unlockedPrivileges: newPrivileges,
+          purchasedAssets: newPurchasedAssets
         };
       }),
       

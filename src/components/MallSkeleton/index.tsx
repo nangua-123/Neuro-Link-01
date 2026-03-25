@@ -2,7 +2,7 @@ import React from 'react';
 
 export const MallSkeleton = () => {
   return (
-    <div className="min-h-screen bg-slate-50 pb-24 animate-pulse">
+    <div className="h-full bg-slate-50 pb-24 animate-pulse overflow-y-auto hide-scrollbar">
       {/* Header Skeleton */}
       <div className="bg-white rounded-b-[32px] p-6 pt-12 shadow-sm mb-6">
         <div className="w-32 h-6 bg-slate-200 rounded mb-4"></div>

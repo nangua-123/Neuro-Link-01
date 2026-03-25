@@ -1,19 +1,66 @@
 import React, { useState } from 'react';
-import { NavBar, SafeArea, Popup } from 'antd-mobile';
+import { NavBar, SafeArea, Popup, Toast } from 'antd-mobile';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, Smartphone, Watch, Activity, Heart, ShoppingBag, Bluetooth, ShieldCheck, FileText, BrainCircuit, Moon } from 'lucide-react';
 import { useAppStore } from '../../store';
 import { DiseaseTag } from '../../configs/constants';
 
+const medicalDevices = [
+  {
+    id: 'neuro_band',
+    name: 'Neuro-Band Pro 预警手环',
+    desc: '支持异常脑电与抽搐高精度识别',
+    tags: [DiseaseTag.EPILEPSY],
+    icon: Watch,
+  },
+  {
+    id: 'eeg_patch',
+    name: '动态脑电贴 (24h)',
+    desc: '医疗级长程脑电监测',
+    tags: [DiseaseTag.EPILEPSY],
+    icon: Activity,
+  },
+  {
+    id: 'bci_headband',
+    name: 'BCI 认知训练头环',
+    desc: '精准采集认知波段，辅助数字疗法',
+    tags: [DiseaseTag.AD],
+    icon: BrainCircuit,
+  },
+  {
+    id: 'sleep_monitor',
+    name: '医用级睡眠分期仪',
+    desc: '深度睡眠结构分析与呼吸暂停监测',
+    tags: [DiseaseTag.AD, DiseaseTag.MIGRAINE],
+    icon: Moon,
+  }
+];
+
 export default function DeviceConnectView() {
   const navigate = useNavigate();
-  const { selectedDiseaseTag, connectDevice, bindDevice } = useAppStore();
+  const { selectedDiseaseTag, connectDevice, bindDevice, purchasedAssets, ownedEquipments, activateAsset, connectedDevices } = useAppStore();
   
   const [pairingDevice, setPairingDevice] = useState<any>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
 
   const handleDeviceClick = (device: any) => {
+    // Check if it's a medical device and not purchased
+    const isMedicalDevice = medicalDevices.some(d => d.id === device.id);
+    const isOwned = ownedEquipments.includes(device.id);
+    
+    if (isMedicalDevice && !isOwned) {
+      Toast.show({
+        content: '尚未获取该设备，请先前往商城了解或购买',
+        icon: 'fail',
+        duration: 2000,
+      });
+      setTimeout(() => {
+        navigate(`/equipments/${device.id}`);
+      }, 1000);
+      return;
+    }
+
     setPairingDevice(device);
     // 模拟蓝牙搜索 2 秒后弹出授权协议
     setTimeout(() => {
@@ -32,10 +79,15 @@ export default function DeviceConnectView() {
         battery: 85
       });
       bindDevice();
+      
+      // If this was a purchased asset, activate it
+      if (purchasedAssets.includes(pairingDevice.id)) {
+        activateAsset(pairingDevice.id);
+      }
     }
     setShowAuthModal(false);
     setPairingDevice(null);
-    navigate('/profile', { replace: true });
+    navigate('/manager', { replace: true });
   };
 
   const healthApps = [
@@ -45,44 +97,18 @@ export default function DeviceConnectView() {
     { id: 'oppo', name: 'OPPO 健康', icon: Heart, color: 'text-emerald-500', bgColor: 'bg-emerald-50' },
   ];
 
-  const medicalDevices = [
-    {
-      id: 'neuro_band',
-      name: 'Neuro-Band Pro 预警手环',
-      desc: '支持异常脑电与抽搐高精度识别',
-      tags: [DiseaseTag.EPILEPSY],
-      icon: Watch,
-    },
-    {
-      id: 'eeg_patch',
-      name: '动态脑电贴 (24h)',
-      desc: '医疗级长程脑电监测',
-      tags: [DiseaseTag.EPILEPSY],
-      icon: Activity,
-    },
-    {
-      id: 'bci_headband',
-      name: 'BCI 认知训练头环',
-      desc: '精准采集认知波段，辅助数字疗法',
-      tags: [DiseaseTag.AD],
-      icon: BrainCircuit,
-    },
-    {
-      id: 'sleep_monitor',
-      name: '医用级睡眠分期仪',
-      desc: '深度睡眠结构分析与呼吸暂停监测',
-      tags: [DiseaseTag.AD, DiseaseTag.MIGRAINE],
-      icon: Moon,
-    }
-  ];
+  const availableHealthApps = healthApps.filter(app => !connectedDevices.some(cd => cd.id === app.id));
 
   // 过滤出当前病种推荐的设备，如果没有特定病种，则展示全部
   const recommendedDevices = selectedDiseaseTag && selectedDiseaseTag !== DiseaseTag.NONE
     ? medicalDevices.filter(d => d.tags.includes(selectedDiseaseTag))
     : medicalDevices;
 
+  const pendingDevices = medicalDevices.filter(d => purchasedAssets.includes(d.id));
+  const otherRecommendedDevices = recommendedDevices.filter(d => !purchasedAssets.includes(d.id) && !connectedDevices.some(cd => cd.id === d.id));
+
   return (
-    <div className="max-w-md mx-auto h-screen overflow-y-auto bg-[#F8FAFC] shadow-2xl relative flex flex-col">
+    <div className="max-w-md mx-auto h-full overflow-y-auto hide-scrollbar bg-[#F8FAFC] shadow-2xl relative flex flex-col">
       <div className="bg-white/80 backdrop-blur-xl sticky top-0 z-20 border-b border-slate-100/50">
         <NavBar 
           onBack={() => navigate(-1)}
@@ -102,7 +128,7 @@ export default function DeviceConnectView() {
             </p>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            {healthApps.map((app, index) => (
+            {availableHealthApps.length > 0 ? availableHealthApps.map((app, index) => (
               <motion.div
                 key={app.id}
                 initial={{ opacity: 0, y: 10 }}
@@ -117,7 +143,11 @@ export default function DeviceConnectView() {
                 </div>
                 <span className="text-[14px] font-semibold text-slate-800 relative z-10">{app.name}</span>
               </motion.div>
-            ))}
+            )) : (
+              <div className="col-span-2 text-center text-slate-400 text-[13px] py-4 bg-slate-50 rounded-2xl border border-slate-100/50">
+                已连接所有支持的健康应用
+              </div>
+            )}
           </div>
         </div>
 
@@ -136,8 +166,45 @@ export default function DeviceConnectView() {
               </span>
             )}
           </div>
+          
           <div className="space-y-3">
-            {recommendedDevices.map((device, index) => (
+            {/* 待激活的已购设备置顶显示 */}
+            {pendingDevices.map((device, index) => (
+              <motion.div
+                key={`pending-${device.id}`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                onClick={() => handleDeviceClick(device)}
+                className="bg-gradient-to-r from-blue-50 to-indigo-50/30 rounded-3xl p-4 flex items-center justify-between shadow-[0_4px_20px_rgba(59,130,246,0.08)] border border-blue-200/60 active:scale-[0.98] transition-transform cursor-pointer relative overflow-hidden group"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-100/20 to-indigo-100/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute top-0 right-0 w-24 h-24 bg-blue-400/10 rounded-full blur-xl -mr-8 -mt-8 pointer-events-none" />
+                
+                <div className="flex items-center gap-4 relative z-10">
+                  <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center border border-blue-100 shrink-0 shadow-sm relative">
+                    <device.icon className="w-6 h-6 text-blue-600" />
+                    <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
+                    </span>
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <h3 className="text-[15px] font-bold text-slate-900">{device.name}</h3>
+                      <span className="text-[10px] font-bold text-blue-600 bg-blue-100/80 px-1.5 py-0.5 rounded">待连接</span>
+                    </div>
+                    <p className="text-[12px] text-slate-500 line-clamp-1">您的设备已就绪，点击一键直连</p>
+                  </div>
+                </div>
+                <button className="bg-blue-600 text-white text-[12px] font-bold px-3 py-1.5 rounded-full shadow-sm relative z-10 shrink-0">
+                  立即连接
+                </button>
+              </motion.div>
+            ))}
+
+            {/* 其他推荐设备 */}
+            {otherRecommendedDevices.map((device, index) => (
               <motion.div
                 key={device.id}
                 initial={{ opacity: 0, y: 10 }}
@@ -172,7 +239,7 @@ export default function DeviceConnectView() {
             <p className="text-[11px] text-slate-500 font-medium">华西定制专病硬件，支持按月租赁</p>
           </div>
           <button 
-            onClick={() => navigate('/mall')}
+            onClick={() => navigate('/equipments')}
             className="bg-blue-50 text-blue-600 px-4 py-2 rounded-full text-[13px] font-bold flex items-center gap-1 active:bg-blue-100 transition-colors"
           >
             <ShoppingBag className="w-3.5 h-3.5" />

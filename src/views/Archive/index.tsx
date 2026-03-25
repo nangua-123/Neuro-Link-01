@@ -18,7 +18,7 @@ export default function ArchiveView() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] p-5 pb-24">
+    <div className="h-full bg-[#FAFAFA] p-5 pb-24 overflow-y-auto hide-scrollbar">
       {/* Module A: Header */}
       <div className="bg-white rounded-[32px] p-6 mb-5 shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-slate-100/50 flex items-center gap-5">
         <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 shadow-inner">

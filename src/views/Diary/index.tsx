@@ -112,7 +112,7 @@ export default function DiaryView() {
   const Icon = theme.icon;
 
   return (
-    <div className="flex flex-col h-[100dvh] bg-[#FAFAFA] relative overflow-hidden">
+    <div className="flex flex-col h-full bg-[#FAFAFA] relative overflow-y-auto hide-scrollbar">
       {/* 极浅弥散暖色渐变背景 */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <div className="absolute top-[-10%] left-[-10%] w-[70%] h-[50%] bg-blue-200/30 rounded-full blur-3xl" />

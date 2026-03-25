@@ -61,9 +61,9 @@ export default function ClinicReportView() {
   const adherenceRate = medicationPlans.length > 0 ? Math.round((todayTakenCount / medicationPlans.length) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] font-sans pb-safe">
+    <div className="h-full bg-[#F8FAFC] font-sans flex flex-col relative overflow-hidden">
       {/* Header */}
-      <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200/60">
+      <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 shrink-0">
         <div className="flex items-center justify-between px-4 h-14">
           <button 
             onClick={() => navigate(-1)}
@@ -101,7 +101,7 @@ export default function ClinicReportView() {
         </div>
       </div>
 
-      <div className="p-4 space-y-4">
+      <div className="flex-1 p-4 space-y-4 overflow-y-auto hide-scrollbar pb-24">
         {/* Raw Data Ledger - Summary */}
         {activeTab === 'summary' && (
           <motion.div 

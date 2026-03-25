@@ -24,7 +24,7 @@ export const OfflineBoundary: React.FC<OfflineBoundaryProps> = ({ children }) =>
 
   if (!isOnline) {
     return (
-      <div className="min-h-[100dvh] bg-[#FAFAFA] flex flex-col items-center justify-center p-6 text-center relative overflow-hidden">
+      <div className="h-full bg-[#FAFAFA] flex flex-col items-center justify-center p-6 text-center relative overflow-y-auto hide-scrollbar">
         {/* Background Gradients */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
           <div className="absolute -top-[10%] -right-[10%] w-[120%] h-[50%] bg-gradient-to-b from-slate-100 to-transparent opacity-60 blur-3xl" />

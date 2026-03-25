@@ -39,7 +39,7 @@ export const CareDiary: React.FC = () => {
   }, [recordsList]);
 
   return (
-    <div className="bg-slate-50 flex flex-col relative overflow-hidden min-h-screen">
+    <div className="bg-slate-50 flex flex-col relative overflow-hidden h-full">
       {/* 极浅弥散暖色渐变背景 */}
       <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <div className="absolute top-0 left-0 right-0 h-80 bg-gradient-to-b from-blue-100/80 via-white to-transparent" />
@@ -47,7 +47,7 @@ export const CareDiary: React.FC = () => {
         <div className="absolute top-[10%] left-[-10%] w-72 h-72 bg-blue-200/40 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000" />
       </div>
 
-      <div className="relative z-10 flex-1 flex flex-col h-[100dvh]">
+      <div className="relative z-10 flex-1 flex flex-col h-full">
         <SafeArea position="top" />
         <NavBar 
           backArrow={<ChevronLeft className="w-6 h-6 text-slate-700" />}

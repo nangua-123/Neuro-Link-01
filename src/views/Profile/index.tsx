@@ -55,7 +55,7 @@ export default function ProfileView() {
     Modal.alert({
       title: '三方电子联合数据授权协议',
       content: (
-        <div className="h-64 overflow-y-auto text-sm text-slate-600 leading-relaxed font-medium">
+        <div className="h-64 overflow-y-auto text-[13px] text-slate-600 leading-relaxed font-medium">
           <p className="mb-2">尊敬的用户：</p>
           <p className="mb-2">感谢您使用华西脑健康（Neuro-Link）平台。为了给您提供更精准的 AI 疾病管家服务，我们需要收集并处理您的相关健康数据。</p>
           <p className="mb-2">1. 数据收集范围：包括但不限于您的基础体征数据（如心率、睡眠）、认知与行为测评结果、用药记录等。</p>
@@ -116,26 +116,28 @@ export default function ProfileView() {
   }
 
   return (
-    <div className="bg-[#FAFAFA] flex flex-col relative overflow-x-hidden">
-      {/* 极浅弥散暖色渐变背景 */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-        <div className="absolute -top-[10%] -right-[10%] w-[120%] h-[50%] bg-gradient-to-b from-[#E8F3FF] to-transparent opacity-60 blur-3xl" />
-        <div className="absolute top-[20%] -left-[20%] w-[80%] h-[60%] bg-gradient-to-tr from-[#FFF0E6] to-transparent opacity-30 blur-3xl" />
+    <div className="bg-[#FAFAFA] flex flex-col relative overflow-x-hidden min-h-full pb-[calc(env(safe-area-inset-bottom)+20px)]">
+      {/* Soft Diffuse Background */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute top-[-5%] left-[-10%] w-[70%] h-[40%] bg-blue-200/40 rounded-full blur-[80px]" />
+        <div className="absolute top-[15%] right-[-10%] w-[60%] h-[40%] bg-indigo-200/30 rounded-full blur-[80px]" />
+        <div className="absolute bottom-[-10%] left-[20%] w-[60%] h-[40%] bg-blue-100/40 rounded-full blur-[80px]" />
       </div>
 
       <motion.div 
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="p-5 relative z-10 pt-5"
+        className="px-5 pt-6 relative z-10"
       >
         {/* Module A: Header */}
-        <motion.div variants={itemVariants} className="bg-white rounded-[32px] p-6 mb-4 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100/50 flex items-center justify-between relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+        <motion.div variants={itemVariants} className="bg-white/80 backdrop-blur-xl rounded-[32px] p-6 mb-5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-white flex items-center justify-between relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-40 h-40 bg-blue-400/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-400/5 rounded-full blur-2xl -ml-10 -mb-10 pointer-events-none" />
           
           <div className="flex items-center gap-5 relative z-10">
             <div className="relative">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-50 to-blue-50 flex items-center justify-center text-blue-600 shadow-inner border border-blue-100/50 overflow-hidden">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center text-blue-600 shadow-inner border border-blue-100/50 overflow-hidden">
                 {identity === UserIdentity.FAMILY && currentPatient?.avatarUrl ? (
                   <img src={currentPatient.avatarUrl} alt="avatar" className="w-full h-full object-cover" />
                 ) : (
@@ -144,20 +146,20 @@ export default function ProfileView() {
               </div>
               <div 
                 onClick={() => setIsIdentitySheetVisible(true)}
-                className="absolute -bottom-1 -right-1 w-6 h-6 bg-white rounded-full shadow-sm border border-slate-100 flex items-center justify-center cursor-pointer active:scale-95 transition-transform"
+                className="absolute -bottom-1 -right-1 w-7 h-7 bg-white rounded-full shadow-md border border-slate-100 flex items-center justify-center cursor-pointer active:scale-95 transition-transform"
               >
                 <Users className="w-3.5 h-3.5 text-blue-600" />
               </div>
             </div>
             <div>
-              <div className="flex items-center gap-2 mb-1">
-                <h2 className="text-[18px] font-bold text-slate-900 tracking-tight">
+              <div className="flex items-center gap-2.5 mb-1.5">
+                <h2 className="text-[20px] font-bold text-slate-900 tracking-tight">
                   {identity === UserIdentity.FAMILY && currentPatient ? currentPatient.name : '138****5920'}
                 </h2>
-                <span className="px-2 py-0.5 bg-gradient-to-r from-amber-100 to-amber-50 text-amber-700 text-[12px] font-bold rounded-[8px] border border-amber-200/50 shadow-sm">VIP</span>
+                <span className="px-2.5 py-0.5 bg-gradient-to-r from-amber-100 to-amber-50 text-amber-700 text-[11px] font-bold rounded-full border border-amber-200/50 shadow-sm">VIP</span>
               </div>
-              <p className="text-[13px] text-slate-500 font-medium flex items-center gap-1">
-                当前视角: <span className="text-blue-600 font-semibold">{identity === UserIdentity.PATIENT ? '患者本人' : '家属/照护者'}</span>
+              <p className="text-[13px] text-slate-500 font-medium flex items-center gap-1.5">
+                当前视角: <span className="text-blue-600 font-bold">{identity === UserIdentity.PATIENT ? '患者本人' : '家属/照护者'}</span>
               </p>
             </div>
           </div>
@@ -165,98 +167,99 @@ export default function ProfileView() {
         </motion.div>
 
         {/* Quick Actions Grid - High Density */}
-        <motion.div variants={itemVariants} className="grid grid-cols-4 gap-2 mb-5">
+        <motion.div variants={itemVariants} className="grid grid-cols-4 gap-3 mb-6">
           <button 
             onClick={() => setIsNeuroPassOpen(true)}
-            className="bg-white rounded-[16px] p-2.5 flex flex-col items-center justify-center gap-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-slate-100/50 active:scale-95 transition-transform"
+            className="bg-white/80 backdrop-blur-xl rounded-[24px] p-3 flex flex-col items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-white active:scale-95 transition-transform"
           >
-            <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center">
-              <QrCode className="w-4 h-4 text-blue-600" />
+            <div className="w-10 h-10 rounded-2xl bg-blue-50 flex items-center justify-center border border-blue-100/50">
+              <QrCode className="w-5 h-5 text-blue-600" />
             </div>
-            <span className="text-[12px] font-semibold text-slate-700">就诊码</span>
+            <span className="text-[12px] font-bold text-slate-700">就诊码</span>
           </button>
           <button 
             onClick={() => navigate('/ehr-timeline')}
-            className="bg-white rounded-[16px] p-2.5 flex flex-col items-center justify-center gap-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-slate-100/50 active:scale-95 transition-transform"
+            className="bg-white/80 backdrop-blur-xl rounded-[24px] p-3 flex flex-col items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-white active:scale-95 transition-transform"
           >
-            <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center">
-              <FileText className="w-4 h-4 text-blue-600" />
+            <div className="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center border border-indigo-100/50">
+              <FileText className="w-5 h-5 text-indigo-600" />
             </div>
-            <span className="text-[12px] font-semibold text-slate-700">健康档案</span>
+            <span className="text-[12px] font-bold text-slate-700">健康档案</span>
           </button>
           <button 
             onClick={handleDeviceClick}
-            className="bg-white rounded-[16px] p-2.5 flex flex-col items-center justify-center gap-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-slate-100/50 active:scale-95 transition-transform"
+            className="bg-white/80 backdrop-blur-xl rounded-[24px] p-3 flex flex-col items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-white active:scale-95 transition-transform"
           >
-            <div className="w-9 h-9 rounded-full bg-rose-50 flex items-center justify-center">
-              <HeartPulse className="w-4 h-4 text-rose-500" />
+            <div className="w-10 h-10 rounded-2xl bg-rose-50 flex items-center justify-center border border-rose-100/50">
+              <HeartPulse className="w-5 h-5 text-rose-500" />
             </div>
-            <span className="text-[12px] font-semibold text-slate-700">智能穿戴</span>
+            <span className="text-[12px] font-bold text-slate-700">智能穿戴</span>
           </button>
           <button 
             onClick={() => navigate('/clinic-report')}
-            className="bg-white rounded-[16px] p-2.5 flex flex-col items-center justify-center gap-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-slate-100/50 active:scale-95 transition-transform"
+            className="bg-white/80 backdrop-blur-xl rounded-[24px] p-3 flex flex-col items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-white active:scale-95 transition-transform"
           >
-            <div className="w-9 h-9 rounded-full bg-emerald-50 flex items-center justify-center">
-              <Activity className="w-4 h-4 text-emerald-600" />
+            <div className="w-10 h-10 rounded-2xl bg-emerald-50 flex items-center justify-center border border-emerald-100/50">
+              <Activity className="w-5 h-5 text-emerald-600" />
             </div>
-            <span className="text-[12px] font-semibold text-slate-700">全景档案</span>
+            <span className="text-[12px] font-bold text-slate-700">全景档案</span>
           </button>
         </motion.div>
 
         {/* Module A.1: Family Management (Only visible if identity is FAMILY) */}
         {identity === UserIdentity.FAMILY && (
-          <motion.div variants={itemVariants} className="bg-white rounded-[28px] p-4 mb-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100/50">
-            <div className="flex items-center justify-between mb-3 px-2">
-              <h3 className="font-semibold text-slate-900 text-[15px] tracking-tight">照护对象管理</h3>
+          <motion.div variants={itemVariants} className="bg-white/80 backdrop-blur-xl rounded-[32px] p-5 mb-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-white relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-400/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+            <div className="flex items-center justify-between mb-4 relative z-10">
+              <h3 className="font-bold text-slate-900 text-[16px] tracking-tight">照护对象管理</h3>
               <button 
                 onClick={() => setIsBindingModalVisible(true)}
-                className="text-blue-600 text-[13px] font-semibold flex items-center gap-1 bg-blue-50/50 px-3 py-1.5 rounded-full active:bg-blue-100/50 transition-colors"
+                className="text-blue-600 text-[13px] font-bold flex items-center gap-1.5 bg-blue-50/80 px-3.5 py-1.5 rounded-full active:bg-blue-100/80 transition-colors border border-blue-100/50"
               >
                 <Plus className="w-3.5 h-3.5" /> 绑定长辈
               </button>
             </div>
-            <div className="flex gap-3 overflow-x-auto pb-2 px-2 snap-x">
+            <div className="flex gap-3 overflow-x-auto pb-2 snap-x relative z-10">
               {boundPatients?.map(patient => (
                 <div 
                   key={patient.id}
                   onClick={() => switchPatient(patient.id)}
-                  className={`flex-shrink-0 w-24 p-3 rounded-[20px] border flex flex-col items-center gap-2 snap-center transition-all ${
+                  className={`flex-shrink-0 w-24 p-3 rounded-[24px] border flex flex-col items-center gap-2 snap-center transition-all ${
                     currentPatientId === patient.id 
-                      ? 'bg-blue-50 border-blue-200 shadow-sm' 
-                      : 'bg-slate-50 border-slate-100 opacity-70 active:opacity-100'
+                      ? 'bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200 shadow-sm' 
+                      : 'bg-white/50 border-slate-100 opacity-70 active:opacity-100'
                   }`}
                 >
-                  <img src={patient.avatarUrl} alt={patient.name} className="w-10 h-10 rounded-full bg-white shadow-sm" />
+                  <img src={patient.avatarUrl} alt={patient.name} className="w-12 h-12 rounded-full bg-white shadow-sm border border-slate-100/50" />
                   <div className="text-center">
-                    <div className="text-[13px] font-bold text-slate-900 leading-tight">{patient.name}</div>
-                    <div className="text-[12px] text-slate-500 font-medium">{patient.relation}</div>
+                    <div className="text-[13px] font-bold text-slate-900 leading-tight mb-0.5">{patient.name}</div>
+                    <div className="text-[11px] text-slate-500 font-medium">{patient.relation}</div>
                   </div>
                 </div>
               ))}
               {(!boundPatients || boundPatients.length === 0) && (
-                <div className="w-full py-4 text-center text-slate-400 text-[13px]">
+                <div className="w-full py-6 text-center text-slate-400 text-[13px] font-medium bg-slate-50/50 rounded-[24px] border border-slate-100/50">
                   暂无绑定的照护对象
                 </div>
               )}
             </div>
             
             {boundPatients && boundPatients.length > 0 && (
-              <div className="mt-3 px-2">
+              <div className="mt-4 relative z-10">
                 <button
                   onClick={() => navigate('/clinic-report')}
-                  className="w-full bg-gradient-to-r from-blue-50 to-blue-50 border border-blue-100/50 rounded-[16px] p-3 flex items-center justify-between active:scale-[0.98] transition-transform"
+                  className="w-full bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100/50 rounded-[24px] p-4 flex items-center justify-between active:scale-[0.98] transition-transform shadow-sm"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-blue-100/50 flex items-center justify-center">
-                      <FileText className="w-4 h-4 text-blue-600" />
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shadow-sm border border-blue-100/50">
+                      <FileText className="w-5 h-5 text-blue-600" />
                     </div>
                     <div className="text-left">
-                      <div className="text-[14px] font-bold text-slate-800">全景数字病历</div>
-                      <div className="text-[11px] text-slate-500">查看长辈全维度健康数据</div>
+                      <div className="text-[15px] font-bold text-slate-800 mb-0.5">全景数字病历</div>
+                      <div className="text-[12px] text-slate-500 font-medium">查看长辈全维度健康数据</div>
                     </div>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-slate-400" />
+                  <ChevronRight className="w-5 h-5 text-blue-300" />
                 </button>
               </div>
             )}
@@ -265,30 +268,31 @@ export default function ProfileView() {
 
         {/* Module A.2: My Caregivers (Only visible if identity is PATIENT) */}
         {identity === UserIdentity.PATIENT && (
-          <motion.div variants={itemVariants} className="bg-white rounded-[28px] p-4 mb-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100/50">
-            <div className="flex items-center justify-between mb-3 px-2">
-              <h3 className="font-semibold text-slate-900 text-[15px] tracking-tight">我的照护者</h3>
+          <motion.div variants={itemVariants} className="bg-white/80 backdrop-blur-xl rounded-[32px] p-5 mb-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-white relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-400/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+            <div className="flex items-center justify-between mb-4 relative z-10">
+              <h3 className="font-bold text-slate-900 text-[16px] tracking-tight">我的照护者</h3>
               <button 
                 onClick={() => setIsNeuroPassOpen(true)}
-                className="text-blue-600 text-[13px] font-semibold flex items-center gap-1 bg-blue-50/50 px-3 py-1.5 rounded-full active:bg-blue-100/50 transition-colors"
+                className="text-blue-600 text-[13px] font-bold flex items-center gap-1.5 bg-blue-50/80 px-3.5 py-1.5 rounded-full active:bg-blue-100/80 transition-colors border border-blue-100/50"
               >
                 <QrCode className="w-3.5 h-3.5" /> 邀请家属
               </button>
             </div>
-            <div className="flex gap-3 overflow-x-auto pb-2 px-2 snap-x">
+            <div className="flex gap-3 overflow-x-auto pb-2 snap-x relative z-10">
               {/* Mocking a bound caregiver if we have boundPatients (just for simulation) */}
               {boundPatients && boundPatients.length > 0 ? (
-                <div className="flex-shrink-0 w-24 p-3 rounded-[20px] border border-slate-100 bg-slate-50 flex flex-col items-center gap-2 snap-center">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-blue-100 flex items-center justify-center text-blue-600 shadow-sm border border-blue-200/50">
-                    <User className="w-5 h-5" />
+                <div className="flex-shrink-0 w-24 p-3 rounded-[24px] border border-blue-100/50 bg-gradient-to-br from-blue-50 to-indigo-50 flex flex-col items-center gap-2 snap-center shadow-sm">
+                  <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-blue-600 shadow-sm border border-blue-100/50">
+                    <User className="w-6 h-6" />
                   </div>
                   <div className="text-center">
-                    <div className="text-[13px] font-bold text-slate-900 leading-tight">李阿姨</div>
-                    <div className="text-[12px] text-slate-500 font-medium">女儿</div>
+                    <div className="text-[13px] font-bold text-slate-900 leading-tight mb-0.5">李阿姨</div>
+                    <div className="text-[11px] text-slate-500 font-medium">女儿</div>
                   </div>
                 </div>
               ) : (
-                <div className="w-full py-4 text-center text-slate-400 text-[13px]">
+                <div className="w-full py-6 text-center text-slate-400 text-[13px] font-medium bg-slate-50/50 rounded-[24px] border border-slate-100/50">
                   暂无绑定的照护者，点击右上角邀请
                 </div>
               )}
@@ -297,57 +301,57 @@ export default function ProfileView() {
         )}
 
         {/* Module C: Privacy & Settings */}
-        <motion.div variants={itemVariants} className="bg-white rounded-[28px] p-2 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100/50 overflow-hidden mb-6">
+        <motion.div variants={itemVariants} className="bg-white/80 backdrop-blur-xl rounded-[32px] p-2 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-white overflow-hidden mb-6 relative z-10">
           <List className="border-none" style={{ '--border-inner': 'none', '--border-top': 'none', '--border-bottom': 'none' }}>
             <List.Item 
               prefix={
-                <div className="w-10 h-10 rounded-[16px] bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center border border-emerald-100/50 shadow-sm">
-                  <Shield className="w-5 h-5 text-emerald-600" />
+                <div className="w-12 h-12 rounded-[20px] bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center border border-emerald-100/50 shadow-sm">
+                  <Shield className="w-6 h-6 text-emerald-600" />
                 </div>
               }
               extra={
                 <Switch 
                   checked={hasSignedAgreement} 
                   onChange={handleAuthChange}
-                  style={{ '--checked-color': '#10b981', '--width': '36px', '--height': '20px' }}
+                  style={{ '--checked-color': '#10b981', '--width': '40px', '--height': '24px' }}
                 />
               }
-              className="active:bg-slate-50 transition-colors"
+              className="active:bg-slate-50/50 transition-colors"
             >
-              <div className="py-1.5">
-                <div className="font-semibold text-slate-900 text-[15px] tracking-tight">数据资产与隐私安全</div>
+              <div className="py-2">
+                <div className="font-bold text-slate-900 text-[16px] tracking-tight mb-0.5">数据资产与隐私安全</div>
                 <div 
-                  className="text-[12px] text-blue-600 mt-0.5 font-medium active:opacity-70"
+                  className="text-[13px] text-blue-600 font-medium active:opacity-70 inline-flex items-center gap-1"
                   onClick={(e) => { e.stopPropagation(); showAgreement(); }}
                 >
-                  查看《授权协议》
+                  查看《授权协议》 <ChevronRight className="w-3 h-3" />
                 </div>
               </div>
             </List.Item>
-            <div className="h-[1px] bg-slate-100/50 mx-4" />
+            <div className="h-[1px] bg-slate-100/80 mx-5" />
             <List.Item 
               prefix={
-                <div className="w-10 h-10 rounded-[16px] bg-gradient-to-br from-slate-50 to-gray-50 flex items-center justify-center border border-slate-200/50 shadow-sm">
-                  <Settings className="w-5 h-5 text-slate-600" />
+                <div className="w-12 h-12 rounded-[20px] bg-gradient-to-br from-slate-50 to-gray-50 flex items-center justify-center border border-slate-200/50 shadow-sm">
+                  <Settings className="w-6 h-6 text-slate-600" />
                 </div>
               }
               onClick={() => showComingSoon('通用设置', '通知、账号与通用设置功能即将开放。')}
               arrow={<ChevronRight className="w-5 h-5 text-slate-300" />}
-              className="active:bg-slate-50 transition-colors"
+              className="active:bg-slate-50/50 transition-colors"
             >
-              <div className="py-1.5">
-                <div className="font-semibold text-slate-900 text-[15px] tracking-tight">通用设置</div>
-                <div className="text-[12px] text-slate-400 mt-0.5 font-medium">通知、账号与通用设置</div>
+              <div className="py-2">
+                <div className="font-bold text-slate-900 text-[16px] tracking-tight mb-0.5">通用设置</div>
+                <div className="text-[13px] text-slate-500 font-medium">通知、账号与通用设置</div>
               </div>
             </List.Item>
           </List>
         </motion.div>
 
         {/* Module D: Logout */}
-        <motion.div variants={itemVariants}>
+        <motion.div variants={itemVariants} className="relative z-10">
           <button 
             onClick={handleLogout}
-            className="w-full bg-white rounded-full p-4 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100/50 flex items-center justify-center gap-2 text-rose-500 font-semibold active:bg-rose-50 transition-colors tracking-wide"
+            className="w-full bg-white/80 backdrop-blur-xl rounded-full p-4 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-white flex items-center justify-center gap-2 text-rose-500 font-bold active:bg-rose-50 transition-colors tracking-wide text-[15px]"
           >
             <LogOut className="w-5 h-5" />
             退出登录

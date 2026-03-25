@@ -181,7 +181,7 @@ export default function BrainTrainingView() {
   const progressPercent = Math.min(100, Math.round((dtxProgress.completed / dtxProgress.total) * 100));
 
   return (
-    <div className="bg-[#FAFAFA] flex flex-col relative overflow-hidden min-h-screen">
+    <div className="bg-[#FAFAFA] flex flex-col relative overflow-hidden h-full">
       {/* 极浅弥散暖色渐变背景 */}
       <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <div className="absolute top-[-10%] left-[-10%] w-[70%] h-[50%] bg-blue-200/30 rounded-full blur-3xl" />
@@ -189,7 +189,7 @@ export default function BrainTrainingView() {
         <div className="absolute bottom-[-10%] left-[20%] w-[60%] h-[40%] bg-blue-200/20 rounded-full blur-3xl" />
       </div>
 
-      <div className="relative z-10 flex-1 flex flex-col h-[100dvh]">
+      <div className="relative z-10 flex-1 flex flex-col h-full">
         <SafeArea position="top" />
         <NavBar 
           backArrow={<ChevronLeft className="w-6 h-6 text-slate-700" />}
@@ -199,7 +199,7 @@ export default function BrainTrainingView() {
           <span className="font-bold text-slate-800">数字疗法大厅</span>
         </NavBar>
 
-        <div className="flex-1 overflow-y-auto px-5 pt-2 pb-24 space-y-6">
+        <div className="flex-1 overflow-y-auto px-5 pt-2 pb-24 space-y-6 hide-scrollbar">
           
           {/* AI Greeting */}
           <motion.div 

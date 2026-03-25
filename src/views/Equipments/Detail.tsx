@@ -45,7 +45,7 @@ export default function EquipmentDetailView() {
 
   if (!equipment) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="h-full flex items-center justify-center bg-slate-50 overflow-y-auto hide-scrollbar">
         <div className="text-center">
           <p className="text-slate-500 mb-4">未找到该装备信息</p>
           <button 
@@ -61,7 +61,7 @@ export default function EquipmentDetailView() {
 
   const handleBuyClick = () => {
     if (isOwned) {
-      navigate('/manager');
+      navigate('/manager', { replace: true });
       return;
     }
     
@@ -75,6 +75,10 @@ export default function EquipmentDetailView() {
   const executePurchase = () => {
     const privileges = equipment.bundledPrivileges.map(p => p.id);
     buyEquipment(equipment.id, privileges);
+    
+    // Add to purchased assets for IoT linkage
+    useAppStore.getState().addPurchasedAsset(equipment.id);
+    
     // Redirect to manager after successful purchase
     navigate('/manager', { replace: true });
   };
@@ -86,7 +90,7 @@ export default function EquipmentDetailView() {
   };
 
   return (
-    <div className="bg-slate-50">
+    <div className="bg-slate-50 h-full overflow-y-auto hide-scrollbar">
       {/* Header */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100/50 pt-[env(safe-area-inset-top)]">
         <div className="flex items-center justify-between h-14 px-4">
@@ -226,7 +230,7 @@ export default function EquipmentDetailView() {
                 <CheckCircle2 className="w-5 h-5" /> 已拥有
               </>
             ) : (
-              '立即购买并绑定'
+              '立即购买'
             )}
           </button>
         </div>

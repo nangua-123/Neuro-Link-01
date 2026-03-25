@@ -51,7 +51,7 @@ export default function DTxRunnerView() {
   const handleExit = () => navigate(-1);
 
   return (
-    <div className="bg-slate-900 flex flex-col h-[100dvh] overflow-hidden relative text-white">
+    <div className="bg-slate-900 flex flex-col h-full overflow-y-auto hide-scrollbar relative text-white">
       <SafeArea position="top" />
       
       {/* Top Bar - Only show in intro/outro or when paused (simplified here) */}

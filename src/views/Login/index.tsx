@@ -84,7 +84,7 @@ export default function LoginView() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] flex flex-col relative overflow-hidden">
+    <div className="h-full bg-[#FAFAFA] flex flex-col relative overflow-hidden">
       <style>{`
         input[type="tel"]::-webkit-inner-spin-button,
         input[type="tel"]::-webkit-outer-spin-button {
@@ -98,7 +98,7 @@ export default function LoginView() {
         <div className="absolute top-[20%] -left-[20%] w-[80%] h-[60%] bg-gradient-to-tr from-[#FFF0E6] to-transparent opacity-30 blur-3xl" />
       </div>
 
-      <div className="flex-1 px-6 pt-16 pb-8 flex flex-col z-10 overflow-y-auto items-center">
+      <div className="flex-1 px-6 pt-16 pb-8 flex flex-col z-10 overflow-y-auto items-center hide-scrollbar">
         
         {/* AI管家式欢迎区 */}
         <div className="flex flex-col items-center text-center mb-10 w-full animate-fade-in">
