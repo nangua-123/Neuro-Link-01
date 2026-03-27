@@ -5,10 +5,11 @@ import { useAppStore } from '../../store';
 import { 
   Sparkles, FileText, Activity, Zap, BrainCircuit, 
   ChevronRight, Pill, MapPin, HeartHandshake, ShieldAlert, Lock, CheckCircle2,
-  Stethoscope, Smile, HeartPulse, QrCode, Watch, AlertCircle
+  Stethoscope, Smile, HeartPulse, QrCode, Watch, AlertCircle, Package
 } from 'lucide-react';
 import { Toast, Modal } from 'antd-mobile';
 
+import { DiaryTimeline } from '../../components/DiaryTimeline';
 import { VitalsGrid } from '../../components/Charts/VitalsGrid';
 import { DailyTaskManager } from '../../components/DailyTaskManager';
 import { SeizureDiarySheet } from '../../components/SeizureDiarySheet';
@@ -27,13 +28,13 @@ const getDynamicInsight = (stage: string, tag: string, identity: string, hasDevi
   
   if (stage === 'NEW') return `${prefix}的专属健康管家尚未激活。只需 3 分钟完成专业量表测评，AI 将为${prefix}量身定制康复与干预方案。`;
   
-  if (!hasDevice) return `✨ AI 档案已建立。我是您的专属管家，请尽快连接监测设备或设置用药计划，以便我为您提供精准守护。`;
+  if (!hasDevice) return `AI 档案已建立。我是您的专属管家，请尽快连接监测设备或设置用药计划，以便我为您提供精准守护。`;
 
-  if (tag === 'EPILEPSY') return `✨ AI 状态评估：良好。${prefix}已连续 14 天无异常发作，近期深睡比例提升 12%，请继续保持当前的用药规律。`;
-  if (tag === 'MIGRAINE') return `✨ AI 预警：未来 48 小时气压变化剧烈，偏头痛发作风险轻微上升，请提醒${prefix}注意防寒保暖并随身携带备用药。`;
-  if (tag === 'AD') return `✨ AI 洞察：本周脑力训练达标率为 80%，建议今日增加 15 分钟的记忆力强化训练，以巩固康复效果。`;
+  if (tag === 'EPILEPSY') return `AI 状态评估：良好。${prefix}已连续 14 天无异常发作，近期深睡比例提升 12%，请继续保持当前的用药规律。`;
+  if (tag === 'MIGRAINE') return `AI 预警：未来 48 小时气压变化剧烈，偏头痛发作风险轻微上升，请提醒${prefix}注意防寒保暖并随身携带备用药。`;
+  if (tag === 'AD') return `AI 洞察：本周脑力训练达标率为 80%，建议今日增加 15 分钟的记忆力强化训练，以巩固康复效果。`;
   
-  return `✨ AI 守护中：今日各项体征平稳，未见异常波动。保持好心情，继续享受美好的一天。`;
+  return `AI 守护中：今日各项体征平稳，未见异常波动。保持好心情，继续享受美好的一天。`;
 };
 
 export default function ManagerView() {
@@ -55,6 +56,13 @@ export default function ManagerView() {
     const timer = setTimeout(() => setIsLoading(false), 800);
     return () => clearTimeout(timer);
   }, []);
+
+  // Clean up dirty state from previous tests where purchasedAssets wasn't cleared on logout
+  useEffect(() => {
+    if (userStage === 'NEW' && purchasedAssets.length > 0) {
+      useAppStore.setState({ purchasedAssets: [] });
+    }
+  }, [userStage, purchasedAssets.length]);
 
   const handleTaskAction = (task: Task) => {
     if (task.type === 'MEDICATION') {
@@ -149,15 +157,9 @@ export default function ManagerView() {
       </div>
       
       <div className="flex-1 overflow-y-auto px-4 pt-5 pb-[120px] relative z-10 hide-scrollbar">
-        <motion.h1 variants={itemVariants} className="text-[18px] font-bold text-slate-800 tracking-tight flex items-center gap-2 mb-2.5">
+        <motion.h1 variants={itemVariants} className="text-[18px] font-bold text-slate-800 tracking-tight flex items-center gap-2 mb-5">
           下午好，张建国
         </motion.h1>
-        <motion.div variants={itemVariants} className="flex items-start gap-2.5 bg-white/60 backdrop-blur-md px-4 py-3 rounded-[16px] shadow-[0_4px_16px_rgba(0,0,0,0.03)] border border-white/80 mb-5">
-          <Sparkles className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
-          <p className="text-[13px] text-slate-700 leading-relaxed font-medium">
-            {getDynamicInsight(userStage, selectedDiseaseTag, identity, connectedDevices.length > 0)}
-          </p>
-        </motion.div>
 
         <div className="space-y-5">
           {/* Module 1: AI Health Summary (Dynamic) */}
@@ -166,8 +168,6 @@ export default function ManagerView() {
               userStage={userStage} 
               navigate={navigate} 
               diseaseTag={selectedDiseaseTag}
-              hasMed={medicationPlans.length > 0}
-              hasDevice={connectedDevices.length > 0}
               purchasedAssets={purchasedAssets}
             />
           </motion.div>
@@ -180,7 +180,7 @@ export default function ManagerView() {
           )}
 
           {/* Module 3: Vitals */}
-          {userStage !== 'NEW' && (
+          {userStage !== 'NEW' && (connectedDevices.length > 0 || purchasedAssets.length > 0) && (
             <motion.div variants={itemVariants} className="space-y-2.5">
               <h3 className="text-[18px] font-bold text-slate-800 px-1 tracking-tight">体征监测</h3>
               <VitalsGrid />
@@ -196,6 +196,14 @@ export default function ManagerView() {
               onOpenCDR={() => { setActiveTaskId(undefined); setIsCDRDiaryVisible(true); }}
             />
           </motion.div>
+
+          {/* Module 5: Diary Timeline */}
+          {userStage !== 'NEW' && (
+            <motion.div variants={itemVariants} className="space-y-2.5">
+              <h3 className="text-[18px] font-bold text-slate-800 px-1 tracking-tight">照护日记/发作记录</h3>
+              <DiaryTimeline />
+            </motion.div>
+          )}
         </div>
       </div>
 
@@ -272,10 +280,43 @@ export default function ManagerView() {
   );
 }
 
-function AIHealthSummaryCard({ userStage, navigate, diseaseTag, hasMed, hasDevice, purchasedAssets = [] }: any) {
-  const { identity } = useAppStore();
+function AIHealthSummaryCard({ userStage, navigate, diseaseTag, purchasedAssets = [] }: any) {
+  const { 
+    identity, 
+    medicationPlans, 
+    medicationHistory, 
+    connectedDevices, 
+    seizureRecords, 
+    migraineRecords, 
+    dtxTotalDuration, 
+    dtxProgress 
+  } = useAppStore();
+  
   const isFamily = identity === UserIdentity.FAMILY;
   const hasPurchased = purchasedAssets.length > 0;
+
+  // 1. Medication Logic
+  const today = new Date().toISOString().split('T')[0];
+  const todayHistory = medicationHistory[today] || [];
+  const totalDosesToday = medicationPlans.reduce((acc, plan) => acc + plan.times.length, 0);
+  const completedDosesToday = todayHistory.length;
+  const hasMedPlans = medicationPlans.length > 0;
+  const medStatus = !hasMedPlans ? 'NONE' : (completedDosesToday >= totalDosesToday && totalDosesToday > 0 ? 'DONE' : 'PENDING');
+
+  // 2. Device Logic
+  const deviceCount = connectedDevices.length;
+  const hasConnectedDevice = deviceCount > 0;
+
+  // 3. Control (Diary) Logic
+  const records = diseaseTag === 'EPILEPSY' ? seizureRecords : diseaseTag === 'MIGRAINE' ? migraineRecords : [];
+  const hasRecords = records && records.length > 0;
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+  const recentRecords = records?.filter((r: any) => new Date(r.timestamp || r.date) >= oneWeekAgo) || [];
+  const recentCount = recentRecords.length;
+
+  // 4. Brain Training Logic
+  const hasTrained = dtxTotalDuration > 0 || dtxProgress.completed > 0;
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -296,15 +337,18 @@ function AIHealthSummaryCard({ userStage, navigate, diseaseTag, hasMed, hasDevic
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-        className="bg-white/90 backdrop-blur-xl rounded-[24px] p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-white relative overflow-hidden"
+        className="bg-white/90 backdrop-blur-xl rounded-[24px] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-white relative overflow-hidden"
       >
         <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100/30 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
-        <div className="relative z-10">
+        <div className="relative z-10 flex flex-col items-center text-center">
+          <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mb-4 shadow-inner">
+            <Sparkles className="w-6 h-6 text-blue-500" />
+          </div>
           <h2 className="text-[18px] font-bold text-slate-800 mb-2">专属健康管家尚未激活</h2>
-          <p className="text-[13px] text-slate-500 leading-relaxed mb-4">
-            完成首次专业量表测评，AI 将为{isFamily ? '长辈' : '您'}量身定制康复与干预方案，并开启全景数据追踪。
+          <p className="text-[13px] text-slate-500 leading-relaxed mb-6">
+            只需 3 分钟完成首次专业量表测评，AI 将为{isFamily ? '长辈' : '您'}量身定制康复与干预方案，并开启全景数据追踪。
           </p>
-          <button onClick={() => navigate('/assessment')} className="w-full bg-blue-600 text-white text-[14px] py-3 rounded-[16px] font-bold shadow-[0_4px_12px_rgba(37,99,235,0.2)] active:scale-95 transition-transform flex items-center justify-center gap-1.5">
+          <button onClick={() => navigate('/assessment')} className="w-full bg-blue-600 text-white text-[15px] py-3.5 rounded-[16px] font-bold shadow-[0_4px_12px_rgba(37,99,235,0.2)] active:scale-95 transition-transform flex items-center justify-center gap-1.5">
             立即开启测评
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -321,7 +365,7 @@ function AIHealthSummaryCard({ userStage, navigate, diseaseTag, hasMed, hasDevic
       viewport={{ once: true, margin: "-50px" }}
       className="bg-white/90 backdrop-blur-xl rounded-[24px] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-white relative overflow-hidden"
     >
-      <motion.div variants={itemVariants} className="flex justify-between items-center mb-4">
+      <motion.div variants={itemVariants} className="flex justify-between items-center mb-3">
         <div className="flex items-center gap-1.5">
           <h2 className="text-[18px] font-bold text-slate-800 tracking-tight">AI 阶段健康摘要</h2>
         </div>
@@ -329,83 +373,105 @@ function AIHealthSummaryCard({ userStage, navigate, diseaseTag, hasMed, hasDevic
           全景病历 <ChevronRight className="w-3 h-3" />
         </div>
       </motion.div>
+
+      <motion.div variants={itemVariants} className="flex items-start gap-2 bg-gradient-to-r from-blue-50/80 to-indigo-50/50 px-3 py-2.5 rounded-[12px] mb-4 border border-blue-100/50">
+        <Sparkles className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
+        <p className="text-[12px] text-slate-700 leading-relaxed font-medium">
+          {getDynamicInsight(userStage, diseaseTag, identity, hasConnectedDevice)}
+        </p>
+      </motion.div>
       
       <div className="grid grid-cols-2 gap-2.5">
         {/* Metric 1: Medication */}
         <motion.div variants={itemVariants}
-          onClick={hasMed ? undefined : () => navigate('/medications')}
-          className={`flex flex-col items-center text-center rounded-[16px] p-3 border ${hasMed ? 'bg-emerald-50/50 border-emerald-100/50' : 'bg-slate-50/80 border-slate-100/80 cursor-pointer active:scale-95 transition-transform'}`}
+          onClick={medStatus === 'DONE' ? undefined : () => navigate('/medications')}
+          className={`flex flex-col items-center text-center rounded-[16px] p-3 border ${medStatus === 'DONE' ? 'bg-emerald-50/50 border-emerald-100/50' : 'bg-slate-50/80 border-slate-100/80 cursor-pointer active:scale-95 transition-transform'}`}
         >
           <div className="flex items-center justify-center gap-1.5 mb-1.5">
-            <Pill className={`w-4 h-4 ${hasMed ? 'text-emerald-500' : 'text-slate-400'}`} />
+            <Pill className={`w-4 h-4 ${medStatus === 'DONE' ? 'text-emerald-500' : 'text-slate-400'}`} />
             <span className="text-[12px] font-medium text-slate-500">用药依从性</span>
           </div>
           <div className="flex items-baseline justify-center gap-1">
-            <span className={`text-[18px] font-bold leading-none ${hasMed ? 'text-slate-800' : 'text-slate-400'}`}>{hasMed ? '98%' : '未设置'}</span>
+            <span className={`text-[18px] font-bold leading-none ${medStatus === 'NONE' ? 'text-slate-400' : 'text-slate-800'}`}>
+              {medStatus === 'NONE' ? '未设置' : `${completedDosesToday}/${totalDosesToday}`}
+              {medStatus !== 'NONE' && <span className="text-[13px] font-normal text-slate-500 ml-0.5">次</span>}
+            </span>
           </div>
-          <div className={`text-[12px] mt-1.5 ${hasMed ? 'text-emerald-600' : 'text-blue-500'}`}>
-            {hasMed ? '本周表现极佳' : '去添加计划 ➔'}
+          <div className={`text-[12px] mt-1.5 ${medStatus === 'DONE' ? 'text-emerald-600' : medStatus === 'PENDING' ? 'text-orange-500' : 'text-blue-500'}`}>
+            {medStatus === 'DONE' ? '今日用药达标' : medStatus === 'PENDING' ? '请按时完成用药' : '去添加计划 ➔'}
           </div>
         </motion.div>
 
         {/* Metric 2: Device */}
         <motion.div variants={itemVariants}
-          onClick={hasDevice ? undefined : () => navigate('/device-connect')}
+          onClick={() => {
+            if (hasConnectedDevice) {
+              document.getElementById('vitals-grid-section')?.scrollIntoView({ behavior: 'smooth' });
+            } else {
+              navigate('/device-connect');
+            }
+          }}
           className={`flex flex-col items-center text-center rounded-[16px] p-3 border ${
-            hasDevice ? 'bg-blue-50/50 border-blue-100/50' : 
-            hasPurchased ? 'bg-indigo-50/50 border-indigo-100/50 cursor-pointer active:scale-95 transition-transform' : 
+            hasConnectedDevice ? 'bg-blue-50/50 border-blue-100/50 cursor-pointer active:scale-95 transition-transform' : 
+            hasPurchased ? 'bg-blue-50/50 border-blue-100/50 cursor-pointer active:scale-95 transition-transform' : 
             'bg-slate-50/80 border-slate-100/80 cursor-pointer active:scale-95 transition-transform'
           }`}
         >
           <div className="flex items-center justify-center gap-1.5 mb-1.5">
-            {hasPurchased && !hasDevice ? (
-              <span className="text-[14px]">📦</span>
+            {hasPurchased && !hasConnectedDevice ? (
+              <Package className="w-4 h-4 text-blue-500" />
             ) : (
-              <Watch className={`w-4 h-4 ${hasDevice ? 'text-blue-500' : 'text-slate-400'}`} />
+              <Watch className={`w-4 h-4 ${hasConnectedDevice ? 'text-blue-500' : 'text-slate-400'}`} />
             )}
             <span className="text-[12px] font-medium text-slate-500">体征监测</span>
           </div>
           <div className="flex items-baseline justify-center gap-1">
-            <span className={`font-bold leading-none ${hasDevice ? 'text-[18px] text-slate-800' : hasPurchased ? 'text-[15px] text-indigo-600' : 'text-[15px] text-slate-400'}`}>
-              {hasDevice ? '守护中' : hasPurchased ? '新设备待连接' : '未绑定设备'}
+            <span className={`font-bold leading-none ${hasConnectedDevice ? 'text-[18px] text-slate-800' : hasPurchased ? 'text-[15px] text-blue-600' : 'text-[15px] text-slate-400'}`}>
+              {hasConnectedDevice ? `${deviceCount} 台设备` : hasPurchased ? '设备已在途中' : '未绑定设备'}
             </span>
           </div>
-          <div className={`text-[12px] mt-1.5 ${hasDevice ? 'text-blue-600' : hasPurchased ? 'text-indigo-500' : 'text-slate-500'}`}>
-            {hasDevice ? '心率 72bpm' : hasPurchased ? '收到后点击激活' : '去连接手表/手环 ➔'}
+          <div className="text-[12px] mt-1.5 text-blue-500">
+            {hasConnectedDevice ? 'AI持续守护中' : hasPurchased ? '收到后请绑定 ➔' : '去连接设备 ➔'}
           </div>
         </motion.div>
 
         {/* Metric 3: Diary/Control */}
         <motion.div variants={itemVariants}
           onClick={() => navigate('/diary')}
-          className="flex flex-col items-center text-center rounded-[16px] p-3 border bg-rose-50/50 border-rose-100/50 cursor-pointer active:scale-95 transition-transform"
+          className={`flex flex-col items-center text-center rounded-[16px] p-3 border ${hasRecords ? 'bg-rose-50/50 border-rose-100/50' : 'bg-slate-50/80 border-slate-100/80'} cursor-pointer active:scale-95 transition-transform`}
         >
           <div className="flex items-center justify-center gap-1.5 mb-1.5">
-            <Activity className="w-4 h-4 text-rose-500" />
+            <Activity className={`w-4 h-4 ${hasRecords ? 'text-rose-500' : 'text-slate-400'}`} />
             <span className="text-[12px] font-medium text-slate-500">发作控制</span>
           </div>
           <div className="flex items-baseline justify-center gap-1">
-            <span className="text-[18px] font-bold text-slate-800 leading-none">0 <span className="text-[13px] font-normal text-slate-500 ml-0.5">次</span></span>
+            <span className={`text-[18px] font-bold leading-none ${hasRecords ? 'text-slate-800' : 'text-slate-400'}`}>
+              {hasRecords ? recentCount : '--'}
+              <span className="text-[13px] font-normal text-slate-500 ml-0.5">次</span>
+            </span>
           </div>
-          <div className="text-[12px] mt-1.5 text-rose-600">
-            本周无异常记录
+          <div className={`text-[12px] mt-1.5 ${hasRecords ? 'text-rose-600' : 'text-blue-500'}`}>
+            {hasRecords ? '本周发作记录' : '点击开启追踪 ➔'}
           </div>
         </motion.div>
 
-        {/* Metric 4: Training (Dynamic based on disease) */}
+        {/* Metric 4: Training */}
         <motion.div variants={itemVariants}
-          onClick={() => navigate('/feature/brain-training')}
-          className={`flex flex-col items-center text-center rounded-[16px] p-3 border ${diseaseTag === 'AD' ? 'bg-indigo-50/50 border-indigo-100/50' : 'bg-slate-50/80 border-slate-100/80'} cursor-pointer active:scale-95 transition-transform`}
+          onClick={() => navigate('/dtx')}
+          className={`flex flex-col items-center text-center rounded-[16px] p-3 border ${hasTrained ? 'bg-indigo-50/50 border-indigo-100/50' : 'bg-slate-50/80 border-slate-100/80'} cursor-pointer active:scale-95 transition-transform`}
         >
           <div className="flex items-center justify-center gap-1.5 mb-1.5">
-            <BrainCircuit className={`w-4 h-4 ${diseaseTag === 'AD' ? 'text-indigo-500' : 'text-slate-400'}`} />
+            <BrainCircuit className={`w-4 h-4 ${hasTrained ? 'text-indigo-500' : 'text-slate-400'}`} />
             <span className="text-[12px] font-medium text-slate-500">脑力训练</span>
           </div>
           <div className="flex items-baseline justify-center gap-1">
-            <span className={`text-[18px] font-bold leading-none ${diseaseTag === 'AD' ? 'text-slate-800' : 'text-slate-400'}`}>{diseaseTag === 'AD' ? '80%' : '待激活'}</span>
+            <span className={`text-[18px] font-bold leading-none ${hasTrained ? 'text-slate-800' : 'text-slate-400'}`}>
+              {hasTrained ? dtxTotalDuration : '0'}
+              <span className="text-[13px] font-normal text-slate-500 ml-0.5">分钟</span>
+            </span>
           </div>
-          <div className={`text-[12px] mt-1.5 ${diseaseTag === 'AD' ? 'text-indigo-600' : 'text-blue-500'}`}>
-            {diseaseTag === 'AD' ? '达标率良好' : '开启专属训练 ➔'}
+          <div className={`text-[12px] mt-1.5 ${hasTrained ? 'text-indigo-600' : 'text-blue-500'}`}>
+            {hasTrained ? '累计训练时长' : '开启首次唤醒 ➔'}
           </div>
         </motion.div>
       </div>
@@ -466,7 +532,7 @@ function UniversalToolbox({ userStage, navigate, onOpenCDR }: any) {
       <div>
         <motion.div variants={itemVariants} className="text-[14px] font-bold text-slate-800 mb-3 px-1">干预与守护</motion.div>
         <div className="grid grid-cols-4 gap-y-4">
-           <motion.div variants={itemVariants}><ToolItem icon={<BrainCircuit/>} label="脑力训练" onClick={() => navigate('/feature/brain-training')} color="blue" userStage={userStage} requiresAssessment /></motion.div>
+           <motion.div variants={itemVariants}><ToolItem icon={<BrainCircuit/>} label="脑力训练" onClick={() => navigate('/dtx')} color="blue" userStage={userStage} requiresAssessment /></motion.div>
            <motion.div variants={itemVariants}><ToolItem icon={<MapPin/>} label="安全围栏" onClick={() => navigate('/feature/lbs-fence')} color="orange" userStage={userStage} requiresAssessment /></motion.div>
            <motion.div variants={itemVariants}><ToolItem icon={<ShieldAlert/>} label="紧急录像" onClick={() => Toast.show({ content: '已触发紧急录像', icon: 'success' })} color="red" userStage={userStage} /></motion.div>
         </div>

@@ -114,10 +114,17 @@ export const CareDiary: React.FC = () => {
           <div>
             <div className="flex items-center justify-between mb-4 px-1">
               <h3 className="text-[18px] font-bold text-slate-900 tracking-tight">近期记录</h3>
-              <span className="text-[13px] text-slate-500 font-medium flex items-center gap-1 bg-white/80 backdrop-blur-md px-3 py-1 rounded-full border border-slate-200/50 shadow-sm">
+              <button 
+                onClick={() => setSelectedDate('all')}
+                className={`text-[13px] font-medium flex items-center gap-1 px-3 py-1 rounded-full border shadow-sm transition-all ${
+                  selectedDate === 'all' 
+                    ? 'bg-blue-50 text-blue-600 border-blue-200' 
+                    : 'bg-white/80 backdrop-blur-md text-slate-500 border-slate-200/50 hover:bg-white'
+                }`}
+              >
                 <CalendarIcon className="w-4 h-4" />
                 全部
-              </span>
+              </button>
             </div>
             
             <div className="flex gap-3 overflow-x-auto pb-2 hide-scrollbar">
@@ -153,9 +160,46 @@ export const CareDiary: React.FC = () => {
 
           {/* 记录列表 */}
           <div className="space-y-4">
-            <AnimatePresence mode="wait">
-              {careDiaryRecords[selectedDate] ? (
+            <AnimatePresence mode="popLayout">
+              {selectedDate === 'all' ? (
+                recordsList.length > 0 ? (
+                  recordsList.map((record, index) => (
+                    <motion.div
+                      layout
+                      initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.3, delay: index * 0.05 }}
+                      key={record.id}
+                    >
+                      <DiaryTimelineCard record={record} subjectLabel={subjectLabel} />
+                    </motion.div>
+                  ))
+                ) : (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    key="empty-all"
+                    className="bg-white/80 backdrop-blur-md rounded-[28px] p-10 text-center border border-slate-100/80 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex flex-col items-center justify-center"
+                  >
+                    <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-5 border border-blue-100/50">
+                      <Activity className="w-8 h-8 text-blue-400" />
+                    </div>
+                    <h4 className="text-[16px] font-bold text-slate-800 mb-2">暂无任何记录</h4>
+                    <p className="text-[14px] text-slate-500 max-w-[200px] mx-auto leading-relaxed mb-6">记录{subjectLabel}的日常状态，AI将为您提供更精准的照护建议</p>
+                    <button 
+                      onClick={() => setShowSheet(true)}
+                      className="px-6 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full text-[14px] font-bold active:scale-95 transition-transform shadow-[0_4px_12px_rgba(37,99,235,0.2)]"
+                    >
+                      立即记录
+                    </button>
+                  </motion.div>
+                )
+              ) : careDiaryRecords[selectedDate] ? (
                 <motion.div
+                  layout
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
@@ -166,6 +210,7 @@ export const CareDiary: React.FC = () => {
                 </motion.div>
               ) : (
                 <motion.div 
+                  layout
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}

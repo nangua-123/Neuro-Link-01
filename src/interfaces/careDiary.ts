@@ -10,6 +10,7 @@ export interface CareDiaryRecord {
     mood: string;
   };
   bpsdSymptoms: string[];
+  bpsdOtherDetail?: string;
   adlStatus: string[];
   notes: string;
   hasSevereIncident: boolean;

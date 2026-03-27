@@ -56,10 +56,90 @@
 - `recharts`: [新增] 数据可视化图表库。
 
 ## Changelog
+
+### 🔄 VitalsGrid Empty State Optimization (2026-03-26)
+- **Objective:** Address user feedback regarding the "Vitals Monitoring" section taking up too much vertical space when no devices are connected or pending.
+- **Key Changes:**
+  - **Conditional Rendering:** The "体征监测" (Vitals Monitoring) section in `ManagerView` is now completely hidden if the user has no connected devices and no pending purchases.
+  - **Space Efficiency:** Removed the large empty state card from `VitalsGrid.tsx`, saving significant vertical space on the dashboard.
+  - **Streamlined UX:** Users without devices now rely solely on the compact "AI Health Summary" card for the entry point to connect devices, reducing UI clutter.
+
+### 🔄 Manager Dashboard & Medications Refinement (2026-03-26)
+- **Objective:** Optimize the Diary Timeline on the Manager dashboard and refine the core workflows in the Medications module.
+- **Key Changes:**
+  - **DiaryTimeline Component:**
+    - Created a new `DiaryTimeline` component to display a unified timeline of recent events.
+    - Dynamically integrates data from `careDiaryRecords`, `seizureRecords`, and `migraineRecords`.
+    - Adapts the displayed records based on the user's `selectedDiseaseTag` (Epilepsy, Migraine, or All).
+    - Added the `DiaryTimeline` to the bottom of the `ManagerView` to provide a quick overview of recent health events.
+    - Implemented a consistent, modern UI style with color-coded icons and soft backgrounds.
+  - **Medications Module Refinement:**
+    - Enhanced the medication check-in process in `MedicationsView`.
+    - Replaced the immediate toggle action with a confirmation `Modal` to prevent accidental clicks.
+    - The modal displays the medication time, name, and dose, providing clear context before confirming the check-in.
+    - Maintained the existing smooth animations and swipe-to-delete functionality.
+
+### 🔄 VitalsGrid Refinement (2026-03-25)
+- **Objective:** Further optimize the multi-device display logic and data dynamicization in the `VitalsGrid` component.
+- **Key Changes:**
+  - **Unified Swiper Display:** Consolidated the "Connected Devices" and "Pending Delivery" states into a single unified `Swiper` component. Users can now swipe through all their active and pending devices seamlessly.
+  - **Pending Device Cards:** Purchased but unconnected devices now render as full cards within the Swiper, displaying the specific device name and icon (e.g., "Neuro-Band Pro 预警手环") instead of a generic banner.
+  - **Dynamic Filtering:** Implemented logic to filter out `purchasedAssets` that are already present in `connectedDevices`, preventing duplicate displays.
+  - **Add Device Card:** The "Add Device" card is now consistently appended to the end of the Swiper, whether the user has connected devices or pending deliveries.
+  - **Smooth Scrolling:** Added an `id="vitals-grid-section"` to the root element to support smooth scrolling from the `AIHealthSummaryCard`.
+
+### 🔄 AI Health Summary Refinement (2026-03-25)
+- **Objective:** Refine the "AI Health Summary" card within the Manager dashboard to display dynamic and contextually relevant information based on user stage and data availability.
+- **Key Changes:**
+  - **Dynamic Data Integration:** Refactored `AIHealthSummaryCard` to fetch real-time data from the Zustand store instead of using static mock data.
+  - **Medication Adherence:** Now dynamically displays adherence status ('NONE', 'PENDING', 'DONE') based on `medicationPlans` and `medicationHistory`.
+  - **Device Status:** Replaced specific hardcoded metrics (like heart rate) with a qualitative summary of connected devices (`connectedDevices.length`), linking to the detailed `VitalsGrid`.
+  - **Diary/Control:** Dynamically reflects actual seizure/migraine records from the store, prompting new users to start tracking.
+  - **Brain Training:** Links to actual training progress (`dtxTotalDuration`) and routes users to the training feature.
+  - **Contextual UI:** The UI adapts based on the user's stage ('NEW' vs. active) and data availability, providing relevant prompts and clear Call-to-Actions (CTAs).
+
+### 🔄 Device Management & Onboarding Refinement (2026-03-25)
+- **Objective:** Refine the user experience and core functionalities of the Neuro-Link C-end application, particularly around device management, user onboarding, and data handling.
+- **Key Changes:**
+  - **DeviceConnect.tsx:** Updated UI text and logic for pending devices (from "待连接" to "已下单"). Implemented logic to skip the authorization modal for already owned medical devices, directly proceeding to pairing and showing a success toast. Modified `handleDeviceClick` and `handleAgreeAndBind` to differentiate between new medical devices and owned medical devices.
+  - **VitalsGrid.tsx:** Refactored the display of device connection states to show three distinct states: connected devices, purchased but pending devices, and an empty state. Compacted the "Pending Delivery" state UI into a single-line banner and updated the text to "设备已在途中".
+  - **JIT Agreement Flow:** Refined the logic for handling JIT (Just-In-Time) authorization for medical devices to differentiate between new and owned devices.
+  - **Success Feedback:** Added a success toast message for successful device pairing.
+
+### 🔄 Epilepsy Diary AI Analysis (2026-03-25)
+- **Objective:** Provide immediate educational feedback on the risks of missing medication.
+- **Key Changes:**
+  - Added an AI Analysis Card in the `SeizureDiarySheet` that triggers when "漏服药" (missed medication) or "经常漏服" is selected as a trigger.
+  - The card explains the potential impact on epilepsy control and offers actionable improvement suggestions (e.g., using reminders, not doubling doses).
+
+### 🔄 Home AI Hub Refactor (2026-03-25)
+- **Objective:** Consolidate the AI insight banner and health summary card into a unified "AI Hub" component.
+- **Key Changes:**
+  - Merged the standalone AI insight banner and the health summary card in the Manager view.
+  - Streamlined the new user empty state by removing redundant copy and creating a focused, immersive call-to-action card.
+  - Integrated dynamic AI alerts as an inline highlighted banner within the health summary for existing users, significantly improving screen real estate and information density.
+
+### 🔄 Diary List Refactor (2026-03-25)
+- **Objective:** Enhance the display of care diary records to be more visual and interactive.
+- **Key Changes:**
+  - Implemented the "全部" (All) view in the Care Diary module to display a comprehensive list of all records.
+  - Replaced plain text diary entries in the Clinic Report with the `DiaryTimelineCard` component for a unified and rich visual experience.
+  - Added subtle entry animations (`framer-motion`) for newly added records in the list view.
+  - Ensured `DiaryTimelineCard` clearly highlights severe incidents and high-risk BPSD symptoms.
+
+### 🔄 BPSD Symptom Selection Enhancement (2026-03-25)
+- **Objective:** Allow users to provide specific details when selecting 'other' in the BPSD symptom list.
+- **Key Changes:**
+  - Added 'other' option to `BPSD_SYMPTOMS_DICT`.
+  - Introduced `bpsdOtherDetail` to the `CareDiaryRecord` interface.
+  - Updated `RecordSheet` to conditionally render a text area for detailed input when 'other' is selected.
+  - Updated `DiaryTimelineCard` to display the custom detail alongside the 'other' label.
+
 ### 🔄 Device State UI Refinement (2026-03-25)
 - **Objective:** Address user feedback regarding the "Pending Delivery" card being too large and confusing when no device was purchased.
 - **Key Changes:**
   - **Compacted UI:** Significantly reduced the size of the "Pending Delivery" (Purchased but not connected) state in `VitalsGrid.tsx` to a single-line banner, matching the minimal footprint of the "Empty" state.
+  - **Text Update:** Updated the text to "设备已在途中" (Device on the way) and "预计 1-3 天送达，收到后点击激活" to clearly communicate the delivery status.
   - **Logic Clarification:** Confirmed that the "Pending Delivery" state is correctly triggered by `purchasedAssets` in the global store. If a user sees this state without having purchased a device in the current session, it is due to the state being persisted in `localStorage` from a previous test session.
 
 ### 🔄 核心业务闭环：IoT 资产与商城联动 (Purchase-to-Bind)

@@ -9,7 +9,7 @@ interface DiaryTimelineCardProps {
 }
 
 export const DiaryTimelineCard: React.FC<DiaryTimelineCardProps> = ({ record, subjectLabel }) => {
-  const { basicStatus, bpsdSymptoms, adlStatus, notes, hasSevereIncident } = record;
+  const { basicStatus, bpsdSymptoms, bpsdOtherDetail, adlStatus, notes, hasSevereIncident } = record;
 
   const getStatusLabel = (type: 'sleep' | 'appetite' | 'mood', val: string) => {
     return BASIC_STATUS_DICT[type].find(i => i.value === val)?.label || val;
@@ -80,6 +80,10 @@ export const DiaryTimelineCard: React.FC<DiaryTimelineCardProps> = ({ record, su
             {bpsdSymptoms.map(id => {
               const symptom = BPSD_SYMPTOMS_DICT.find(s => s.id === id);
               if (!symptom) return null;
+              
+              const isOther = id === 'other';
+              const label = isOther && bpsdOtherDetail ? `其他: ${bpsdOtherDetail}` : symptom.label;
+              
               return (
                 <span 
                   key={id} 
@@ -87,7 +91,7 @@ export const DiaryTimelineCard: React.FC<DiaryTimelineCardProps> = ({ record, su
                     symptom.isHighRisk ? 'bg-rose-50 text-rose-600 border-rose-100/50' : 'bg-blue-50 text-blue-600 border-blue-100/50'
                   }`}
                 >
-                  {symptom.label}
+                  {label}
                 </span>
               );
             })}

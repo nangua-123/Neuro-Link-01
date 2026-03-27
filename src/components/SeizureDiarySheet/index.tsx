@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Popup, Switch, Toast } from 'antd-mobile';
-import { Activity, AlertTriangle, Check, Video } from 'lucide-react';
+import { Activity, AlertTriangle, Check, Video, Sparkles } from 'lucide-react';
 import { useRecallStore, DangerLevel, RecallReason } from '../../store/recall';
 import { useAppStore } from '../../store';
 import { UserIdentity } from '../../interfaces/user';
@@ -231,6 +231,32 @@ export function SeizureDiarySheet({ visible, onClose, activeTaskId, onTaskComple
                 );
               })}
             </div>
+
+            {/* AI 漏服药分析卡片 */}
+            {(triggers.includes('漏服药') || triggers.includes('经常漏服')) && (
+              <div className="animate-in fade-in slide-in-from-top-2 duration-300 mt-4 bg-gradient-to-br from-indigo-50 to-blue-50 p-4 rounded-[20px] border border-indigo-100/50 shadow-sm relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-blue-200/20 rounded-full blur-xl -mr-8 -mt-8 pointer-events-none" />
+                <div className="flex items-start gap-3 relative z-10">
+                  <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm shrink-0 text-indigo-500">
+                    <Sparkles size={16} />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-indigo-900 mb-1.5">AI 漏服药风险提示</h4>
+                    <p className="text-xs text-indigo-700/80 leading-relaxed mb-2">
+                      漏服抗癫痫药物会导致血液中药物浓度骤降，是诱发癫痫发作最危险的因素之一，极易打破原本稳定的控制状态。
+                    </p>
+                    <div className="bg-white/60 rounded-lg p-2.5">
+                      <div className="text-xs font-bold text-indigo-900 mb-1">💡 改善建议</div>
+                      <ul className="text-[11px] text-indigo-700/80 space-y-1 pl-3 list-disc marker:text-indigo-400">
+                        <li>请勿在下次服药时擅自加倍剂量，以免引起药物中毒。</li>
+                        <li>建议开启系统的「用药提醒」功能，或使用带有闹钟的智能分药盒。</li>
+                        <li>若近期频繁漏服，建议{isFamily ? '您加强监督' : '邀请家属协助监督'}。</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* 提交按钮 */}

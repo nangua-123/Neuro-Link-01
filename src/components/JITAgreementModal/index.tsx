@@ -44,10 +44,10 @@ export const JITAgreementModal: React.FC<JITAgreementModalProps> = ({ visible, o
               </div>
 
               <h2 className="text-[22px] font-bold text-slate-900 mb-3 leading-tight">
-                激活专属硬件与服务
+                授权并获取专属硬件
               </h2>
               <p className="text-[15px] text-slate-600 mb-6 leading-relaxed">
-                为激活您的专属硬件并生成精准的临床分析报告，请授权 Neuro-Link 处理您的体征与量表数据。
+                为获取专属硬件并生成精准的临床分析报告，请授权 Neuro-Link 处理您的体征与量表数据。
               </p>
 
               <div className="bg-slate-50 rounded-[20px] p-4 mb-6 border border-slate-100">
@@ -103,7 +103,7 @@ export const JITAgreementModal: React.FC<JITAgreementModalProps> = ({ visible, o
                     : 'bg-slate-100 text-slate-400 cursor-not-allowed'
                 }`}
               >
-                同意授权并激活
+                同意授权并下单
               </button>
             </div>
           </motion.div>

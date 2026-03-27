@@ -10,7 +10,8 @@ export const BPSD_SYMPTOMS_DICT = [
   { id: 'irritability', label: '易激惹', isHighRisk: false },
   { id: 'aberrant_motor', label: '异常动作/游荡', isHighRisk: true },
   { id: 'sleep_disorder', label: '睡眠障碍/日落综合征', isHighRisk: false },
-  { id: 'appetite_change', label: '饮食异常', isHighRisk: false }
+  { id: 'appetite_change', label: '饮食异常', isHighRisk: false },
+  { id: 'other', label: '其他', isHighRisk: false }
 ];
 
 export const BASIC_STATUS_DICT = {

@@ -18,6 +18,7 @@ export const RecordSheet: React.FC<RecordSheetProps> = ({ visible, onClose, date
   const [appetite, setAppetite] = useState('good');
   const [mood, setMood] = useState('calm');
   const [bpsdSymptoms, setBpsdSymptoms] = useState<string[]>([]);
+  const [bpsdOtherDetail, setBpsdOtherDetail] = useState('');
   const [adlStatus, setAdlStatus] = useState<string[]>([]);
   const [notes, setNotes] = useState('');
   const [hasSevereIncident, setHasSevereIncident] = useState(false);
@@ -29,6 +30,7 @@ export const RecordSheet: React.FC<RecordSheetProps> = ({ visible, onClose, date
       setAppetite('good');
       setMood('calm');
       setBpsdSymptoms([]);
+      setBpsdOtherDetail('');
       setAdlStatus([]);
       setNotes('');
       setHasSevereIncident(false);
@@ -58,6 +60,7 @@ export const RecordSheet: React.FC<RecordSheetProps> = ({ visible, onClose, date
     addCareDiaryRecord({
       basicStatus: { sleepQuality, appetite, mood },
       bpsdSymptoms,
+      bpsdOtherDetail: bpsdSymptoms.includes('other') ? bpsdOtherDetail : undefined,
       adlStatus,
       notes,
       hasSevereIncident
@@ -148,6 +151,21 @@ export const RecordSheet: React.FC<RecordSheetProps> = ({ visible, onClose, date
               value={bpsdSymptoms} 
               onChange={setBpsdSymptoms} 
             />
+            
+            {bpsdSymptoms.includes('other') && (
+              <div className="pt-2">
+                <div className="bg-slate-50 rounded-xl p-1">
+                  <TextArea
+                    placeholder={`请详细描述${subjectLabel}出现的其他精神行为症状...`}
+                    value={bpsdOtherDetail}
+                    onChange={setBpsdOtherDetail}
+                    autoSize={{ minRows: 2, maxRows: 4 }}
+                    className="bg-transparent text-sm"
+                    style={{ '--font-size': '14px' }}
+                  />
+                </div>
+              </div>
+            )}
           </section>
 
           {/* 日常生活能力 (ADL) 简记 */}

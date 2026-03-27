@@ -8,6 +8,7 @@ import {
 import { useAppStore } from '../../store';
 import { UserIdentity } from '../../interfaces/user';
 import { DiseaseTag } from '../../configs/constants';
+import { DiaryTimelineCard } from '../../components/CareDiary/DiaryTimelineCard';
 
 export default function ClinicReportView() {
   const navigate = useNavigate();
@@ -262,17 +263,11 @@ export default function ClinicReportView() {
                     </div>
                   ))
                 ) : selectedDiseaseTag === DiseaseTag.AD && Object.keys(careDiaryRecords).length > 0 ? (
-                  Object.values(careDiaryRecords).map(record => (
-                    <div key={record.id} className="relative pl-4 border-l border-slate-200">
-                      <div className="absolute -left-[5px] top-1 w-2 h-2 rounded-full bg-rose-400 ring-4 ring-white" />
-                      <div className="text-[12px] font-bold text-slate-800 mb-1">{new Date(record.timestamp).toLocaleString()}</div>
-                      <div className="text-[14px] text-slate-700 mb-2">
-                        精神行为症状: {record.bpsdSymptoms.join(', ')}。
-                        严重意外: {record.hasSevereIncident ? '是' : '否'}。
-                        {record.notes && `备注: ${record.notes}`}
-                      </div>
-                    </div>
-                  ))
+                  <div className="space-y-4">
+                    {Object.values(careDiaryRecords).map(record => (
+                      <DiaryTimelineCard key={record.id} record={record} subjectLabel={currentPatient?.name || '长辈'} />
+                    ))}
+                  </div>
                 ) : (
                   <div className="text-[13px] text-slate-500 text-center py-4">暂无发作记录</div>
                 )}

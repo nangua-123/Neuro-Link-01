@@ -6,6 +6,13 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Swiper } from 'antd-mobile';
 
+const MEDICAL_DEVICES: Record<string, { name: string, icon: any }> = {
+  'neuro_band': { name: 'Neuro-Band Pro 预警手环', icon: Watch },
+  'eeg_patch': { name: '动态脑电贴 (24h)', icon: Activity },
+  'bci_headband': { name: 'BCI 认知训练头环', icon: BrainCircuit },
+  'sleep_monitor': { name: '医用级睡眠分期仪', icon: Moon }
+};
+
 const getDeviceMetrics = (device: any, vitals: any) => {
   if (['apple', 'huawei', 'xiaomi', 'oppo'].includes(device.id)) {
     return [
@@ -34,10 +41,15 @@ export const VitalsGrid: React.FC = () => {
   const [isManagerVisible, setIsManagerVisible] = useState(false);
   const navigate = useNavigate();
 
-  // State 1: Connected Devices
-  if (connectedDevices.length > 0) {
+  // Filter out purchased assets that are already connected
+  const pendingAssets = purchasedAssets.filter(
+    assetId => !connectedDevices.some(d => d.id === assetId)
+  );
+
+  // Unified State: Connected Devices OR Pending Devices exist
+  if (connectedDevices.length > 0 || pendingAssets.length > 0) {
     return (
-      <div className="w-full relative">
+      <div className="w-full relative" id="vitals-grid-section">
         <div className="bg-white rounded-[24px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] overflow-hidden">
           <Swiper
             indicatorProps={{
@@ -47,75 +59,139 @@ export const VitalsGrid: React.FC = () => {
               '--border-radius': '24px',
             } as any}
           >
-            {[
-              ...connectedDevices.map(device => {
-                const metrics = getDeviceMetrics(device, vitals);
-                const DeviceIcon = ['apple', 'huawei', 'xiaomi', 'oppo'].includes(device.id) ? Smartphone : Watch;
+            {/* 1. Render Connected Devices */}
+            {connectedDevices.map(device => {
+              const metrics = getDeviceMetrics(device, vitals);
+              const DeviceIcon = ['apple', 'huawei', 'xiaomi', 'oppo'].includes(device.id) ? Smartphone : Watch;
 
-                return (
-                  <Swiper.Item key={device.id}>
-                    <div className="pt-4 px-4 pb-8">
-                      {/* Card Header */}
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100/80">
-                            <DeviceIcon className="w-5 h-5 text-slate-600" />
-                          </div>
-                          <div>
-                            <h3 className="text-[16px] font-bold text-slate-800 leading-tight">{device.name}</h3>
-                            <div className="flex items-center gap-1.5 mt-1">
-                              <div className="flex items-center gap-1 text-[12px] text-emerald-600 bg-emerald-50/80 px-2 py-0.5 rounded-full font-medium">
-                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                实时同步
-                              </div>
-                              {device.battery && <span className="text-[12px] text-slate-400 font-medium">电量 {device.battery}%</span>}
+              return (
+                <Swiper.Item key={`connected-${device.id}`}>
+                  <div className="pt-4 px-4 pb-8">
+                    {/* Card Header */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100/80">
+                          <DeviceIcon className="w-5 h-5 text-slate-600" />
+                        </div>
+                        <div>
+                          <h3 className="text-[16px] font-bold text-slate-800 leading-tight">{device.name}</h3>
+                          <div className="flex items-center gap-1.5 mt-1">
+                            <div className="flex items-center gap-1 text-[12px] text-emerald-600 bg-emerald-50/80 px-2 py-0.5 rounded-full font-medium">
+                              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                              实时同步
                             </div>
+                            {device.battery && <span className="text-[12px] text-slate-400 font-medium">电量 {device.battery}%</span>}
                           </div>
                         </div>
-                        <button onClick={() => setIsManagerVisible(true)} className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center active:bg-slate-100 transition-colors">
-                          <Settings className="w-4 h-4 text-slate-400" />
-                        </button>
                       </div>
+                      <button onClick={() => setIsManagerVisible(true)} className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center active:bg-slate-100 transition-colors">
+                        <Settings className="w-4 h-4 text-slate-400" />
+                      </button>
+                    </div>
 
-                      {/* Metrics Row */}
-                      <div className="flex items-center justify-between gap-3">
-                        {metrics.map((m, i) => (
-                          <div key={i} className="flex-1 flex flex-col items-center justify-center bg-slate-50/80 rounded-[16px] py-3 px-2">
-                            <div className="flex items-center gap-1.5 mb-1.5">
-                              <m.icon className={`w-4 h-4 ${m.colorClass}`} />
-                              <span className="text-[12px] text-slate-500 font-medium">{m.label}</span>
-                            </div>
-                            <div className="flex items-baseline gap-1">
-                              <span className="text-[18px] font-bold text-slate-800 tracking-tight">{m.value}</span>
-                              <span className="text-[12px] text-slate-400 font-medium">{m.unit}</span>
-                            </div>
+                    {/* Metrics Row */}
+                    <div className="flex items-center justify-between gap-3">
+                      {metrics.map((m, i) => (
+                        <div key={i} className="flex-1 flex flex-col items-center justify-center bg-slate-50/80 rounded-[16px] py-3 px-2">
+                          <div className="flex items-center gap-1.5 mb-1.5">
+                            <m.icon className={`w-4 h-4 ${m.colorClass}`} />
+                            <span className="text-[12px] text-slate-500 font-medium">{m.label}</span>
                           </div>
-                        ))}
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-[18px] font-bold text-slate-800 tracking-tight">{m.value}</span>
+                            <span className="text-[12px] text-slate-400 font-medium">{m.unit}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </Swiper.Item>
+              );
+            })}
+
+            {/* 2. Render Pending Devices */}
+            {pendingAssets.map(assetId => {
+              const deviceDef = MEDICAL_DEVICES[assetId] || { name: '未知医疗设备', icon: Package };
+              const DeviceIcon = deviceDef.icon;
+
+              return (
+                <Swiper.Item key={`pending-${assetId}`}>
+                  <div className="pt-4 px-4 pb-8">
+                    {/* Card Header */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center border border-blue-100/80">
+                          <DeviceIcon className="w-5 h-5 text-blue-500" />
+                        </div>
+                        <div>
+                          <h3 className="text-[16px] font-bold text-slate-800 leading-tight">{deviceDef.name}</h3>
+                          <p className="text-[12px] text-slate-500 mt-1">设备已在途中，预计 1-3 天送达</p>
+                        </div>
                       </div>
+                      <button onClick={() => navigate('/device-connect')} className="bg-blue-600 text-white text-[13px] font-bold px-4 py-1.5 rounded-full active:scale-95 transition-transform shadow-sm">
+                        去绑定
+                      </button>
                     </div>
-                  </Swiper.Item>
-                );
-              }),
-              <Swiper.Item key="add-device">
-                <div className="pt-4 px-4 pb-8 h-full">
-                  <motion.div
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => navigate('/device-connect')}
-                    className="h-full bg-gradient-to-br from-blue-50/40 to-slate-50/40 rounded-[20px] p-4 border border-blue-100/60 border-dashed flex items-center justify-center gap-4 cursor-pointer"
-                  >
-                    <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center text-blue-500 shrink-0">
-                      <Plus className="w-6 h-6" />
+
+                    {/* Placeholder Metrics */}
+                    <div className="flex items-center justify-between gap-3 opacity-60 grayscale">
+                      {[
+                        { label: '心率', icon: HeartPulse },
+                        { label: '步数', icon: Footprints },
+                        { label: '睡眠', icon: Moon }
+                      ].map((m, i) => (
+                        <div key={i} className="flex-1 flex flex-col items-center justify-center bg-slate-50/80 rounded-[16px] py-3 px-2 border border-slate-100 border-dashed">
+                          <div className="flex items-center gap-1.5 mb-1.5">
+                            <m.icon className="w-4 h-4 text-slate-400" />
+                            <span className="text-[12px] text-slate-400 font-medium">{m.label}</span>
+                          </div>
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-[18px] font-bold text-slate-300 tracking-tight">--</span>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                    <div className="text-left">
-                      <h4 className="text-[15px] font-bold text-slate-800">添加健康设备</h4>
-                      <p className="text-[12px] text-slate-500 mt-1 leading-relaxed">
-                        授权同步基础体征，或接入高精度设备
-                      </p>
+                  </div>
+                </Swiper.Item>
+              );
+            })}
+
+            {/* 3. Add Device Card */}
+            <Swiper.Item key="add-device">
+              <div className="pt-4 px-4 pb-8">
+                {/* Card Header */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center border border-slate-200 border-dashed">
+                      <Plus className="w-5 h-5 text-slate-400" />
                     </div>
-                  </motion.div>
+                    <div>
+                      <h3 className="text-[16px] font-bold text-slate-800 leading-tight">添加健康设备</h3>
+                      <p className="text-[12px] text-slate-500 mt-1">授权同步基础体征，或接入高精度设备</p>
+                    </div>
+                  </div>
+                  <button onClick={() => navigate('/device-connect')} className="bg-slate-800 text-white text-[13px] font-bold px-4 py-1.5 rounded-full active:scale-95 transition-transform shadow-sm">
+                    去添加
+                  </button>
                 </div>
-              </Swiper.Item>
-            ]}
+
+                {/* Placeholder Features */}
+                <div className="flex items-center justify-between gap-3">
+                  {[
+                    { label: '多端同步', icon: Smartphone, color: 'text-blue-500' },
+                    { label: '医疗级', icon: Activity, color: 'text-emerald-500' },
+                    { label: 'AI 预警', icon: BrainCircuit, color: 'text-indigo-500' }
+                  ].map((m, i) => (
+                    <div key={i} className="flex-1 flex flex-col items-center justify-center bg-slate-50/50 rounded-[16px] py-3 px-2 border border-slate-100 border-dashed">
+                      <div className="flex items-center gap-1.5 mb-1.5">
+                        <m.icon className={`w-4 h-4 ${m.color}`} />
+                      </div>
+                      <span className="text-[12px] text-slate-500 font-medium">{m.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Swiper.Item>
           </Swiper>
         </div>
 
@@ -127,51 +203,6 @@ export const VitalsGrid: React.FC = () => {
     );
   }
 
-  // State 2: Purchased but not connected (Pending Delivery)
-  if (purchasedAssets.length > 0) {
-    return (
-      <div className="w-full relative">
-        <div className="bg-indigo-50/50 rounded-[20px] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-indigo-100/50 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0 shadow-sm">
-              <Package className="w-5 h-5 text-indigo-500" />
-            </div>
-            <div>
-              <h3 className="text-[15px] font-bold text-slate-800 mb-0.5">新设备待连接</h3>
-              <p className="text-[12px] text-slate-500">收到硬件后，请点击绑定</p>
-            </div>
-          </div>
-          <button 
-            onClick={() => navigate('/device-connect')}
-            className="bg-indigo-500 text-white text-[13px] font-bold px-4 py-2 rounded-full active:scale-95 transition-transform shrink-0"
-          >
-            去绑定
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   // State 3: Empty State (No devices, no purchases)
-  return (
-    <div className="w-full relative">
-      <div className="bg-white rounded-[20px] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-50/80 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
-            <Watch className="w-5 h-5 text-slate-400" />
-          </div>
-          <div>
-            <h3 className="text-[15px] font-bold text-slate-800 mb-0.5">暂无体征数据</h3>
-            <p className="text-[12px] text-slate-500">接入设备，开启 24h 智能监测</p>
-          </div>
-        </div>
-        <button 
-          onClick={() => navigate('/device-connect')}
-          className="bg-blue-50 text-blue-600 text-[13px] font-bold px-4 py-2 rounded-full active:scale-95 transition-transform shrink-0"
-        >
-          去接入
-        </button>
-      </div>
-    </div>
-  );
+  return null;
 };

@@ -5,13 +5,14 @@ import { ChevronLeft, ChevronRight, Pill, Plus, CheckCircle2, Clock, CalendarDay
 import { useAppStore } from '../../store';
 import { MedicationSetupModal } from '../../components/MedicationSetupModal';
 import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { SwipeAction, Dialog, Toast } from 'antd-mobile';
+import { SwipeAction, Dialog, Toast, Modal } from 'antd-mobile';
 
 export default function MedicationsView() {
   const navigate = useNavigate();
   const { medicationPlans, todayTakenIds, toggleMedication, medicationHistory, removeMedicationPlan } = useAppStore();
   const [isSetupVisible, setIsSetupVisible] = useState(false);
   const [activeTab, setActiveTab] = useState<'today' | 'history'>('today');
+  const [selectedPlan, setSelectedPlan] = useState<any>(null);
 
   const timeMap: Record<string, { label: string, icon: React.ElementType, color: string, bg: string }> = {
     morning: { label: '晨起', icon: Sunrise, color: 'text-amber-500', bg: 'bg-amber-50' },
@@ -86,6 +87,14 @@ export default function MedicationsView() {
         Toast.show({ icon: 'success', content: '已删除' });
       },
     });
+  };
+
+  const handleConfirmMedication = () => {
+    if (selectedPlan) {
+      toggleMedication(selectedPlan.id);
+      Toast.show({ content: '打卡成功', icon: 'success' });
+      setSelectedPlan(null);
+    }
   };
 
   // Dynamic Greeting
@@ -251,7 +260,7 @@ export default function MedicationsView() {
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, scale: 0.95 }}
                                     whileTap={{ scale: 0.98 }}
-                                    onClick={() => toggleMedication(plan.id)}
+                                    onClick={() => setSelectedPlan(plan)}
                                     className="bg-white p-3.5 flex items-center justify-between group cursor-pointer"
                                   >
                                     <div className="flex items-center gap-3.5 min-w-0">
@@ -430,6 +439,54 @@ export default function MedicationsView() {
       </div>
 
       <MedicationSetupModal visible={isSetupVisible} onClose={() => setIsSetupVisible(false)} />
+
+      {/* Medication Confirmation Modal */}
+      <Modal
+        visible={!!selectedPlan}
+        content={
+          <div className="flex flex-col items-center pt-2 pb-1 w-full">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-5 shadow-[0_4px_12px_rgba(59,130,246,0.3)]">
+              <Pill className="w-7 h-7 text-white" />
+            </div>
+            <h3 className="text-[20px] font-bold text-slate-800 mb-1">用药打卡</h3>
+            <p className="text-[14px] text-slate-500 text-center mb-6">请确认您已按时服用以下药物</p>
+            
+            <div className="w-full bg-slate-50 rounded-[16px] p-4 mb-6 border border-slate-100">
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-[13px] font-medium text-slate-500">服药时间</span>
+                <span className="text-[14px] font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md">
+                  {selectedPlan ? timeMap[selectedPlan.time]?.label : ''}
+                </span>
+              </div>
+              <div className="h-[1px] w-full bg-slate-200/60 mb-3" />
+              <div className="flex justify-between items-center">
+                <span className="text-[13px] font-medium text-slate-500">药物名称与剂量</span>
+                <span className="text-[15px] font-bold text-slate-800 text-right max-w-[60%]">
+                  {selectedPlan?.name} {selectedPlan?.dose}
+                </span>
+              </div>
+            </div>
+
+            <div className="w-full flex flex-col gap-3">
+              <button 
+                onClick={handleConfirmMedication}
+                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full py-3.5 text-[16px] font-bold shadow-[0_4px_12px_rgba(37,99,235,0.2)] active:scale-95 transition-transform"
+              >
+                确认已服药
+              </button>
+              <button 
+                onClick={() => setSelectedPlan(null)}
+                className="w-full bg-slate-100 text-slate-600 rounded-full py-3.5 text-[16px] font-bold active:scale-95 transition-transform"
+              >
+                稍后提醒
+              </button>
+            </div>
+          </div>
+        }
+        closeOnAction
+        onClose={() => setSelectedPlan(null)}
+        bodyStyle={{ borderRadius: '24px', padding: '24px' }}
+      />
     </div>
   );
 }

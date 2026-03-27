@@ -334,7 +334,7 @@ export const useAppStore = create<AppState>()(
         }
         
         if (state.selectedDiseaseTag === DiseaseTag.AD) {
-          newTasks.push({ id: 't1', title: '每日脑力唤醒', description: '15分钟画钟与词汇回忆训练', type: 'TRAINING', time: 'MORNING', status: existingTasksMap.get('t1')?.status || 'PENDING', actionLabel: '去训练', iconName: 'Brain', actionRoute: '/feature/brain-training' });
+          newTasks.push({ id: 't1', title: '每日脑力唤醒', description: '15分钟画钟与词汇回忆训练', type: 'TRAINING', time: 'MORNING', status: existingTasksMap.get('t1')?.status || 'PENDING', actionLabel: '去训练', iconName: 'Brain', actionRoute: '/dtx' });
           newTasks.push({ id: 't2', title: '记录异常行为', description: '随手记录长辈精神行为症状', type: 'DIARY', time: 'ANYTIME', status: existingTasksMap.get('t2')?.status || 'PENDING', actionLabel: '去记录', iconName: 'HeartHandshake', actionRoute: '/cdr' });
           if (state.medicationPlans.length === 0) {
             newTasks.push({ id: 't3', title: '日常用药打卡', description: '记录改善认知药物服用情况', type: 'MEDICATION', time: 'ANYTIME', status: existingTasksMap.get('t3')?.status || 'PENDING', actionLabel: '打卡', iconName: 'Pill' });
@@ -434,6 +434,7 @@ export const useAppStore = create<AppState>()(
         ownedEquipments: [],
         unlockedPrivileges: [],
         isRweAuthorized: false,
+        purchasedAssets: [],
         painkillerDates: [],
         missedMedicationDates: [],
         connectedDevices: [],

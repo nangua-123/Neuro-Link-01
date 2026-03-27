@@ -47,7 +47,7 @@ const services = [
     color: 'text-blue-500',
     bg: 'bg-blue-50',
     tags: [DiseaseTag.AD],
-    route: '/feature/brain-training'
+    route: '/dtx'
   },
   {
     id: 'lbs-fence',

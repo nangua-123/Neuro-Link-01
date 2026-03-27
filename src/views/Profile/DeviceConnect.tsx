@@ -62,17 +62,26 @@ export default function DeviceConnectView() {
     }
 
     setPairingDevice(device);
-    // 模拟蓝牙搜索 2 秒后弹出授权协议
-    setTimeout(() => {
-      setShowAuthModal(true);
-    }, 2000);
+    
+    if (isMedicalDevice && isOwned) {
+      // 模拟蓝牙搜索 2.5 秒后直接配对成功（购买时已授权）
+      setTimeout(() => {
+        handleAgreeAndBind(device);
+      }, 2500);
+    } else {
+      // 模拟蓝牙搜索 2 秒后弹出授权协议
+      setTimeout(() => {
+        setShowAuthModal(true);
+      }, 2000);
+    }
   };
 
-  const handleAgreeAndBind = () => {
-    if (pairingDevice) {
+  const handleAgreeAndBind = (deviceToBind?: any) => {
+    const targetDevice = deviceToBind?.id ? deviceToBind : pairingDevice;
+    if (targetDevice) {
       connectDevice({
-        id: pairingDevice.id,
-        name: pairingDevice.name,
+        id: targetDevice.id,
+        name: targetDevice.name,
         type: 'hardware',
         status: '已连接 · 信号极佳',
         syncTime: '刚刚同步',
@@ -81,12 +90,17 @@ export default function DeviceConnectView() {
       bindDevice();
       
       // If this was a purchased asset, activate it
-      if (purchasedAssets.includes(pairingDevice.id)) {
-        activateAsset(pairingDevice.id);
+      if (purchasedAssets.includes(targetDevice.id)) {
+        activateAsset(targetDevice.id);
       }
     }
     setShowAuthModal(false);
     setPairingDevice(null);
+    Toast.show({
+      content: '配对成功',
+      icon: 'success',
+      duration: 2000,
+    });
     navigate('/manager', { replace: true });
   };
 
@@ -192,13 +206,13 @@ export default function DeviceConnectView() {
                   <div>
                     <div className="flex items-center gap-2 mb-0.5">
                       <h3 className="text-[15px] font-bold text-slate-900">{device.name}</h3>
-                      <span className="text-[10px] font-bold text-blue-600 bg-blue-100/80 px-1.5 py-0.5 rounded">待连接</span>
+                      <span className="text-[10px] font-bold text-blue-600 bg-blue-100/80 px-1.5 py-0.5 rounded">已下单</span>
                     </div>
-                    <p className="text-[12px] text-slate-500 line-clamp-1">您的设备已就绪，点击一键直连</p>
+                    <p className="text-[12px] text-slate-500 line-clamp-1">收到货后，点击进行蓝牙配对</p>
                   </div>
                 </div>
                 <button className="bg-blue-600 text-white text-[12px] font-bold px-3 py-1.5 rounded-full shadow-sm relative z-10 shrink-0">
-                  立即连接
+                  去配对
                 </button>
               </motion.div>
             ))}

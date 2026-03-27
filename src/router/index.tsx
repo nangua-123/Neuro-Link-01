@@ -143,7 +143,7 @@ export const router = createBrowserRouter([
         element: <RequireAuth><RequireAgreement><FeatureView /></RequireAgreement></RequireAuth>,
       },
       {
-        path: '/feature/brain-training',
+        path: '/dtx',
         element: <RequireAuth><RequireAgreement><BrainTrainingView /></RequireAgreement></RequireAuth>,
       },
       {
